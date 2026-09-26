@@ -1,10 +1,12 @@
 #BlueJ class context
-#Sat Sep 26 10:18:08 ART 2026
+#Sat Sep 26 20:16:48 ART 2026
 comment0.target=Comision
 comment1.target=Comision()
 comment10.params=legajo
 comment10.target=Alumno buscarAlumnoPorLegajo(int)
 comment11.target=java.lang.String toString()
+comment12.params=legajo
+comment12.target=boolean darDeBajaAlumno(int)
 comment2.params=codigoComision nombre
 comment2.target=Comision(int, java.lang.String)
 comment3.target=int getCodigoComision()
@@ -17,4 +19,4 @@ comment7.target=java.util.ArrayList getListaAlumnos()
 comment8.params=alumno
 comment8.target=void agregarAlumno(Alumno)
 comment9.target=int getCantidadAlumnos()
-numComments=12
+numComments=13

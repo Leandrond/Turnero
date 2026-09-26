@@ -79,5 +79,16 @@ public class Comision
         return "Comision " + codigoComision + " - " + nombre + "(Alumnos instriptos: )" + getCantidadAlumnos() + ")";
     }
     
+    //Para dar de baja un alumno utilizo un booleano, retorna true si el alumno se pudo
+    //dar de baja, sino retorna false.
+    public boolean darDeBajaAlumno(int legajo){ //Recibe el legajo del alumno a dar de baja
+        Alumno alumnoAEliminar=buscarAlumnoPorLegajo(legajo);
+        
+        if(alumnoAEliminar != null){
+            return this.listaAlumnos.remove(alumnoAEliminar);//elimino el coincidente de a lista
+        }
+        return false;//si no hay coincidente retorno false
+    }
+    
     
 }
