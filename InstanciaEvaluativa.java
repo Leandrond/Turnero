@@ -1,33 +1,36 @@
+import java.util.Timer;
+import java.util.Date;
 
-/**
- * Write a description of class InstanciaEvaluativa here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class InstanciaEvaluativa
 {
     // instance variables - replace the example below with your own
-    private int x;
+    private String tipo;
+    private Date fecha;
+    private Timer hora;
+    private Comision comision;
+    private String duracionEstimada;
+    private Turno turno;
 
-    /**
-     * Constructor for objects of class InstanciaEvaluativa
-     */
     public InstanciaEvaluativa()
     {
         // initialise instance variables
-        x = 0;
+        
     }
-
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
+    public InstanciaEvaluativa( String tipo, Date fecha,Timer hora,  Comision comision,  String duracionEstimada, Turno turno)
     {
-        // put your code here
-        return x + y;
+        // initialise instance variables
+        this.tipo =tipo;
+        this.fecha= fecha;
+        this.hora = hora;
+        this.comision = comision;
+        this.duracionEstimada = duracionEstimada;
+        this.turno=turno;
     }
+    public String getTipo(){return tipo;}
+    public Date getFecha(){return fecha;}
+    public Timer getHoraInicio(){return hora;}
+    public Comision getComision(){return comision;}
+    public String getDuracionEstimada(){return duracionEstimada;}
+    public Turno getTurno(){return turno;}
+    
 }
