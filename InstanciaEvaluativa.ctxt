@@ -1,0 +1,13 @@
+#BlueJ class context
+#Sat Sep 26 00:45:30 ART 2026
+comment0.target=InstanciaEvaluativa
+comment1.target=InstanciaEvaluativa()
+comment2.params=tipo fecha hora comision duracionEstimada turno
+comment2.target=InstanciaEvaluativa(java.lang.String, java.util.Date, java.util.Timer, Comision, java.lang.String, Turno)
+comment3.target=java.lang.String getTipo()
+comment4.target=java.util.Date getFecha()
+comment5.target=java.util.Timer getHoraInicio()
+comment6.target=Comision getComision()
+comment7.target=java.lang.String getDuracionEstimada()
+comment8.target=Turno getTurno()
+numComments=9
