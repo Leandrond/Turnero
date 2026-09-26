@@ -48,8 +48,20 @@ public class Comision
     }
     
 
+    // METODOS DE COMPORTAMIENTO
     
     
+    //Agregar alumno
+    public void agregarAlumno(Alumno alumno){
+        if(alumno != null){ //verifico que alumno no sea un valor nulo
+            this.listaAlumnos.add(alumno);
+        }
+    }
+    
+    //Contar cantidad de alumnos
+    public int getCantidadAlumnos(){
+        return this.listaAlumnos.size();
+    }
     
     
     
