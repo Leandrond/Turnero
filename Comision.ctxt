@@ -1,10 +1,20 @@
 #BlueJ class context
-#Sat Sep 26 00:28:21 ART 2026
+#Sat Sep 26 10:18:08 ART 2026
 comment0.target=Comision
-comment0.text=\r\n Write a description of class Comision here.\r\n \r\n @author (your name) \r\n @version (a version number or a date)\r\n
 comment1.target=Comision()
-comment1.text=\r\n Constructor for objects of class Comision\r\n
-comment2.params=y
-comment2.target=int sampleMethod(int)
-comment2.text=\r\n An example of a method - replace this comment with your own\r\n \r\n @param  y   a sample parameter for a method\r\n @return     the sum of x and y \r\n
-numComments=3
+comment10.params=legajo
+comment10.target=Alumno buscarAlumnoPorLegajo(int)
+comment11.target=java.lang.String toString()
+comment2.params=codigoComision nombre
+comment2.target=Comision(int, java.lang.String)
+comment3.target=int getCodigoComision()
+comment4.params=codigoComision
+comment4.target=void setCodigoComision(int)
+comment5.target=java.lang.String getNombre()
+comment6.params=nombre
+comment6.target=void setNombre(java.lang.String)
+comment7.target=java.util.ArrayList getListaAlumnos()
+comment8.params=alumno
+comment8.target=void agregarAlumno(Alumno)
+comment9.target=int getCantidadAlumnos()
+numComments=12
