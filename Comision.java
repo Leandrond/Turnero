@@ -73,5 +73,11 @@ public class Comision
         return null;//si no hay coincidente al recorrer la lista, retorna valor null
     }
     
+    //Represento en texto en la comision
+    @Override
+    public String toString(){
+        return "Comision " + codigoComision + " - " + nombre + "(Alumnos instriptos: )" + getCantidadAlumnos() + ")";
+    }
+    
     
 }
