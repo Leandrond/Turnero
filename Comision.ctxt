@@ -1,10 +1,7 @@
 #BlueJ class context
-#Sat Sep 26 00:28:21 ART 2026
+#Sat Sep 26 09:15:08 ART 2026
 comment0.target=Comision
-comment0.text=\r\n Write a description of class Comision here.\r\n \r\n @author (your name) \r\n @version (a version number or a date)\r\n
 comment1.target=Comision()
-comment1.text=\r\n Constructor for objects of class Comision\r\n
-comment2.params=y
-comment2.target=int sampleMethod(int)
-comment2.text=\r\n An example of a method - replace this comment with your own\r\n \r\n @param  y   a sample parameter for a method\r\n @return     the sum of x and y \r\n
+comment2.params=codigoComision nombre
+comment2.target=Comision(int, java.lang.String)
 numComments=3

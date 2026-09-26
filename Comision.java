@@ -1,33 +1,27 @@
+import java.util.ArrayList;
 
-/**
- * Write a description of class Comision here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class Comision
 {
-    // instance variables - replace the example below with your own
-    private int x;
+    private int codigoComision;
+    private String nombre; //Yo lo haria string para poder poner "Comision 1/2/3..."
+    private ArrayList<Alumno> listaAlumnos;//Lista para poder administrar alumnos
 
-    /**
-     * Constructor for objects of class Comision
-     */
+    
     public Comision()
     {
-        // initialise instance variables
-        x = 0;
+       
+    }
+   
+    public Comision(int codigoComision, String nombre)
+    {
+       this.codigoComision=codigoComision;
+       this.nombre=nombre;
+       this.listaAlumnos= new ArrayList<>();
+       
     }
 
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
-    }
+    
+    
+    
+    
 }
