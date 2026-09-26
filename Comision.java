@@ -63,6 +63,15 @@ public class Comision
         return this.listaAlumnos.size();
     }
     
+    //Busco alumnos por su legajo
+    public Alumno buscarAlumnoPorLegajo(int legajo){
+        for (Alumno a : this.listaAlumnos){
+            if(a.getLegajo() == legajo){
+                return a;//devuelve el alumno coincidente
+            }
+        }
+        return null;//si no hay coincidente al recorrer la lista, retorna valor null
+    }
     
     
 }

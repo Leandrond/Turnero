@@ -1,33 +1,24 @@
 
-/**
- * Write a description of class Alumno here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class Alumno
 {
-    // instance variables - replace the example below with your own
-    private int x;
-
-    /**
-     * Constructor for objects of class Alumno
-     */
+    
+    private int legajo;
+    
     public Alumno()
     {
-        // initialise instance variables
-        x = 0;
+        
+        
     }
 
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
+    
+    public Alumno(int legajo)
     {
-        // put your code here
-        return x + y;
+        this.legajo=legajo;
+        
+    }
+    
+    //(Joaquin)--> hago un metodo set, que devuelva el legajo porque lo necesito para la comision
+    public int getLegajo(){
+        return legajo;
     }
 }
