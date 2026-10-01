@@ -1,33 +1,22 @@
+import javax.swing.Timer;
+import java.util.Date;
 
-/**
- * Write a description of class Turno here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class Turno
 {
-    // instance variables - replace the example below with your own
-    private int x;
-
-    /**
-     * Constructor for objects of class Turno
-     */
+    /**Atributos**/
+    private InstanciaEvaluativa instancia;
+    private Alumno alumno;
+    private Grupo grupo;
+    private Date fecha;
+    private Timer hora;
+    private boolean tienePrioridad;
+    private String motivoPrioridad;
+    private String estado;
+    
+    /**Constructor**/
     public Turno()
     {
-        // initialise instance variables
-        x = 0;
+    
     }
-
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
-    }
+    
 }
