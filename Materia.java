@@ -1,33 +1,25 @@
 
-/**
- * Write a description of class Materia here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+
 public class Materia
 {
-    // instance variables - replace the example below with your own
-    private int x;
-
-    /**
-     * Constructor for objects of class Materia
-     */
-    public Materia()
+    private String nombre;
+  - private docente representanteCatedra;
+    
+    public Materia(String nombre, Docente representanteCatedra)
     {
-        // initialise instance variables
-        x = 0;
+        this.nombre = nombre;
+        this.representanteCatedra = representanteCatedra;
+    }
+    //getters para devolver nombre y el representante de catedra
+    public String getNombre(){
+        return nombre;
     }
 
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+    public Docente getRepresentanteCatedra(){
+        return representanteCatedra;
+    }
+    //para modificar el representante de catedra de la materia
+    public void setRepresentanteCatedra(Docente docente){
+        this.representanteCatedra = docente;
     }
 }
