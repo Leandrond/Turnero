@@ -19,4 +19,16 @@ public class Turno
     
     }
     
+    public Alumno getAlumno()
+    {
+        return alumno;
+    }
+    
+    public Alumno siguienteAlumnoXEstado()
+    {
+        if (alumno.getEstado().equals("Evaluando")){
+                     return alumno;
+        }
+    return alumno;
+    } 
 }

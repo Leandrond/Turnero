@@ -178,14 +178,14 @@ class Turnero {
 
   + getListaTurnos(): List<Turno>
   + agregarTurno(turno: Turno): void
-  + obtenerColaOrdenada(): List<Turno>
+  + obtenerColachaOrdenada(): List<Turno>
   + obtenerSiguienteTurno(): Turno
   + cambiarEstadoTurno(numero: int, nuevoEstado: String): void
 }
 
 Estudiantes de Programación II - UTN FRVM (Año 2026)
-- TOMÁS, DIEGO – Líder técnico
+- TOMÁS, DIEGO – Jr.
 - DOMÍNGUEZ, LEO MARIANO – Q&A Tester
-- DEMARCHI, LEANDRO – Analista
+- DEMARCHI, LEANDRO – Líder técnico
 - BERRINO, JOAQUÍN JOSÉ – Diseñador
 - CHOQUE, LEANDRO – Programador

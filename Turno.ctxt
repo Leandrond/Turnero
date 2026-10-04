@@ -1,6 +1,8 @@
 #BlueJ class context
-#Sun Sep 27 17:49:14 ART 2026
+#Sat Oct 03 22:48:01 ART 2026
 comment0.target=Turno
 comment1.target=Turno()
 comment1.text=Constructor*
-numComments=2
+comment2.target=Alumno getAlumno()
+comment3.target=Alumno siguienteAlumnoXEstado()
+numComments=4
