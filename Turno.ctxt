@@ -1,8 +1,12 @@
 #BlueJ class context
-#Sat Oct 03 22:48:01 ART 2026
+#Sun Oct 04 15:04:23 ART 2026
 comment0.target=Turno
 comment1.target=Turno()
 comment1.text=Constructor*
-comment2.target=Alumno getAlumno()
-comment3.target=Alumno siguienteAlumnoXEstado()
-numComments=4
+comment2.params=instancia alumno fecha hora
+comment2.target=Turno(InstanciaEvaluativa, Alumno, java.util.Date, java.time.LocalTime)
+comment3.params=instancia grupo fecha hora
+comment3.target=Turno(InstanciaEvaluativa, Grupo, java.util.Date, java.time.LocalTime)
+comment4.target=Alumno getAlumno()
+comment5.target=boolean estaEvaluando()
+numComments=6
