@@ -3,7 +3,7 @@
 public class Materia
 {
     private String nombre;
-  - private docente representanteCatedra;
+    private docente representanteCatedra;
     
     public Materia(String nombre, Docente representanteCatedra)
     {
