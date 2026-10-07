@@ -19,8 +19,10 @@ public class Comision
        this.listaAlumnos= new ArrayList<>();
        
     }
-
+    
+    //====================================================================================
     //Metodos get y set
+    //====================================================================================
     
     //Devuelvo codigoComision
     public int getCodigoComision(){
@@ -47,9 +49,9 @@ public class Comision
         return listaAlumnos;
     }
     
-
+    //====================================================================================
     // METODOS DE COMPORTAMIENTO
-    
+    //====================================================================================
     
     //Agregar alumno
     public void agregarAlumno(Alumno alumno){
@@ -74,16 +76,17 @@ public class Comision
     }
     
     //Represento en texto en la comision
-    @Override
     public String toString(){
-        return "Comision " + codigoComision + " - " + nombre + "(Alumnos instriptos: )" + getCantidadAlumnos() + ")";
+        return      "Comision " + codigoComision 
+                    + " - " + nombre 
+                    + "(Alumnos instriptos: )" 
+                    + getCantidadAlumnos() + ")";
     }
     
     //Para dar de baja un alumno utilizo un booleano, retorna true si el alumno se pudo
     //dar de baja, sino retorna false.
     public boolean darDeBajaAlumno(int legajo){ //Recibe el legajo del alumno a dar de baja
         Alumno alumnoAEliminar=buscarAlumnoPorLegajo(legajo);
-        
         if(alumnoAEliminar != null){
             return this.listaAlumnos.remove(alumnoAEliminar);//elimino el coincidente de a lista
         }
