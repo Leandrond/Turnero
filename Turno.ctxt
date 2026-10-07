@@ -1,5 +1,9 @@
 #BlueJ class context
+<<<<<<< HEAD
 #Sun Oct 04 15:04:23 ART 2026
+=======
+#Thu Oct 01 15:14:21 ART 2026
+>>>>>>> main
 comment0.target=Turno
 comment1.target=Turno()
 comment1.text=Constructor*
