@@ -1,5 +1,9 @@
 #BlueJ class context
+<<<<<<< HEAD
 #Sat Oct 03 22:40:08 ART 2026
+=======
+#Thu Oct 01 15:14:21 ART 2026
+>>>>>>> main
 comment0.target=InstanciaEvaluativa
 comment1.target=InstanciaEvaluativa()
 comment2.params=tipo fecha hora comision duracionEstimada turno

@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sat Sep 26 21:10:34 ART 2026
+#Thu Oct 01 15:12:49 ART 2026
 comment0.target=Grupo
 comment1.target=Grupo()
 comment2.params=numero
@@ -8,4 +8,5 @@ comment3.target=int getNumero()
 comment4.target=java.util.List getlistaAlumnos()
 comment5.params=alumno
 comment5.target=void agregarAlumno(Alumno)
-numComments=6
+comment6.target=boolean tieneDisponibilidad()
+numComments=7
