@@ -1,5 +1,9 @@
 #BlueJ class context
+<<<<<<< HEAD
+#Sat Oct 03 19:40:18 ART 2026
+=======
 #Wed Oct 07 17:09:42 ART 2026
+>>>>>>> main
 comment0.target=Materia
 comment1.params=nombre representanteCatedra
 comment1.target=Materia(java.lang.String, Docente)

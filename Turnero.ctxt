@@ -1,5 +1,18 @@
 #BlueJ class context
+<<<<<<< HEAD
+#Sun Oct 04 15:04:36 ART 2026
+comment0.target=Turnero
+comment1.target=Turnero()
+comment2.params=turno
+comment2.target=void addTurno(Turno)
+comment3.target=java.util.ArrayList getListaTurno()
+comment4.params=t nuevaPosicion
+comment4.target=void cambiarOrden(Turno, int)
+comment5.target=Turno siguienteTurno()
+numComments=6
+=======
 #Thu Oct 01 15:15:16 ART 2026
 comment0.target=Turnero
 comment1.target=Turnero()
 numComments=2
+>>>>>>> main
