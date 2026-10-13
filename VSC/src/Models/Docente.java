@@ -1,3 +1,5 @@
+package Models;
+
 public class Docente
 {
     private String nombre;
