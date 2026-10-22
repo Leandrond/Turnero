@@ -7,32 +7,16 @@ public class Turno
     /**Atributos**/
     private InstanciaEvaluativa instancia;
     private Alumno alumno;
-    private Grupo grupo;
     private Date fecha;
     private LocalTime hora;
     private Estado estado;
     
     /**Constructor**/
-    public Turno()
-    {
-    
-    }
-    
       public Turno(InstanciaEvaluativa instancia, Alumno alumno, Date fecha,
       LocalTime hora)
     {
         this.instancia=instancia;
         this.alumno=alumno;
-        this.fecha=fecha;
-        this.hora=hora;
-        this.estado=Estado.Evaluando;
-    }
-    
-      public Turno(InstanciaEvaluativa instancia, Grupo grupo, Date fecha,
-      LocalTime hora)
-    {
-        this.instancia=instancia;
-        this.grupo=grupo;
         this.fecha=fecha;
         this.hora=hora;
         this.estado=Estado.Evaluando;
