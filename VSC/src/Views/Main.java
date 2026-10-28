@@ -492,9 +492,9 @@ public class Main {
         // y llamar a Grupo.quitarAlumno(), que ya existe.
         // Si el alumno no esta en el grupo, tiene que avisarlo.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta.LISTO
 
-        // gestion.quitarAlumnoDeGrupo(codigo, numero, legajo);
+         gestion.quitarAlumnoDeGrupo(codigo, numero, legajo);
     }
 
     // Muestra los grupos de una comision y sus integrantes.
