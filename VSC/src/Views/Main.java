@@ -344,9 +344,9 @@ public class Main {
         // Comision.darDeBajaAlumno(), que ya existe.
         // Tiene que avisar si se elimino o si no estaba cargado.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta.LISTO
 
-        // gestion.darDeBajaAlumno(codigo, legajo);
+         gestion.darDeBajaAlumno(codigo, legajo);
     }
 
     // Muestra las opciones para trabajar con los grupos.
@@ -417,9 +417,9 @@ public class Main {
         // FALTA UN METODO PARA MODIFICAR EL CUPO POR SI SE EQUIVOCA AL CARGARLO,
         //  O SI NECESITA HACERLO PORQUE DEJA JULI ESE METODO VA EN GESTION TURNERO.
         //
-        // Cuando esten los dos metodos, se descomenta.
+        // Cuando esten los dos metodos, se descomenta. LISTO
 
-        // gestion.crearGrupo(codigo, numero, cupo);
+         gestion.crearGrupo(codigo, numero, cupo);
     }
 
     
@@ -446,9 +446,9 @@ public class Main {
         //
         // Si la comision o el grupo no existen, tiene que avisarlo.
         // Cuando el metodo este implementado en GestionTurnero,
-        // se puede descomentar esta llamada.
+        // se puede descomentar esta llamada. LISTO
 
-        // gestion.cambiarCupoMaximo(codigo, numero, cupo);
+         gestion.cambiarCupoMaximo(codigo, numero, cupo);
     }
 
 
@@ -472,9 +472,9 @@ public class Main {
         // GestionTurnero tiene que avisar si no encontro
         // el grupo o si el alumno no pertenece a la comision.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta. Listo
 
-        // gestion.agregarAlumnoAGrupo(codigo, numero, legajo);
+         gestion.agregarAlumnoAGrupo(codigo, numero, legajo);
     }
 
     // Saca un alumno de un grupo.

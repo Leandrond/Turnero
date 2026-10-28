@@ -9,8 +9,6 @@ public class Alumno
     
     public Alumno()
     {
-        
-        
     }
     
     public Alumno(int legajo)
@@ -21,7 +19,7 @@ public class Alumno
     public Estado getEstado(){
         return estado;
     }
-    //(Joaquin)--> hago un metodo set, que devuelva el legajo porque lo necesito para la comision
+    // hago un metodo set, que devuelva el legajo porque lo necesito para la comision
     public int getLegajo(){
         return legajo;
     }

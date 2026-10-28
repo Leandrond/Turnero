@@ -173,6 +173,19 @@ public class GestionTurnero {
         return null; // No se encontró el alumno
     }
 
+    private Grupo buscarGrupoEnComision(int codigoComision, int numeroGrupo) {
+        Comision comision = buscarComisionPorCodigo(codigoComision);
+        if (comision != null && comision.getListaGrupos() != null) {
+            for (Grupo g : comision.getListaGrupos()) {
+                if (g.getNumero() == numeroGrupo) {
+                    return g;
+                }
+            }
+        }
+        return null; // No se encontró el grupo
+    }
+    
+
 
     public void crearGrupo(int codigoComision, int numeroGrupo, int cupo){
         Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
@@ -243,7 +256,25 @@ public class GestionTurnero {
     }
 
 
+    public void quitarAlumnoDeGrupo(int codigoComision, int numeroGrupo, int legajoAlumno){
+       //1. Busco el grupo directamente con el codigo y el numero usando el metodo auxiliar
+        Grupo grupoEncontrado = buscarGrupoEnComision(codigoComision, numeroGrupo);
 
+        //2. Si encuentra el grupo, busca el alumno por legajo y lo quita del grupo
+        if(grupoEncontrado != null){
+            Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
+            
+            if(alumnoEncontrado != null){
+                grupoEncontrado.quitarAlumno(alumnoEncontrado);
+                System.out.println("Alumno con legajo " + legajoAlumno + " removido del grupo con éxito.");
+                
+            } else {
+                System.out.println("No se encontró un alumno con ese legajo en esta comisión.");
+            }
+        } else {
+            System.out.println("No se encontró un grupo con ese número en esta comisión.");
+        }
+    }
 
 
 

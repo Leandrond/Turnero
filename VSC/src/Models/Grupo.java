@@ -49,6 +49,7 @@ public class Grupo
         integrantes.remove(alumno);
     }
     
+    
     public boolean tieneDisponibilidad(){
         return integrantes.size()<cupoMaximo;
     }
