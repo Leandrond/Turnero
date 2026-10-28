@@ -8,6 +8,7 @@ public class Comision
     private Materia materia; //Para poder identificar a que materia pertenece la comision
     private ArrayList<Alumno> listaAlumnos;//Lista para poder administrar alumnos
     private ArrayList<Grupo> listaGrupos; //Lista para poder administrar grupos
+    private ArrayList<InstanciaEvaluativa> listaInstanciasEvaluativas; //Lista para poder administrar instancias evaluativas
     
     public Comision()
     {
@@ -21,6 +22,7 @@ public class Comision
        this.materia = materia;
        this.listaAlumnos = new ArrayList<>();
        this.listaGrupos = new ArrayList<>();
+       this.listaInstanciasEvaluativas = new ArrayList<>();
        
     }
     
@@ -46,6 +48,7 @@ public class Comision
     public String getNombre(){ 
         return nombre;
     }
+
     
     //Para poder modificar el nombre
     public void setNombre(String nombre){
@@ -56,6 +59,18 @@ public class Comision
     public ArrayList<Alumno> getListaAlumnos(){
         return listaAlumnos;
     }
+
+    //Devuelvo listaGrupos
+    public ArrayList<Grupo> getListaGrupos() {
+        return listaGrupos;
+    }
+
+    //Devuelvo listaInstanciasEvaluativas
+    public ArrayList<InstanciaEvaluativa> getListaInstanciasEvaluativas(){
+        return listaInstanciasEvaluativas;
+    }
+    
+
     
     //====================================================================================
     // METODOS DE COMPORTAMIENTO
@@ -117,8 +132,10 @@ public class Comision
         }
     }
 
-    public ArrayList<Grupo> getListaGrupos() {
-        return listaGrupos;
+    public void agregarInstanciaEvaluativa(InstanciaEvaluativa instancia) {
+        if (instancia != null) {
+            this.listaInstanciasEvaluativas.add(instancia);
+        }
     }
     
 }

@@ -690,7 +690,7 @@ public class Main {
         //
         // Tiene que buscar la comision y la instancia correspondiente
         // y cambiar la fecha y hora de esa instancia.
-        //
+        //REVISAR
         // Cuando este hecho, se descomenta. LISTO(CREO)
 
         gestion.modificarFechaInstancia(comision, instancia, fecha, hora);
@@ -710,8 +710,8 @@ public class Main {
         // y cambiar la hora de esa instancia.
         //
         // Cuando este hecho, se descomenta.
-
-        // gestion.modificarHoraInstancia(comision, instancia, hora);
+        //REVISAR
+         gestion.modificarHoraInstancia(comision, instancia, hora);
         
     }
     
@@ -733,9 +733,9 @@ public class Main {
         // Para eso falta que las instancias evaluativas
         // queden asociadas a la comision correspondiente.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta.LISTO
 
-        // gestion.listarInstanciasEvaluativas(codigo);
+         gestion.listarInstanciasEvaluativas(codigo);
     }
 
     // Ejecuta una instancia evaluativa que ya esta creada.

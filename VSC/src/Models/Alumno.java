@@ -19,7 +19,7 @@ public class Alumno
     }
 
     public Estado getEstado(){
-        return estado;
+        return this.estado;
     }
 
     public void setEstado(Estado estado){
@@ -27,7 +27,7 @@ public class Alumno
     }
 
     public boolean getPrioridad(){
-        return prioridad;
+        return this.prioridad;
     }
 
     public void setPrioridad(boolean prioridad){
