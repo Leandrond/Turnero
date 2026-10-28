@@ -116,5 +116,9 @@ public class Comision
             System.out.println("ERROR: Ya existe un grupo con ese número en esta comisión.");
         }
     }
+
+    public ArrayList<Grupo> getListaGrupos() {
+        return listaGrupos;
+    }
     
 }
