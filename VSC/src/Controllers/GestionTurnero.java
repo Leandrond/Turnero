@@ -4,6 +4,7 @@ import Models.Alumno;
 import Models.Comision;
 import Models.Docente;
 import Models.Materia;
+import Models.Grupo;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -171,4 +172,17 @@ public class GestionTurnero {
         }
         return null; // No se encontró el alumno
     }
+
+
+    public void crearGrupo(int codigoComision, int numeroGrupo, int cupo){
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
+
+        if(comisionEncontrada != null){
+            Grupo nuevoGrupo = new Grupo(numeroGrupo, cupo);
+            comisionEncontrada.agregarGrupo(nuevoGrupo);
+        } else {
+            System.out.println("No se encontró la comisión con el código proporcionado.");
+        }
+    }
+
 } 

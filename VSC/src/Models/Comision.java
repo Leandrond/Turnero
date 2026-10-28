@@ -20,6 +20,7 @@ public class Comision
        this.nombre = nombre;
        this.materia = materia;
        this.listaAlumnos = new ArrayList<>();
+       this.listaGrupos = new ArrayList<>();
        
     }
     
