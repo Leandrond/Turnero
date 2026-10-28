@@ -7,7 +7,7 @@ public class Comision
     private String nombre; //Yo lo haria string para poder poner "Comision 1/2/3..."
     private Materia materia; //Para poder identificar a que materia pertenece la comision
     private ArrayList<Alumno> listaAlumnos;//Lista para poder administrar alumnos
-
+    private ArrayList<Grupo> listaGrupos; //Lista para poder administrar grupos
     
     public Comision()
     {
@@ -100,5 +100,20 @@ public class Comision
         return false;//si no hay coincidente retorno false
     }
     
+    public void agregarGrupo(Grupo grupo){
+        boolean grupoExistente = false;
+        for (Grupo g : this.listaGrupos) {
+            if (g.getNumero() == grupo.getNumero()) {
+                grupoExistente = true;
+                break;
+            }
+        }
+        if (!grupoExistente && grupo != null) {
+            this.listaGrupos.add(grupo);
+            System.out.println("Grupo con número " + grupo.getNumero() + " agregado correctamente a la comisión.");
+        }else{
+            System.out.println("ERROR: Ya existe un grupo con ese número en esta comisión.");
+        }
+    }
     
 }
