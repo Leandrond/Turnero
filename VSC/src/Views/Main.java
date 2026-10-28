@@ -548,15 +548,15 @@ public class Main {
         // Despues Turnero tiene que usar ese dato para ordenar
         // los turnos cuando se cree una instancia evaluativa.
         //
-        // Cuando esten esos metodos, se descomenta el bloque.
+        // Cuando esten esos metodos, se descomenta el bloque. LISTO
 
-        // if (opcion == 1) {
-        //     gestion.cambiarPrioridad(codigo, legajo, true);
-        // } else if (opcion == 2) {
-        //     gestion.cambiarPrioridad(codigo, legajo, false);
-        // } else {
-        //     System.out.println("Opcion incorrecta.");
-        // }
+         if (opcion == 1) {
+             gestion.cambiarPrioridad(codigo, legajo, true);
+         } else if (opcion == 2) {
+             gestion.cambiarPrioridad(codigo, legajo, false);
+         } else {
+             System.out.println("Opcion incorrecta.");
+         }
     }
 
     // Muestra las opciones para trabajar con las evaluaciones.
@@ -691,9 +691,9 @@ public class Main {
         // Tiene que buscar la comision y la instancia correspondiente
         // y cambiar la fecha y hora de esa instancia.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta. LISTO(CREO)
 
-        // gestion.modificarFechaInstancia(comision, instancia, fecha, hora);
+        gestion.modificarFechaInstancia(comision, instancia, fecha, hora);
         
     }
 

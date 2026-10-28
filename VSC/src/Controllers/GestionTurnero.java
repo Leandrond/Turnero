@@ -7,10 +7,13 @@ import Models.Materia;
 import Models.Grupo;
 import models.DefensaParcial;
 import models.ExamenFinal;
+import models.InstanciaEvaluativa;
 import models.Turno;
 import models.Turnero;
 
 import java.lang.reflect.Array;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class GestionTurnero {
@@ -375,8 +378,43 @@ public class GestionTurnero {
         
     }
 
+    public void modificarFechaInstancia(int codigoComision, int codigoInstancia, String nuevaFechaStr, String nuevaHoraStr){
+        //1. Busco la comision con el metodo auxiliar
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
 
+        if(comisionEncontrada != null){
+            //2. Convierto los String a LocalDate y LocalTime
+            LocalDate nuevaFecha = LocalDate.parse(nuevaFechaStr);
+            LocalTime nuevaHora = LocalTime.parse(nuevaHoraStr);
 
+            boolean instanciaEncontrada = false;
+        
+
+            //3. Recorro las instancias de la comision para buscar la que coincide con el codigo
+            if(comisionEncontrada.getListaInstanciasEvaluativas() != null){
+                for(InstanciaEvaluativa ins : comisionEncontrada.getListaInstanciasEvaluativas()){
+                    if(ins.getCodigo() == codigoInstancia){
+                        //3. Si la encuentro, cambio la fecha y hora
+                        ins.setFecha(nuevaFecha);
+                        ins.setHora(nuevaHora);
+                        System.out.println("Fecha y hora de la instancia evaluativa modificadas correctamente.");
+                        instanciaEncontrada = true;
+                        break;
+                    }
+
+                }
+
+            }
+            if(instanciaEncontrada){
+                System.out.println("La fecha y la hora de la instancia fueron modificadas con éxito.");
+
+            }else {
+                System.out.println("No se encontró la instancia evaluativa con el código proporcionado.");
+            }
+        }else {
+            System.out.println("No se encontró la comisión con el código proporcionado.");
+        }
+    }        
 
 
 

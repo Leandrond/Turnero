@@ -23,6 +23,7 @@ public abstract class InstanciaEvaluativa
     public abstract String getTipo();
     public abstract Date getFecha();
     public abstract Timer getHoraInicio();  
+    public abstract int getCodigo();
     //public abstract Comision getComision();
     public abstract Double getDuracionEstimada();
     //public abstract Turno getTurno();
