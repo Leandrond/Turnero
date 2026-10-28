@@ -131,6 +131,33 @@ public class GestionTurnero {
         }
     }
 
+    public void buscarAlumno(int codigoComision, int legajoAlumno){
+        //1- Busco la comision por su codigo en el docente actual
+        Comision comisionEncontrada = null;
+        if (!this.listaDocentes.isEmpty()) {
+            Docente docenteActual = this.listaDocentes.get(0); // Tomo el docente activo
+            for (Comision c : docenteActual.getListaComisiones()) {
+                if (c.getCodigoComision() == codigoComision) {
+                    comisionEncontrada = c;
+                    break;
+                }
+            }
+
+        }
+        //2- Si encuentra la comision, busca el alumno por legajo
+        if(comisionEncontrada != null){
+            Alumno alumnoEncontrado = comisionEncontrada.buscarAlumnoPorLegajo(legajoAlumno);
+            if(alumnoEncontrado != null){
+                System.out.println("Alumno encontrado en la comisión " + comisionEncontrada.getNombre() + ":");
+                System.out.println("Legajo: " + alumnoEncontrado.getLegajo() + ", Estado: " + alumnoEncontrado.getEstado());
+            } else {
+                System.out.println("No se encontró un alumno con ese legajo en esta comisión.");
+            }
+        } else {
+            System.out.println("No se encontró la comisión con el código proporcionado.");
+        }
+    }
+
     public void darDeBajaAlumno(){
 
     }
