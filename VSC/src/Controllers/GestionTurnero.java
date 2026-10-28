@@ -67,17 +67,8 @@ public class GestionTurnero {
 
     public void agregarAlumno(int codigoComision, int legajoAlumno){
         //1- Busco la comision por su codigo en el docente actual
-        Comision comisionEncontrada = null;
-        if (!this.listaDocentes.isEmpty()) {
-            Docente docenteActual = this.listaDocentes.get(0); // Tomo el docente activo
-            for (Comision c : docenteActual.getListaComisiones()) {
-                if (c.getCodigoComision() == codigoComision) {
-                    comisionEncontrada = c;
-                    break;
-                }
-            }
-
-        }
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
+        
         //2- Si encuentra la comision, validamos que el alumno no este ya en la comision y lo agregamos
         if(comisionEncontrada != null){
             // Verifico si el alumno ya está en la comisión
@@ -104,18 +95,9 @@ public class GestionTurnero {
 
     public void listarAlumnos(int codigoComision){
         //1- Busco la comision por su codigo en el docente actual
-        Comision comisionEncontrada = null;
-        if (!this.listaDocentes.isEmpty()) {
-            Docente docenteActual = this.listaDocentes.get(0); // Tomo el docente activo
-            for (Comision c : docenteActual.getListaComisiones()) {
-                if (c.getCodigoComision() == codigoComision) {
-                    comisionEncontrada = c;
-                    break;
-                }
-            }
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
 
-        }
-        //2- Si encuentra la comision, recorre y lista los alumnos
+        // Si encuentra la comision, recorre y lista los alumnos
         if(comisionEncontrada != null){
             ArrayList<Alumno> listaAlumnos = comisionEncontrada.getListaAlumnos();
             if(!listaAlumnos.isEmpty()){
@@ -131,22 +113,14 @@ public class GestionTurnero {
         }
     }
 
+    
     public void buscarAlumno(int codigoComision, int legajoAlumno){
         //1- Busco la comision por su codigo en el docente actual
-        Comision comisionEncontrada = null;
-        if (!this.listaDocentes.isEmpty()) {
-            Docente docenteActual = this.listaDocentes.get(0); // Tomo el docente activo
-            for (Comision c : docenteActual.getListaComisiones()) {
-                if (c.getCodigoComision() == codigoComision) {
-                    comisionEncontrada = c;
-                    break;
-                }
-            }
-
-        }
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
+       
         //2- Si encuentra la comision, busca el alumno por legajo
         if(comisionEncontrada != null){
-            Alumno alumnoEncontrado = comisionEncontrada.buscarAlumnoPorLegajo(legajoAlumno);
+            Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
             if(alumnoEncontrado != null){
                 System.out.println("Alumno encontrado en la comisión " + comisionEncontrada.getNombre() + ":");
                 System.out.println("Legajo: " + alumnoEncontrado.getLegajo() + ", Estado: " + alumnoEncontrado.getEstado());
@@ -158,7 +132,43 @@ public class GestionTurnero {
         }
     }
 
-    public void darDeBajaAlumno(){
+    public void darDeBajaAlumno(int codigoComision, int legajoAlumno){
+        //1- Busco la comision por su codigo en el docente actual
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
+       
+        //2- Si encuentra la comision, busca el alumno por legajo y lo da de baja
+        if(comisionEncontrada != null){
+            Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
+            
+            if(alumnoEncontrado != null){
+                comisionEncontrada.getListaAlumnos().remove(alumnoEncontrado);
+                System.out.println("Alumno con legajo " + legajoAlumno + " dado de baja de la comisión " + comisionEncontrada.getNombre() + ".");
+            } else {
+                System.out.println("No se encontró un alumno con ese legajo en esta comisión.");
+            }
+        } else {
+            System.out.println("No se encontró la comisión con el código proporcionado.");
+        }
 
+    }
+
+    private Comision buscarComisionPorCodigo(int codigoComision) {
+        if (!this.listaDocentes.isEmpty()) {
+            Docente docenteActual = this.listaDocentes.get(0); // Tomo el docente activo
+            for (Comision c : docenteActual.getListaComisiones()) {
+                if (c.getCodigoComision() == codigoComision) {
+                    return c;
+                }
+            }
+        }
+        return null; // No se encontró la comisión
+    }
+
+    private Alumno buscarAlumnoEnComision(int codigoComision, int legajoAlumno) {
+        Comision comision = buscarComisionPorCodigo(codigoComision);
+        if (comision != null) {
+            return comision.buscarAlumnoPorLegajo(legajoAlumno);
+        }
+        return null; // No se encontró el alumno
     }
 } 
