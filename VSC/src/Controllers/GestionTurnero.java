@@ -210,7 +210,59 @@ public class GestionTurnero {
     }
 
 
+    //responde al metodo de la linea 458
+    public void agregarAlumnoAGrupo(int codigoComision, int numeroGrupo, int legajoAlumno){
+        //Se busca la comision
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
+        if(comisionEncontrada != null){
+            //Se busca el grupo
+            Grupo grupoEncontrado = null;
+            for (Grupo g : comisionEncontrada.getListaGrupos()) {
+                if (g.getNumero() == numeroGrupo) {
+                    grupoEncontrado = g;
+                    break;
+                }
+            }
+
+            if(grupoEncontrado != null){
+                //Se busca el alumno en la comision
+                Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
+                if(alumnoEncontrado != null){
+                    //Se agrega el alumno al grupo
+                    grupoEncontrado.agregarAlumno(alumnoEncontrado);
+                    System.out.println("Alumno con legajo " + legajoAlumno + " agregado al grupo con éxito.");
+                } else {
+                    System.out.println("Error: No se encontró un alumno con ese legajo en esta comisión.");
+                }
+            } else {
+                System.out.println("No se encontró un grupo con ese número en esta comisión.");
+            }
+        } else {
+            System.out.println("No se encontró la comisión con el código proporcionado.");
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
+
+
+
 
 
 
