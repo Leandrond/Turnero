@@ -5,11 +5,11 @@ import Models.Comision;
 import Models.Docente;
 import Models.Materia;
 import Models.Grupo;
-import models.DefensaParcial;
-import models.ExamenFinal;
-import models.InstanciaEvaluativa;
-import models.Turno;
-import models.Turnero;
+import Models.DefensaParcial;
+import Models.ExamenFinal;
+import Models.InstanciaEvaluativa;
+import Models.Turno;
+import Models.Turnero;
 
 import java.lang.reflect.Array;
 import java.time.LocalDate;
@@ -450,7 +450,29 @@ public class GestionTurnero {
         }
     }
 
+    public void listarInstanciasEvaluativas(int codigoComision){
+        //1- Busco la comision por su codigo en el docente actual
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
 
+        // Si encuentra la comision, recorre y lista las instancias evaluativas
+        if(comisionEncontrada != null){
+            ArrayList<InstanciaEvaluativa> listaInstancias = comisionEncontrada.getListaInstanciasEvaluativas();
+            if(listaInstancias != null && !listaInstancias.isEmpty()){
+                System.out.println("Instancias evaluativas de la comisión " + comisionEncontrada.getNombre() + ":");
+                for (InstanciaEvaluativa ins : listaInstancias) {
+                    System.out.println("Código: " + ins.getCodigo() +
+                        ", Tipo: " + ins.getTipo() +
+                        ", Fecha: " + ins.getFecha() +
+                        ", Hora: " + ins.getHoraInicio() +
+                        ", Duración Estimada: " + ins.getDuracionEstimada());
+                }
+            } else {
+                System.out.println("No hay instancias evaluativas registradas en esta comisión.");
+            }
+        } else {
+            System.out.println("No se encontró la comisión con el código proporcionado.");
+        }
+    }
 
 
 
