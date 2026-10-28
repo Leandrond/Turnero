@@ -1,6 +1,9 @@
-package models;
+package Models;
 import java.util.Date;
 import java.util.Timer;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 // es una clase que hereda porque hay 3 tipos de instancia evaluativa Defensa de Parcial - Presentacion de Trabajo Practico - Examen Final
 public abstract class InstanciaEvaluativa
@@ -8,8 +11,8 @@ public abstract class InstanciaEvaluativa
     // Atributos
     protected int codigo; //lo agrego para identificarla
     protected String tipo;
-    protected Date fecha;
-    protected Timer hora;
+    protected LocalDate fecha;
+    protected LocalTime hora;
     //protected Comision comision;
     protected double duracionEstimada;
     //protected Turno turno;
