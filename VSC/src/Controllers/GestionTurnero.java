@@ -5,6 +5,10 @@ import Models.Comision;
 import Models.Docente;
 import Models.Materia;
 import Models.Grupo;
+import models.DefensaParcial;
+import models.ExamenFinal;
+import models.Turno;
+import models.Turnero;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -321,7 +325,55 @@ public class GestionTurnero {
         }
     }
 
+    public void crearInstanciaEvaluativa(int codigoComision, int tipo, int modalidad, String fecha, String hora, int minutos){
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
+        
+       //1. Crear tipo de examen según el tipo recibido (1,2,3) y asignarle la modalidad, fecha y hora.
+        if(tipo == 1){
+            nuevaInstancia = new DefensaParcial();
+        }else if(tipo == 2){
+            nuevaInstancia = new ExamenFinal();
+        }else if(tipo == 3){
+            nuevaInstancia = new PresentacionTPI();
+        }
 
+        if (nuevaInstancia != null) {
+            nuevaInstancia.setModalidad(modalidad);
+            nuevaInstancia.setFecha(fecha);
+            nuevaInstancia.setHora(hora);
+            comisionEncontrada.agregarInstanciaEvaluativa(nuevaInstancia);
+
+            //2. Genero el Turnero de esa instancia segun la modalidad
+            Turnero turnero = new Turnero();
+
+            if (modalidad == 1) { //Individual, turno por alumno
+                for(Alumno a : comisionEncontrada.getListaAlumnos()){
+                    turnero.agregarTurno(new Turno(a));
+
+                }
+            } else if (modalidad == 2) { //Grupal, turno por grupo
+                for(Grupo g : comisionEncontrada.getListaGrupos()){
+                    turnero.agregarTurno(new Turno(g));
+                }
+            }else if (modalidad == 3){// General (un turno para toda la comision)
+                turnero.agregarTurno(new Turno(comisionEncontrada));
+            }
+
+            //3. ordeno por prioridad y calcular horarios
+            turnero.ordenarTurnosPorPrioridad();
+            turnero.calcularHorarios(hora, minutos);
+
+            //4. Asocio el turnero a la instancia evaluativa y guardo en comision
+            nuevaInstancia.setTurnero(turnero);
+            comisionEncontrada.agregarInstanciaEvaluativa(nuevaInstancia);
+
+            System.out.println("Instancia evaluativa creada y turnero generado correctamente.");
+
+        } else {
+            System.out.println("Tipo de instancia evaluativa no válido.");
+        }
+        
+    }
 
 
 
