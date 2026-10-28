@@ -33,6 +33,10 @@ public class Alumno
     public void setPrioridad(boolean prioridad){
         this.prioridad=prioridad;
     }
+    
+    public void setLegajo(int legajo){
+        this.legajo=legajo;
+    }
 
     // hago un metodo set, que devuelva el legajo porque lo necesito para la comision
     public int getLegajo(){
