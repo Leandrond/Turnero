@@ -416,6 +416,45 @@ public class GestionTurnero {
         }
     }        
 
+    public void modificarHoraInstancia(int codigoComision, int codigoInstancia, String nuevaHoraStr){
+        //1. Busco la comision con el metodo auxiliar
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
+
+        if(comisionEncontrada != null){
+            //2. Convierto el String a LocalTime
+            LocalTime nuevaHora = LocalTime.parse(nuevaHoraStr);
+
+            boolean instanciaEncontrada = false;
+        
+
+            //3. Recorro las instancias de la comision para buscar la que coincide con el codigo
+            if(comisionEncontrada.getListaInstanciasEvaluativas() != null){
+                for(InstanciaEvaluativa ins : comisionEncontrada.getListaInstanciasEvaluativas()){
+                    if(ins.getCodigo() == codigoInstancia){
+                        //3. Si la encuentro, cambio la hora
+                        ins.setHora(nuevaHora);
+                        System.out.println("Hora de la instancia evaluativa modificada correctamente.");
+                        instanciaEncontrada = true;
+                        break;
+                    }
+                }
+            }
+            if(instanciaEncontrada){
+                System.out.println("La hora de la instancia fue modificada con éxito.");
+
+            }else {
+                System.out.println("No se encontró la instancia evaluativa con el código proporcionado.");
+            }
+        }else {
+            System.out.println("No se encontró la comisión con el código proporcionado.");
+        }
+    }
+
+
+
+
+
+
 
 
 
@@ -423,9 +462,5 @@ public class GestionTurnero {
 
 
 }
-
-
-
-
 
 
