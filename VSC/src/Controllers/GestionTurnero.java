@@ -185,4 +185,39 @@ public class GestionTurnero {
         }
     }
 
-} 
+
+    //responde al metodo de la linea 430
+    public void cambiarCupoMaximo(int codigoComision, int numeroGrupo, int nuevoCupo){
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
+
+        if(comisionEncontrada != null){
+            Grupo grupoEncontrado = null;
+            for (Grupo g : comisionEncontrada.getListaGrupos()) {
+                if (g.getNumero() == numeroGrupo) {
+                    grupoEncontrado = g;
+                    break;
+                }
+            }
+
+            if(grupoEncontrado != null){
+                // validamos las restricciones antes de cambiar el cupo máximo
+                if (nuevoCupo > 0 && nuevoCupo >= grupoEncontrado.getlistaAlumnos().size()) {
+                    grupoEncontrado.setCupoMaximo(nuevoCupo);
+                    System.out.println("Cupo máximo del grupo " + numeroGrupo + " cambiado a " + nuevoCupo + ".");
+                } else {
+                    System.out.println("ERROR: El nuevo cupo máximo debe ser mayor que cero y no menor que la cantidad de alumnos actuales en el grupo.");
+                }
+            } else {
+                System.out.println("No se encontró el grupo con el número proporcionado en la comisión.");
+            }
+        } else {
+            System.out.println("No se encontró la comisión con el código proporcionado.");
+
+        } 
+    }
+
+
+}
+
+
+
