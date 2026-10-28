@@ -5,6 +5,7 @@ public class Comision
 {
     private int codigoComision;
     private String nombre; //Yo lo haria string para poder poner "Comision 1/2/3..."
+    private Materia materia; //Para poder identificar a que materia pertenece la comision
     private ArrayList<Alumno> listaAlumnos;//Lista para poder administrar alumnos
 
     
@@ -13,11 +14,12 @@ public class Comision
        
     }
    
-    public Comision(int codigoComision, String nombre)
+    public Comision(int codigoComision, String nombre, Materia materia)
     {
-       this.codigoComision=codigoComision;
-       this.nombre=nombre;
-       this.listaAlumnos= new ArrayList<>();
+       this.codigoComision = codigoComision;
+       this.nombre = nombre;
+       this.materia = materia;
+       this.listaAlumnos = new ArrayList<>();
        
     }
     
@@ -35,6 +37,10 @@ public class Comision
         this.codigoComision=codigoComision;
     }
     
+    public Materia getMateria(){
+        return materia;
+    }
+
     //Devuelvo nombre
     public String getNombre(){ 
         return nombre;
