@@ -114,6 +114,31 @@ public class GestionTurnero {
         }
     }
 
+
+    public void listarGrupos(int codigoComision){
+        //1- Busco la comision por su codigo en el docente actual
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
+
+        // Si encuentra la comision, recorre y lista los grupos
+        if(comisionEncontrada != null){
+            ArrayList<Grupo> listaGrupos = comisionEncontrada.getListaGrupos();
+            if(listaGrupos != null &&!listaGrupos.isEmpty()){
+                System.out.println("Grupos de la comisión " + comisionEncontrada.getNombre() + ":");
+                for (Grupo g : listaGrupos) {
+                    System.out.println("Número de Grupo: " + g.getNumero() + ", Cupo Máximo: " + g.getCupoMaximo());
+                    System.out.println("Integrantes:");
+                    for (Alumno a : g.getlistaAlumnos()) {
+                        System.out.println("Legajo: " + a.getLegajo() + ", Estado: " + a.getEstado());
+                    }
+                }
+            } else {
+                System.out.println("No hay grupos registrados en esta comisión.");
+            }
+        } else {
+            System.out.println("No se encontró la comisión con el código proporcionado.");
+        }
+    }
+
     
     public void buscarAlumno(int codigoComision, int legajoAlumno){
         //1- Busco la comision por su codigo en el docente actual
@@ -277,7 +302,24 @@ public class GestionTurnero {
     }
 
 
-
+    public void cambiarPrioridad(int codigoComision, int legajoAlumno, boolean nuevaPrioridad){
+        //1- Busco la comision por su codigo en el docente actual
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
+       
+        //2- Si encuentra la comision, busca el alumno por legajo y cambia su prioridad
+        if(comisionEncontrada != null){
+            Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
+            
+            if(alumnoEncontrado != null){
+                alumnoEncontrado.setPrioridad(nuevaPrioridad);
+                System.out.println("Prioridad del alumno con legajo " + legajoAlumno + " cambiada a " + nuevaPrioridad + ".");
+            } else {
+                System.out.println("No se encontró un alumno con ese legajo en esta comisión.");
+            }
+        } else {
+            System.out.println("No se encontró la comisión con el código proporcionado.");
+        }
+    }
 
 
 
