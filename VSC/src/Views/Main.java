@@ -326,9 +326,9 @@ public class Main {
         // Comision.buscarAlumnoPorLegajo(), que ya existe.
         // Despues muestra el alumno o avisa si no lo encontro.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta. LISTO
 
-        // gestion.buscarAlumno(codigo, legajo);
+         gestion.buscarAlumno(codigo, legajo);
     }
 
     // Da de baja un alumno de la comision seleccionada.
