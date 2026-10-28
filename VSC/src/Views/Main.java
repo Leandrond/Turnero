@@ -503,7 +503,7 @@ public class Main {
     static void listarGrupos(GestionTurnero gestion, int codigo) {
 
         // Falta en Comision:
-        // getListaGrupos()
+        // getListaGrupos() LISTO
         //
         // Tiene que devolver la lista de grupos de esa comision.
         //
@@ -514,9 +514,9 @@ public class Main {
         // y mostrar el numero y los integrantes de cada uno.
         // Grupo ya tiene getNumero() y getlistaAlumnos().
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta. LISTO
 
-        // gestion.listarGrupos(codigo);
+         gestion.listarGrupos(codigo);
     }
 
     // Permite darle o sacarle la prioridad a un alumno.
