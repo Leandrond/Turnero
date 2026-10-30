@@ -1,6 +1,5 @@
 package Models;
-import java.util.Date;
-import java.util.Timer;
+
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -24,16 +23,16 @@ public abstract class InstanciaEvaluativa
     }
     // Getters
     public abstract String getTipo();
-    public abstract Date getFecha();
-    public abstract Timer getHoraInicio();  
+    public abstract LocalDate getFecha();
+    public abstract LocalTime getHoraInicio();  
     public abstract int getCodigo();
     //public abstract Comision getComision();
     public abstract Double getDuracionEstimada();
     //public abstract Turno getTurno();
     //public abstract Docente getDocente();
     // Setters
-    public abstract void setFecha(Date fecha);
-    public abstract void setHoraInicio(Timer hora);
+    public abstract void setFecha(LocalDate fecha);
+    public abstract void setHoraInicio(LocalTime hora);
     //public abstract void setComision(Comision comision);
     public abstract void setDuracionEstimada(Double duracionEstimada);
     //public abstract void setTurno(Turno turno);
