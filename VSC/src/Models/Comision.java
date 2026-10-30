@@ -6,17 +6,18 @@ public class Comision
     private int codigoComision;
     private String nombre; //Yo lo haria string para poder poner "Comision 1/2/3..."
     private ArrayList<Alumno> listaAlumnos;//Lista para poder administrar alumnos
-
+    private Materia materia; //MANU:Para poder asociar la comision a una materia, ademas ya lo puse en el constructor y puse su getter.
     
     public Comision()
     {
        
     }
    
-    public Comision(int codigoComision, String nombre)
+    public Comision(int codigoComision, String nombre, Materia materia)
     {
        this.codigoComision=codigoComision;
        this.nombre=nombre;
+       this.materia=materia;
        this.listaAlumnos= new ArrayList<>();
        
     }
@@ -49,6 +50,11 @@ public class Comision
     public ArrayList<Alumno> getListaAlumnos(){
         return listaAlumnos;
     }
+
+    //Devuelvo la materia asociada
+    public Materia getMateria(){
+    return materia;
+}
     
     //====================================================================================
     // METODOS DE COMPORTAMIENTO
