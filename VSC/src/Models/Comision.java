@@ -85,7 +85,8 @@ public class Comision
     //Represento en texto en la comision
     public String toString(){
         return      "Comision " + codigoComision 
-                    + " - " + nombre 
+                    + " - " + nombre  
+                    + " - Materia: " + materia.getNombre()//MANU: le agregue la materia asi queda completo
                     + "(Alumnos instriptos: )" 
                     + getCantidadAlumnos() + ")";
     }

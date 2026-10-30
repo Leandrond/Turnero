@@ -114,17 +114,17 @@ public class Main {
         // ustedes se preguntaran, porque el if a continuacion no tiene un else.
         // bueno es porque solo entra al if si no esta registrado el decente.
 
-        // if (gestion.tieneDocenteRegistrado()) {
-        //     return;
-        // }
-        //
-        // System.out.println("\nREGISTRO DEL DOCENTE");
-        //
-        // String nombre = leerTexto("Nombre: ");
-        // String apellido = leerTexto("Apellido: ");
-        // String legajo = leerTexto("Legajo: ");
-        //
-        // gestion.registrarDocente(nombre, apellido, legajo);
+         if (gestion.tieneDocenteRegistrado()) {
+             return;
+         }
+        
+         System.out.println("\nREGISTRO DEL DOCENTE");
+        
+         String nombre = leerTexto("Nombre: ");
+         String apellido = leerTexto("Apellido: ");
+         String legajo = leerTexto("Legajo: ");
+        
+         gestion.registrarDocente(nombre, apellido, legajo);
     }
 
     // Muestra las opciones para trabajar con las comisiones.
