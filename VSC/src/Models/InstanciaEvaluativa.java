@@ -1,8 +1,6 @@
-package Models;
-
-
-import java.time.LocalDate;
-import java.time.LocalTime;
+package models;
+import java.util.Date;
+import java.util.Timer;
 
 // es una clase que hereda porque hay 3 tipos de instancia evaluativa Defensa de Parcial - Presentacion de Trabajo Practico - Examen Final
 public abstract class InstanciaEvaluativa
@@ -10,14 +8,14 @@ public abstract class InstanciaEvaluativa
     // Atributos
     protected int codigo; //lo agrego para identificarla
     protected String tipo;
-    protected LocalDate fecha;
-    protected LocalTime hora;
+    protected Date fecha;
+    protected Timer hora;
     //protected Comision comision;
     protected double duracionEstimada;
-    //Se crea atributo turnero para poder tener la lista de turnos de la instancia evaluativa.DV.31/10/26. 
+
     protected Turnero turnero;
-    //protected Turno turno;
-    //protected Docente docente;
+    protected Docente docente;
+    protected int codigoDeInstancia;
     // Constructor
     public InstanciaEvaluativa()
     {
@@ -25,18 +23,19 @@ public abstract class InstanciaEvaluativa
     }
     // Getters
     public abstract String getTipo();
-    public abstract LocalDate getFecha();
-    public abstract LocalTime getHoraInicio();  
-    public abstract int getCodigo();
+    public abstract Date getFecha();
+    public abstract Timer getHoraInicio();  
     //public abstract Comision getComision();
     public abstract Double getDuracionEstimada();
-    //public abstract Turno getTurno();
-    //public abstract Docente getDocente();
+    public abstract Turnero getTurnero();
+    public abstract Docente getDocente();
+    public abstract int getCodigoDeInstancia();
     // Setters
-    public abstract void setFecha(LocalDate fecha);
-    public abstract void setHoraInicio(LocalTime hora);
+    public abstract void setFecha(Date fecha);
+    public abstract void setHoraInicio(Timer hora);
     //public abstract void setComision(Comision comision);
     public abstract void setDuracionEstimada(Double duracionEstimada);
+
     public void setTurnero(Turnero turnero) {
         this.turnero = turnero;
     }
@@ -47,9 +46,5 @@ public abstract class InstanciaEvaluativa
     //public abstract void setDocente(Docente docente);
     // Metodos y comentarios abstractos
     //public abstract void sumarDocente(Docente docente);
-
-
-
-
-    
+    public abstract void setCodigoDeInstancia(int codigoDeInstancia);
 }
