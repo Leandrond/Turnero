@@ -1,8 +1,7 @@
-//Leandro
 package Models;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
-
 public class DefensaParcial extends InstanciaEvaluativa{
 
     // Constructor con atributos heredados de la clase InstanciaEvaluativa
