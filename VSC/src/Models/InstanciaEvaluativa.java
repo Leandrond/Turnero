@@ -12,6 +12,7 @@ public abstract class InstanciaEvaluativa
     protected Timer hora;
     //protected Comision comision;
     protected double duracionEstimada;
+
     protected Turnero turnero;
     protected Docente docente;
     protected int codigoDeInstancia;
@@ -34,13 +35,16 @@ public abstract class InstanciaEvaluativa
     public abstract void setHoraInicio(Timer hora);
     //public abstract void setComision(Comision comision);
     public abstract void setDuracionEstimada(Double duracionEstimada);
-    public abstract void setTurnero(Turnero turnero);
-    public abstract void setDocente(Docente docente);
+
+    public void setTurnero(Turnero turnero) {
+        this.turnero = turnero;
+    }
+    public Turnero getTurnero() {
+        return this.turnero;
+    }
+    //public abstract void setTurno(Turno turno);
+    //public abstract void setDocente(Docente docente);
+    // Metodos y comentarios abstractos
+    //public abstract void sumarDocente(Docente docente);
     public abstract void setCodigoDeInstancia(int codigoDeInstancia);
-     //Metodos y comentarios abstractos
-
-
-
-
-    
 }

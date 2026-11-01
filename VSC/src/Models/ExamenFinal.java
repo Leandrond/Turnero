@@ -52,6 +52,12 @@ public class ExamenFinal extends InstanciaEvaluativa{
     public void setDuracionEstimada(Double duracionEstimada) {
         this.duracionEstimada = duracionEstimada;
     }
+
+
+    @Override 
+    public int getCodigo() {
+        return this.codigo;
+
     @Override
     public void setDocente(Docente docente) {
         this.docente = docente;

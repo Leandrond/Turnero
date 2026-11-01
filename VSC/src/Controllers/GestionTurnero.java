@@ -3,7 +3,9 @@ package Controllers;
 import Models.Alumno;
 import Models.Comision;
 import Models.Docente;
+import Models.Estado;
 import Models.Materia;
+import Models.PresentacionTPI;
 import Models.Grupo;
 import Models.DefensaParcial;
 import Models.ExamenFinal;
@@ -89,7 +91,7 @@ public class GestionTurnero {
             }
 
             if (!alumnoExistente) {
-                Alumno nuevoAlumno = new Alumno(legajoAlumno);
+                Alumno nuevoAlumno = new Alumno(legajoAlumno, null, false); // Estado y prioridad se pueden establecer según sea necesario
                 comisionEncontrada.agregarAlumno(nuevoAlumno);// Usamos el método que ya tiene Comision
                 System.out.println("Alumno con legajo " + legajoAlumno + " agregado correctamente a la comisión.");
             } else {
@@ -330,14 +332,14 @@ public class GestionTurnero {
 
     public void crearInstanciaEvaluativa(int codigoComision, int tipo, int modalidad, String fecha, String hora, int minutos){
         Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
-        
+        instanciaEvaluativa nuevaInstancia = null;
        //1. Crear tipo de examen según el tipo recibido (1,2,3) y asignarle la modalidad, fecha y hora.
         if(tipo == 1){
-            nuevaInstancia = new DefensaParcial();
+            nuevaInstancia = new DefensaParcial("Defensa Parcial", fecha, hora, duracionEstimada);
         }else if(tipo == 2){
-            nuevaInstancia = new ExamenFinal();
+            nuevaInstancia = new ExamenFinal("Examen Final", fecha, hora, duracionEstimada);
         }else if(tipo == 3){
-            nuevaInstancia = new PresentacionTPI();
+            nuevaInstancia = new PresentacionTPI("Presentación TPI", fecha, hora, duracionEstimada);
         }
 
         if (nuevaInstancia != null) {
@@ -377,6 +379,36 @@ public class GestionTurnero {
         }
         
     }
+
+    public Turnero obtenerTurnero(int codigoComision, int codigoInstancia) {
+
+    Comision c = buscarComisionPorCodigo(codigoComision);
+
+    if (c != null) {
+        for (InstanciaEvaluativa instancia : c.getListaInstanciasEvaluativas()) {
+            if (instancia.getCodigo() == codigoInstancia) {
+                return instancia.getTurnero();
+            }
+        }
+    }
+    return null;
+    }
+
+    public void cambiarOrdenTurno(int comision, int instancia, int turno, int posicion) {
+
+    Turnero turneroEncontrado = obtenerTurnero(comision, instancia);
+
+    if (turneroEncontrado != null) {
+        for (Turno t : turneroEncontrado.getListaTurno()) {
+            if (t.getCodigo() == turno) {
+                turneroEncontrado.cambiarOrden(t, posicion);
+                System.out.println("Orden del turno cambiado correctamente.");
+                return;
+            }
+        }
+
+    }
+}
 
     public void modificarFechaInstancia(int codigoComision, int codigoInstancia, String nuevaFechaStr, String nuevaHoraStr){
         //1. Busco la comision con el metodo auxiliar

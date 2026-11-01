@@ -1,11 +1,11 @@
 package Models;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 public class DefensaParcial extends InstanciaEvaluativa{
 
     // Constructor con atributos heredados de la clase InstanciaEvaluativa
     public DefensaParcial(
+
         String tipo, LocalDate fecha,LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero) {
         super.tipo = tipo;
         super.fecha = fecha;
@@ -23,12 +23,15 @@ public class DefensaParcial extends InstanciaEvaluativa{
     }
 
     @Override
+
     public LocalDate getFecha() {   
+
         return this.fecha;
     }
 
     @Override
     public LocalTime getHoraInicio() {
+
         return this.horaInicio;
     }
 
@@ -51,6 +54,11 @@ public class DefensaParcial extends InstanciaEvaluativa{
     public void setDuracionEstimada(Double duracionEstimada) {
         this.duracionEstimada = duracionEstimada;
     }
+
+    @Override 
+    public int getCodigo() {
+        return this.codigo;
+
     @Override
     public void setDocente(Docente docente) {
         this.docente = docente;
