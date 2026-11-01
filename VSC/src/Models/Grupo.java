@@ -64,5 +64,14 @@ public class Grupo
     // vista no modificable de la lista, 
     // evitando que otras clases alteren directamente 
     // los integrantes del grupo. 10-10-26
-
+    public int contarAlumnosPrioritarios(){
+         int contador = 0;
+        for (Alumno a : integrantes) {
+            if (a.getPrioridad()) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+       
 }

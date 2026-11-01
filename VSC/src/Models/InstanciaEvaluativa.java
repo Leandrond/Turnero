@@ -14,6 +14,8 @@ public abstract class InstanciaEvaluativa
     protected LocalTime hora;
     //protected Comision comision;
     protected double duracionEstimada;
+    //Se crea atributo turnero para poder tener la lista de turnos de la instancia evaluativa.DV.31/10/26. 
+    protected Turnero turnero;
     //protected Turno turno;
     //protected Docente docente;
     // Constructor
@@ -35,6 +37,12 @@ public abstract class InstanciaEvaluativa
     public abstract void setHoraInicio(LocalTime hora);
     //public abstract void setComision(Comision comision);
     public abstract void setDuracionEstimada(Double duracionEstimada);
+    public void setTurnero(Turnero turnero) {
+        this.turnero = turnero;
+    }
+    public Turnero getTurnero() {
+        return this.turnero;
+    }
     //public abstract void setTurno(Turno turno);
     //public abstract void setDocente(Docente docente);
     // Metodos y comentarios abstractos

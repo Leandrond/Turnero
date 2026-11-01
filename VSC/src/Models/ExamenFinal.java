@@ -1,13 +1,13 @@
 // Leandro
 package Models;
-import java.util.Date;
-import java.util.Timer;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class ExamenFinal extends InstanciaEvaluativa{
     
     // Constructor con atributos heredados de la clase InstanciaEvaluativa
     public ExamenFinal(
-        String tipo, Date fecha, Timer hora ,double duracionEstimada) {
+        String tipo, LocalDate fecha, LocalTime hora ,double duracionEstimada) {
         super.tipo = tipo;
         super.fecha = fecha;
         super.hora = hora;
@@ -20,12 +20,12 @@ public class ExamenFinal extends InstanciaEvaluativa{
     }
 
     @Override
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return this.fecha;
     }
 
     @Override
-    public Timer getHoraInicio() {
+    public LocalTime getHoraInicio() {
         return this.hora;
     }
 
@@ -35,17 +35,22 @@ public class ExamenFinal extends InstanciaEvaluativa{
     }
 
     @Override
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
     @Override
-    public void setHoraInicio(Timer hora) {
+    public void setHoraInicio(LocalTime hora) {
         this.hora = hora;
     }
 
     @Override
     public void setDuracionEstimada(Double duracionEstimada) {
         this.duracionEstimada = duracionEstimada;
+    }
+
+    @Override 
+    public int getCodigo() {
+        return this.codigo;
     }
 }
