@@ -1,12 +1,19 @@
 
 package Views;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Scanner;
 import Controllers.GestionTurnero;
+import Models.Comision;
+import Models.DefensaParcial;
 import Models.Docente;
 import Models.Estado;
+import Models.ExamenFinal;
 import Models.Turno;
 import Models.Materia;
+import Models.PresentacionTPI;
+import Models.Turnero;
 
 
 
@@ -551,9 +558,9 @@ public class Main {
         // Cuando esten esos metodos, se descomenta el bloque. LISTO
 
          if (opcion == 1) {
-             gestion.cambiarPrioridad(codigo, legajo, true);
+             GestionTurnero.cambiarPrioridad(codigo, legajo, true);
          } else if (opcion == 2) {
-             gestion.cambiarPrioridad(codigo, legajo, false);
+             GestionTurnero.cambiarPrioridad(codigo, legajo, false);
          } else {
              System.out.println("Opcion incorrecta.");
          }
@@ -578,7 +585,24 @@ public class Main {
 
             switch (opcion) {
                 case 1:
-                    crearInstancia(gestion);
+                System.out.println("Ingrese el Tipo de Instancia\n1. Defensa Parcial\n2. Examen Final\n3. Presentacion TPI");  
+                int tipo = Integer.parseInt(teclado.nextLine());
+
+                if(tipo == 1){
+
+                    GestionTurnero.crearDefensaParcial( String tipo, LocalDate fecha,LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero) {
+                    }
+                    else if(tipo == 2){
+                        GestionTurnero.crearExamenFinal( String tipo, LocalDate fecha, LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero) {
+                
+                    }   
+                    else if(tipo == 3){
+                        GestionTurnero.crearPresentacionTPI( String tipo, LocalDate fecha, LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero) {}
+                    
+                }
+
+
+                
                     break;
 
                 case 2:

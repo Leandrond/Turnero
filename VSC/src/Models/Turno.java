@@ -32,4 +32,8 @@ public class Turno
     public boolean estaEvaluando(){
         return estado==Estado.Evaluando;
     }
+
+    public boolean getPrioridad(){
+        return alumno.getPrioridad();
+    }
 }
