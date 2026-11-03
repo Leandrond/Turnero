@@ -9,7 +9,7 @@ public class DefensaParcial extends InstanciaEvaluativa{
         String tipo, LocalDate fecha,LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero) {
         super.tipo = tipo;
         super.fecha = fecha;
-        super.horaInicio = hora;
+        super.horaInicio = hora;   
         super.duracionEstimada = duracionEstimada;
         super.comision = comision;
         super.docente = docente;
@@ -54,45 +54,20 @@ public class DefensaParcial extends InstanciaEvaluativa{
     public void setDuracionEstimada(Double duracionEstimada) {
         this.duracionEstimada = duracionEstimada;
     }
-
-    @Override 
-    public int getCodigo() {
-        return this.codigo;
-    }
-
-    @Override
-    public void setDocente(Docente docente) {
-        this.docente = docente;
-    }
-
-    @Override
-    public void setComision(Comision comision) {
-        this.comision = comision;
-    }
-    @Override
-    public void setCodigoDeInstancia(int codigoDeInstancia) {
-        this.codigoDeInstancia = codigoDeInstancia;
-    }
-    @Override
-    public int getCodigoDeInstancia() {
-        return this.codigoDeInstancia;
-    }
-
-    @Override
-    public Docente getDocente() {
-        return this.docente;
-    }
-
-    @Override
-    public Comision getComision() {
-        return this.comision;
-    }
     @Override
     public Turnero getTurnero() {
         return this.turnero;
     }
     @Override
-    public void setTurnero(Turnero turnero) {
-        this.turnero = turnero;
+    public Docente getDocente() {
+        return this.docente;
     }
-}
+    @Override
+    public int getCodigoDeInstancia() {
+        return this.codigoDeInstancia;
+    }
+    @Override
+    public void setCodigoDeInstancia(int codigoDeInstancia) {
+        this.codigoDeInstancia = codigoDeInstancia;
+    }
+} 
