@@ -10,10 +10,14 @@ public class Turnero
     public Turnero()
     {
         // initialise instance variables
+        turnos = new ArrayList<>();
         
     }
 
-    
+    public ArrayList<Turno> getTurnero()
+    {
+        return this.turnos;
+    }
     public void agregarTurno(Turno turno)
     {
         turnos.add(turno);

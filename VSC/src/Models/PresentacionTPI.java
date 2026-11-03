@@ -52,43 +52,24 @@ public class PresentacionTPI extends InstanciaEvaluativa{
     public void setDuracionEstimada(Double duracionEstimada) {
         this.duracionEstimada = duracionEstimada;
     }
-    @Override 
-    public int getCodigo() {    
-        return this.codigo;
 
     @Override
-    public void setDocente(Docente docente) {
-        this.docente = docente;
-    }
-
-    @Override
-    public void setComision(Comision comision) {
-        this.comision = comision;
-    }
-    @Override
-    public void setCodigoDeInstancia(int codigoDeInstancia) {
-        this.codigoDeInstancia = codigoDeInstancia;
-    }
-    @Override
-    public int getCodigoDeInstancia() {
-        return this.codigoDeInstancia;
+    public Turnero getTurnero() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Docente getDocente() {
-        return this.docente;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Comision getComision() {
-        return this.comision;
+    public int getCodigoDeInstancia() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
+
     @Override
-    public Turnero getTurnero() {
-        return this.turnero;
-    }
-    @Override
-    public void setTurnero(Turnero turnero) {
-        this.turnero = turnero;
+    public void setCodigoDeInstancia(int codigoDeInstancia) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
