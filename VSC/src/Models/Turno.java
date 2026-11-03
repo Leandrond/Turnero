@@ -1,5 +1,6 @@
 package Models;
 import java.util.Date;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Turno
@@ -7,13 +8,12 @@ public class Turno
     /**Atributos**/
     private InstanciaEvaluativa instancia;
     private Alumno alumno;
-    private Date fecha;
+    private LocalDate fecha;
     private LocalTime hora;
     private Estado estado;
     
     /**Constructor**/
-      public Turno(InstanciaEvaluativa instancia, Alumno alumno, Date fecha,
-      LocalTime hora)
+      public Turno(InstanciaEvaluativa instancia, Alumno alumno, LocalDate fecha, LocalTime hora)
     {
         this.instancia=instancia;
         this.alumno=alumno;
