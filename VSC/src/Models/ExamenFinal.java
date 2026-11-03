@@ -2,9 +2,12 @@
 package Models;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 public class ExamenFinal extends InstanciaEvaluativa{
-    
+    //lista docente
+    ArrayList<Docente> listaDocentes = new ArrayList<Docente>();
+
     // Constructor con atributos heredados de la clase InstanciaEvaluativa
     public ExamenFinal(
         String tipo, LocalDate fecha, LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero) {    
@@ -13,9 +16,9 @@ public class ExamenFinal extends InstanciaEvaluativa{
         super.horaInicio = hora;
         super.duracionEstimada = duracionEstimada;
         super.comision = comision;
-        super.docente = docente;
+        this.listaDocentes.add(docente);
         super.codigoDeInstancia = codigoDeInstancia;
-        super.turnero = turnero;
+        super.turnero= turnero;
     }
     //getters y setters de los atributos heredados de la clase InstanciaEvaluativa
     @Override
@@ -53,21 +56,24 @@ public class ExamenFinal extends InstanciaEvaluativa{
         this.duracionEstimada = duracionEstimada;
     }
     @Override
-    public void setDocente(Docente docente) {
-        this.docente = docente;
+    public int getCodigoDeInstancia() {
+        return this.codigoDeInstancia;
     }
 
-    @Override
-    public void setComision(Comision comision) {
-        this.comision = comision;
-    }
     @Override
     public void setCodigoDeInstancia(int codigoDeInstancia) {
         this.codigoDeInstancia = codigoDeInstancia;
     }
     @Override
-    public int getCodigoDeInstancia() {
-        return this.codigoDeInstancia;
+    public Turnero getTurnero() {
+        return this.turnero;
+    }
+
+    public ArrayList<Docente> getListaDocente() {
+            return this.listaDocentes; // Devuelve la lista completa de docentes
+        }
+    public void agregarDocente(Docente docente) {
+        this.listaDocentes.add(docente);
     }
 
     @Override
@@ -75,16 +81,4 @@ public class ExamenFinal extends InstanciaEvaluativa{
         return this.docente;
     }
 
-    @Override
-    public Comision getComision() {
-        return this.comision;
-    }
-    @Override
-    public Turnero getTurnero() {
-        return this.turnero;
-    }
-    @Override
-    public void setTurnero(Turnero turnero) {
-        this.turnero = turnero;
-    }
 }

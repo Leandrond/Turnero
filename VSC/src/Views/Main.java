@@ -1,14 +1,21 @@
 
 package Views;
-
+// import 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Scanner;
 import Controllers.GestionTurnero;
+import Models.Comision;
+import Models.DefensaParcial;
 import Models.Docente;
 import Models.Estado;
+import Models.ExamenFinal;
 import Models.Turno;
 import Models.Materia;
+import Models.PresentacionTPI;
+import Models.Turnero;
 
-
+// Main
 
 public class Main {
 
@@ -29,15 +36,13 @@ public class Main {
         // registrarDocente(gestion);
 
         int opcion;
-
         do {
             System.out.println("\nTURNERO");
             System.out.println("1. Comisiones");
             System.out.println("2. Instancias evaluativas");
             System.out.println("0. Salir");
 
-            opcion = leerEntero("Opcion: ");
-
+            opcion = teclado.nextInt();
             switch (opcion) {
                 case 1:
                     menuComisiones(gestion);
@@ -58,38 +63,6 @@ public class Main {
         } while (opcion != 0);
 
         teclado.close();
-    }
-
-    // Lee un numero entero por teclado.
-    // Se usa en los menus y cuando hay que ingresar un codigo,
-    // legajo o cantidad. Si se escriben letras, vuelve a pedir
-    // el numero en lugar de cortar el programa.
-    // Este es el metodo que estaba arriba y que seguro lo vieron y dijeron "que hace esto?"
-    // ahora ya saben, lee un numero entero y lo devuelve al metodo que lo pidio.
-    // Lean, no sean cabeza de tupper.
-    static int leerEntero(String mensaje) {
-
-        while (true) {
-            System.out.print(mensaje);
-
-            try {
-                return Integer.parseInt(teclado.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Ingresa un numero valido.");
-            }
-        }
-    }
-
-    // Lee un texto y lo devuelve al metodo que lo pidio.
-    // Sirve para cargar nombres, fechas y otros datos
-    // que se ingresan por teclado.
-    // Y seguro se preguntaran... para que? La respuesta esta en sus corazones.
-    // y aca abajo, es para no hacer mil metodos que pidan texto,
-    // en mi cabeza compila pero habria que probar que ande.
-    static String leerTexto(String mensaje) {
-
-        System.out.print(mensaje);
-        return teclado.nextLine();
     }
 
     // Se ejecuta al arrancar el programa para comprobar
@@ -115,16 +88,12 @@ public class Main {
         // se descomenta este bloque.
         // ustedes se preguntaran, porque el if a continuacion no tiene un else.
         // bueno es porque solo entra al if si no esta registrado el decente.
-
-         if (gestion.tieneDocenteRegistrado()) {
-             return;
-            }
-        
         System.out.println("\nREGISTRO DEL DOCENTE");
+                
+        String nombre = teclado.nextLine();
+        String apellido = teclado.nextLine();
+        String legajo = teclado.nextLine();     
         
-        String nombre = leerTexto("Nombre: ");
-        String apellido = leerTexto("Apellido: ");
-        String legajo = leerTexto("Legajo: ");
         
         gestion.registrarDocente(nombre, apellido, legajo);
     }
@@ -146,7 +115,7 @@ public class Main {
             System.out.println("5. Prioridades de alumnos");
             System.out.println("0. Volver");
 
-            opcion = leerEntero("Opcion: ");
+            opcion = teclado.nextInt();
 
             switch (opcion) {
                 case 1:
@@ -184,14 +153,11 @@ public class Main {
     // y a la materia que se esta dictando, porque un docente tiene mas de una comision
     // y mas de una materia.
     static void crearComision(GestionTurnero gestion) {
-
-        int codigo = leerEntero("Codigo de comision: ");
-        String nombre = leerTexto("Nombre: ");
-        String materia = leerTexto("Materia: ");
-
-        // Falta en GestionTurnero:
-        // void crearComision(int codigo, String nombre, String materia)
-        //
+        System.out.println("\nCodigo\nNombre\nMateria");
+        int codigo = teclado.nextInt();
+        String nombre = teclado.nextLine();
+        String materia = teclado.nextLine();
+        
         // Tiene que crear la comision y agregarla a las que
         // administra el docente. Tambien tiene que asociarle
         // la materia.
@@ -203,8 +169,6 @@ public class Main {
         // Cuando esten esas relaciones y el metodo de
         // GestionTurnero, se descomenta la llamada. LISTO
 
-        /*VER--> Obtengo el docente actual del gestor y creo la materia
-         */
          Docente docenteActual = gestion.getDocenteActual();
          Materia nuevaMateria = new Materia(materia, docenteActual);
          gestion.crearComision(codigo, nombre, nuevaMateria);
@@ -215,16 +179,11 @@ public class Main {
     // comision quiere trabajar.
     static void listarComisiones(GestionTurnero gestion) {
 
-        // Falta en GestionTurnero:
-        // void listarComisiones()
-        //
         // Tiene que recorrer las comisiones del docente
         // y mostrar el codigo, nombre y materia de cada una.
         // Para hacerlo necesita que Docente tenga una lista
         // de comisiones y un metodo para consultarla.
         //
-        // Cuando este implementado, se descomenta. LISTO
-
         gestion.listarComisiones();
     }
 
@@ -233,7 +192,7 @@ public class Main {
     // se hagan sobre la lista de alumnos que corresponde.
     static void menuAlumnos(GestionTurnero gestion) {
 
-        int codigo = leerEntero("Codigo de comision: ");
+        int codigo = teclado.nextInt();
         int opcion;
 
         do {
@@ -244,7 +203,7 @@ public class Main {
             System.out.println("4. Dar de baja alumno");
             System.out.println("0. Volver");
 
-            opcion = leerEntero("Opcion: ");
+            opcion = teclado.nextInt();
 
             switch (opcion) {
                 case 1:
@@ -278,7 +237,7 @@ public class Main {
     // seleccionada, no en una lista general.
     static void agregarAlumno(GestionTurnero gestion, int codigo) {
 
-        int legajo = leerEntero("Legajo: ");
+        int legajo = teclado.nextInt();
 
         // Falta en GestionTurnero:
         // void agregarAlumno(int codigoComision, int legajo)
@@ -317,7 +276,7 @@ public class Main {
     // sus datos sin tener que recorrer la lista a mano.
     static void buscarAlumno(GestionTurnero gestion, int codigo) {
 
-        int legajo = leerEntero("Legajo: ");
+        int legajo = teclado.nextInt();
 
         // Falta en GestionTurnero:
         // void buscarAlumno(int codigoComision, int legajo)
@@ -335,7 +294,7 @@ public class Main {
     // Pide el legajo para identificar a quien hay que sacar.
     static void darDeBajaAlumno(GestionTurnero gestion, int codigo) {
 
-        int legajo = leerEntero("Legajo: ");
+        int legajo = teclado.nextInt();
 
         // Falta en GestionTurnero:
         // void darDeBajaAlumno(int codigoComision, int legajo)
@@ -354,7 +313,7 @@ public class Main {
     // con alumnos que ya pertenecen a esa comision.
     static void menuGrupos(GestionTurnero gestion) {
 
-        int codigo = leerEntero("Codigo de comision: ");
+        int codigo = teclado.nextInt();
         int opcion;
 
         do {
@@ -363,13 +322,14 @@ public class Main {
             System.out.println("2. Agregar alumno a grupo");
             System.out.println("3. Quitar alumno de grupo");
             System.out.println("4. Ver grupos");
+            System.out.println("5. Cambiar cupo maximo de grupo");
             System.out.println("0. Volver");
 
-            opcion = leerEntero("Opcion: ");
+            opcion = teclado.nextInt();
 
             switch (opcion) {
                 case 1:
-                    crearGrupo(gestion, codigo);
+                    crearGrupo(gestion);
                     break;
 
                 case 2:
@@ -383,6 +343,9 @@ public class Main {
                 case 4:
                     listarGrupos(gestion, codigo);
                     break;
+                case 5:
+                    cambiarCupoMaximo(gestion, codigo);
+                    break;  
 
                 case 0:
                     break;
@@ -396,10 +359,14 @@ public class Main {
 
     // Crea un grupo dentro de la comision seleccionada.
     // Pide el numero de grupo y el cupo maximo de integrantes.
-    static void crearGrupo(GestionTurnero gestion, int codigo) {
-
-        int numero = leerEntero("Numero de grupo: ");
-        int cupo = leerEntero("Cupo maximo: ");
+    static void crearGrupo(GestionTurnero gestion) {
+        System.out.println("\nCREAR GRUPO");
+        System.out.println("\nCodigo de comision: ");
+        int codigo = teclado.nextInt();
+        System.out.println("\nNumero de grupo: ");
+        int numero = teclado.nextInt();
+        System.out.println("\nCupo maximo: ");
+        int cupo = teclado.nextInt();
 
         // Falta en Comision:
         // void agregarGrupo(Grupo grupo)
@@ -428,9 +395,11 @@ public class Main {
     // integrantes permitidos en un grupo de la comision elegida.
     // El Main solamente pide los datos, no modifica el grupo segun el ceo.
     static void cambiarCupoMaximo(GestionTurnero gestion, int codigo) {
-
-        int numero = leerEntero("Numero de grupo: ");
-        int cupo = leerEntero("Nuevo cupo maximo: ");
+        System.out.println("\nCAMBIAR CUPO MAXIMO DE GRUPO");
+        System.out.println("\nCodigo de Grupo: ");
+        int numero = teclado.nextInt();
+        System.out.println("\nNuevo cupo maximo: ");
+        int cupo = teclado.nextInt();
 
         // Falta implementar en la clase GestionTurnero:
         // void cambiarCupoMaximo(int codigoComision, int numeroGrupo, int nuevoCupo)
@@ -456,9 +425,11 @@ public class Main {
     // El alumno ya tiene que estar cargado en la comision obviamente
     // y el grupo tiene que tener lugar disponible obviamente 2.
     static void agregarAlumnoAGrupo(GestionTurnero gestion, int codigo) {
-
-        int numero = leerEntero("Numero de grupo: ");
-        int legajo = leerEntero("Legajo: ");
+        System.out.println("\nAGREGAR ALUMNO A GRUPO");
+        System.out.println("\nCodigo de grupo: ");
+        int numero = teclado.nextInt();
+        System.out.println("\nLegajo del alumno: ");
+        int legajo = teclado.nextInt();
 
         // Falta en GestionTurnero:
         // void agregarAlumnoAGrupo(int codigo, int numero, int legajo)
@@ -481,9 +452,11 @@ public class Main {
     // Solamente lo saca del grupo, no de la comision.
     // Sirve para cambiar los integrantes sin dar de baja alumnos.
     static void quitarAlumnoDeGrupo(GestionTurnero gestion, int codigo) {
-
-        int numero = leerEntero("Numero de grupo: ");
-        int legajo = leerEntero("Legajo: ");
+        System.out.println("\nQUITAR ALUMNO DE GRUPO");
+        System.out.println("\n Codigo de grupo: ");
+        int numero = teclado.nextInt();
+        System.out.println("\n Legajo del alumno: ");
+        int legajo = teclado.nextInt();
 
         // Falta en GestionTurnero:
         // void quitarAlumnoDeGrupo(int codigo, int numero, int legajo)
@@ -524,14 +497,16 @@ public class Main {
     // se tenga en cuenta cada vez que se armen nuevos turnos.
     // No es lo mismo que mover un turno manualmente.
     static void administrarPrioridades(GestionTurnero gestion) {
-
-        int codigo = leerEntero("Codigo de comision: ");
-        int legajo = leerEntero("Legajo del alumno: ");
+        System.out.println("\nADMINISTRAR PRIORIDADES DE ALUMNOS");
+        System.out.println("\nCodigo de comision: ");
+        int codigo = teclado.nextInt();
+        System.out.println("\nLegajo del alumno: ");
+        int legajo = teclado.nextInt();
 
         System.out.println("1. Dar prioridad");
         System.out.println("2. Quitar prioridad");
 
-        int opcion = leerEntero("Opcion: ");
+        int opcion = teclado.nextInt();
 
         // Falta en Alumno:
         // void setPrioridad(boolean prioridad)
@@ -574,7 +549,7 @@ public class Main {
             System.out.println("4. Cambiar orden de turnos");
             System.out.println("0. Volver");
 
-            opcion = leerEntero("Opcion: ");
+            opcion = teclado.nextInt();
 
             switch (opcion) {
                 case 1:
@@ -607,30 +582,128 @@ public class Main {
     // Primero se elige la comision y el tipo de examen.
     // Despues se carga la modalidad, fecha, hora de inicio
     // y cuanto tiempo se estima para cada turno.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // falta de aca para abajo cracks
+
+
+
+
+
+
+
+
+
+    
     static void crearInstancia(GestionTurnero gestion) {
+        System.out.println("\nCREAR INSTANCIA EVALUATIVA");
+        System.out.println("\nCodigo de comision: ");
+        int comision = teclado.nextInt();
 
-        int comision = leerEntero("Codigo de comision: ");
+        // metodo para buscar la comision por codigo y devolverla, si no existe avisar.
+        Comision comisionEncontrada = gestion.buscarComisionPorCodigo(comision);
 
+        // con comision Encontrada podemos crear la instancia evaluativa, pero primero necesitamos que tipo de instancia es, fecha, hora y duracion estimada.
         System.out.println("1. Defensa parcial");
         System.out.println("2. Examen final");
         System.out.println("3. Presentacion TPI");
+        System.out.println("Tipo de instancia: ");
+        int tipo = teclado.nextInt();
+        
+        switch (tipo) {
+            case 1:
+                System.out.println("Fecha (AAAA-MM-DD): ");
+                String fecha = teclado.next();
+                System.out.println("Hora (HH:MM): ");
+                String hora = teclado.next();
+                System.out.println("Duracion estimada (en minutos): ");
+                double duracionEstimada = teclado.nextDouble();
+                System.out.println("Codigo de instancia: ");
+                int codigoDeInstancia = teclado.nextInt();
+                gestion.crearDefensaParcial (comisionEncontrada, fecha,  hora,  duracionEstimada, codigoDeInstancia);
+                break;
+            case 2:
+                System.out.println("Fecha (AAAA-MM-DD): ");
+                fecha = teclado.next();
+                System.out.println("Hora (HH:MM): ");
+                hora = teclado.next();
+                System.out.println("Duracion estimada (en minutos): ");
+                duracionEstimada = teclado.nextDouble();
+                System.out.println("Codigo de instancia: ");
+                codigoDeInstancia = teclado.nextInt();
+                System.out.println("Docente: ");
+                String docente = teclado.next();
+                System.out.println("Turnero");
+                Turnero turnos = new Turnero();
 
-        int tipo = leerEntero("Tipo: ");
+                gestion.crearExamenFinal(comisionEncontrada,"Examen Final", fecha, hora, duracionEstimada, turnos, docente, codigoDeInstancia, turnero);
+                break;
+            case 3:
+                System.out.println("Fecha (AAAA-MM-DD): ");
+                fecha = teclado.next();
+                System.out.println("Hora (HH:MM): ");
+                hora = teclado.next();
+                System.out.println("Duracion estimada (en minutos): ");
+                duracionEstimada = teclado.nextDouble();
+                System.out.println("Codigo de instancia: ");
+                codigoDeInstancia = teclado.nextInt();
+                System.out.println("Turnero");
+                Turnero turnos = new Turnero();
+                System.out.println("Codigo de instancia: ");
+                codigoDeInstancia = teclado.nextInt();
+                gestion.crearPresentacionTPI(comisionEncontrada, "Presentacion TPI", fecha, hora, duracionEstimada, turnos, turnero, codigoDeInstancia); 
+                break;
+            default:
+                System.out.println("Tipo de instancia no válido.");
+        }
 
-        System.out.println("1. Individual");
-        System.out.println("2. Grupal");
-        System.out.println("3. General");
 
-        int modalidad = leerEntero("Modalidad: ");
-
-        String fecha = leerTexto("Fecha AAAA-MM-DD: ");
-        String hora = leerTexto("Hora HH:MM: ");
-        int minutos = leerEntero("Minutos por turno: ");
-
-        // Falta en GestionTurnero:
-        // void crearInstanciaEvaluativa(int comision, int tipo,
-        //     int modalidad, String fecha, String hora, int minutos)
-        //
+        
         // Tiene que buscar la comision y crear la instancia
         // que corresponda al tipo de examen seleccionado.
         // Las clases DefensaParcial, ExamenFinal y PresentacionTPI
