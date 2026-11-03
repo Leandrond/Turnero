@@ -330,53 +330,47 @@ public class GestionTurnero {
         }
     }
 
-    public void crearInstanciaEvaluativa(int codigoComision, int tipo, int modalidad, String fecha, String hora, int minutos){
+    public void crearInstanciaEvaluativa(String tipo, LocalDate fecha,LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero){
         Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
-        instanciaEvaluativa nuevaInstancia = null;
+        InstanciaEvaluativa nuevaInstancia = null;
        //1. Crear tipo de examen según el tipo recibido (1,2,3) y asignarle la modalidad, fecha y hora.
-        if(tipo == 1){
-            nuevaInstancia = new DefensaParcial("Defensa Parcial", fecha, hora, duracionEstimada);
-        }else if(tipo == 2){
-            nuevaInstancia = new ExamenFinal("Examen Final", fecha, hora, duracionEstimada);
-        }else if(tipo == 3){
-            nuevaInstancia = new PresentacionTPI("Presentación TPI", fecha, hora, duracionEstimada);
-        }
+        
 
-        if (nuevaInstancia != null) {
-            nuevaInstancia.setModalidad(modalidad);
-            nuevaInstancia.setFecha(fecha);
-            nuevaInstancia.setHora(hora);
-            comisionEncontrada.agregarInstanciaEvaluativa(nuevaInstancia);
+    //     if (nuevaInstancia != null) {
+    //         nuevaInstancia.setModalidad(modalidad);
+    //         nuevaInstancia.setFecha(fecha);
+    //         nuevaInstancia.setHora(hora);
+    //         comisionEncontrada.agregarInstanciaEvaluativa(nuevaInstancia);
 
-            //2. Genero el Turnero de esa instancia segun la modalidad
-            Turnero turnero = new Turnero();
+    //         //2. Genero el Turnero de esa instancia segun la modalidad
+    //         Turnero turnero = new Turnero();
 
-            if (modalidad == 1) { //Individual, turno por alumno
-                for(Alumno a : comisionEncontrada.getListaAlumnos()){
-                    turnero.agregarTurno(new Turno(a));
+    //         if (modalidad == 1) { //Individual, turno por alumno
+    //             for(Alumno a : comisionEncontrada.getListaAlumnos()){
+    //                 turnero.agregarTurno(new Turno(a));
 
-                }
-            } else if (modalidad == 2) { //Grupal, turno por grupo
-                for(Grupo g : comisionEncontrada.getListaGrupos()){
-                    turnero.agregarTurno(new Turno(g));
-                }
-            }else if (modalidad == 3){// General (un turno para toda la comision)
-                turnero.agregarTurno(new Turno(comisionEncontrada));
-            }
+    //             }
+    //         } else if (modalidad == 2) { //Grupal, turno por grupo
+    //             for(Grupo g : comisionEncontrada.getListaGrupos()){
+    //                 turnero.agregarTurno(new Turno(g));
+    //             }
+    //         }else if (modalidad == 3){// General (un turno para toda la comision)
+    //             turnero.agregarTurno(new Turno(comisionEncontrada));
+    //         }
 
-            //3. ordeno por prioridad y calcular horarios
-            turnero.ordenarTurnosPorPrioridad();
-            turnero.calcularHorarios(hora, minutos);
+    //         //3. ordeno por prioridad y calcular horarios
+    //         turnero.ordenarTurnosPorPrioridad();
+    //         turnero.calcularHorarios(hora, minutos);
 
-            //4. Asocio el turnero a la instancia evaluativa y guardo en comision
-            nuevaInstancia.setTurnero(turnero);
-            comisionEncontrada.agregarInstanciaEvaluativa(nuevaInstancia);
+    //         //4. Asocio el turnero a la instancia evaluativa y guardo en comision
+    //         nuevaInstancia.setTurnero(turnero);
+    //         comisionEncontrada.agregarInstanciaEvaluativa(nuevaInstancia);
 
-            System.out.println("Instancia evaluativa creada y turnero generado correctamente.");
+    //         System.out.println("Instancia evaluativa creada y turnero generado correctamente.");
 
-        } else {
-            System.out.println("Tipo de instancia evaluativa no válido.");
-        }
+    //     } else {
+    //         System.out.println("Tipo de instancia evaluativa no válido.");
+    //     }
         
     }
 

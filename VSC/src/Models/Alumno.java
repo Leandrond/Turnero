@@ -12,10 +12,10 @@ public class Alumno
     {
     }
     
-    public Alumno(int legajo,Estado estado, boolean prioridad){
+    public Alumno(int legajo,Estado estado){
         this.legajo=legajo;
         this.estado=estado.Evaluando;
-        this.prioridad=prioridad;
+        this.prioridad=false;
     }
 
     public Estado getEstado(){
