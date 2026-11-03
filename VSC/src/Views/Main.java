@@ -3,8 +3,10 @@ package Views;
 
 import java.util.Scanner;
 import Controllers.GestionTurnero;
+import Models.Docente;
 import Models.Estado;
 import Models.Turno;
+import Models.Materia;
 
 
 
@@ -102,11 +104,11 @@ public class Main {
         //
         // boolean tieneDocenteRegistrado()
         // Tiene que devolver true si ya hay un docente cargado
-        // y false si todavia no se registro ninguno.
+        // y false si todavia no se registro ninguno. LISTO 
         //
         // void registrarDocente(String nombre, String apellido, String legajo)
         // Tiene que crear el objeto Docente y guardar la referencia
-        // para poder usarlo mientras el programa este abierto.
+        // para poder usarlo mientras el programa este abierto. LISTO
         //
         // Docente ya tiene el constructor con esos tres datos.
         // Cuando esten hechos los metodos de GestionTurnero,
@@ -116,15 +118,15 @@ public class Main {
 
          if (gestion.tieneDocenteRegistrado()) {
              return;
-         }
+            }
         
-         System.out.println("\nREGISTRO DEL DOCENTE");
+        System.out.println("\nREGISTRO DEL DOCENTE");
         
-         String nombre = leerTexto("Nombre: ");
-         String apellido = leerTexto("Apellido: ");
-         String legajo = leerTexto("Legajo: ");
+        String nombre = leerTexto("Nombre: ");
+        String apellido = leerTexto("Apellido: ");
+        String legajo = leerTexto("Legajo: ");
         
-         gestion.registrarDocente(nombre, apellido, legajo);
+        gestion.registrarDocente(nombre, apellido, legajo);
     }
 
     // Muestra las opciones para trabajar con las comisiones.
@@ -199,9 +201,13 @@ public class Main {
         // Materia ya existe, no hace falta crear otra clase.
         //
         // Cuando esten esas relaciones y el metodo de
-        // GestionTurnero, se descomenta la llamada.
+        // GestionTurnero, se descomenta la llamada. LISTO
 
-        // gestion.crearComision(codigo, nombre, materia);
+        /*VER--> Obtengo el docente actual del gestor y creo la materia
+         */
+         Docente docenteActual = gestion.getDocenteActual();
+         Materia nuevaMateria = new Materia(materia, docenteActual);
+         gestion.crearComision(codigo, nombre, nuevaMateria);
     }
 
     // Muestra las comisiones que tiene cargadas el docente.
@@ -217,9 +223,9 @@ public class Main {
         // Para hacerlo necesita que Docente tenga una lista
         // de comisiones y un metodo para consultarla.
         //
-        // Cuando este implementado, se descomenta.
+        // Cuando este implementado, se descomenta. LISTO
 
-        // gestion.listarComisiones();
+        gestion.listarComisiones();
     }
 
     // Muestra las opciones para administrar los alumnos.
@@ -284,9 +290,9 @@ public class Main {
         // hay que usar ese metodo y no hacerlo de nuevo.
         // Tambien hay que controlar que no se repita el legajo.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta.LISTO
 
-        // gestion.agregarAlumno(codigo, legajo);
+         gestion.agregarAlumno(codigo, legajo);
     }
 
     // Muestra todos los alumnos de la comision elegida.
@@ -301,9 +307,9 @@ public class Main {
         // que devuelve Comision.getListaAlumnos(), que ya existe.
         // Tiene que mostrar por lo menos el legajo de cada uno.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta.LISTO
 
-        // gestion.listarAlumnos(codigo);
+         gestion.listarAlumnos(codigo);
     }
 
     // Busca un alumno por legajo dentro de una comision.
@@ -320,9 +326,9 @@ public class Main {
         // Comision.buscarAlumnoPorLegajo(), que ya existe.
         // Despues muestra el alumno o avisa si no lo encontro.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta. LISTO
 
-        // gestion.buscarAlumno(codigo, legajo);
+         gestion.buscarAlumno(codigo, legajo);
     }
 
     // Da de baja un alumno de la comision seleccionada.
@@ -338,9 +344,9 @@ public class Main {
         // Comision.darDeBajaAlumno(), que ya existe.
         // Tiene que avisar si se elimino o si no estaba cargado.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta.LISTO
 
-        // gestion.darDeBajaAlumno(codigo, legajo);
+         gestion.darDeBajaAlumno(codigo, legajo);
     }
 
     // Muestra las opciones para trabajar con los grupos.
@@ -411,9 +417,9 @@ public class Main {
         // FALTA UN METODO PARA MODIFICAR EL CUPO POR SI SE EQUIVOCA AL CARGARLO,
         //  O SI NECESITA HACERLO PORQUE DEJA JULI ESE METODO VA EN GESTION TURNERO.
         //
-        // Cuando esten los dos metodos, se descomenta.
+        // Cuando esten los dos metodos, se descomenta. LISTO
 
-        // gestion.crearGrupo(codigo, numero, cupo);
+         gestion.crearGrupo(codigo, numero, cupo);
     }
 
     
@@ -440,9 +446,9 @@ public class Main {
         //
         // Si la comision o el grupo no existen, tiene que avisarlo.
         // Cuando el metodo este implementado en GestionTurnero,
-        // se puede descomentar esta llamada.
+        // se puede descomentar esta llamada. LISTO
 
-        // gestion.cambiarCupoMaximo(codigo, numero, cupo);
+         gestion.cambiarCupoMaximo(codigo, numero, cupo);
     }
 
 
@@ -466,9 +472,9 @@ public class Main {
         // GestionTurnero tiene que avisar si no encontro
         // el grupo o si el alumno no pertenece a la comision.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta. Listo
 
-        // gestion.agregarAlumnoAGrupo(codigo, numero, legajo);
+         gestion.agregarAlumnoAGrupo(codigo, numero, legajo);
     }
 
     // Saca un alumno de un grupo.
@@ -486,9 +492,9 @@ public class Main {
         // y llamar a Grupo.quitarAlumno(), que ya existe.
         // Si el alumno no esta en el grupo, tiene que avisarlo.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta.LISTO
 
-        // gestion.quitarAlumnoDeGrupo(codigo, numero, legajo);
+         gestion.quitarAlumnoDeGrupo(codigo, numero, legajo);
     }
 
     // Muestra los grupos de una comision y sus integrantes.
@@ -497,7 +503,7 @@ public class Main {
     static void listarGrupos(GestionTurnero gestion, int codigo) {
 
         // Falta en Comision:
-        // getListaGrupos()
+        // getListaGrupos() LISTO
         //
         // Tiene que devolver la lista de grupos de esa comision.
         //
@@ -508,9 +514,9 @@ public class Main {
         // y mostrar el numero y los integrantes de cada uno.
         // Grupo ya tiene getNumero() y getlistaAlumnos().
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta. LISTO
 
-        // gestion.listarGrupos(codigo);
+         gestion.listarGrupos(codigo);
     }
 
     // Permite darle o sacarle la prioridad a un alumno.
@@ -542,15 +548,15 @@ public class Main {
         // Despues Turnero tiene que usar ese dato para ordenar
         // los turnos cuando se cree una instancia evaluativa.
         //
-        // Cuando esten esos metodos, se descomenta el bloque.
+        // Cuando esten esos metodos, se descomenta el bloque. LISTO
 
-        // if (opcion == 1) {
-        //     gestion.cambiarPrioridad(codigo, legajo, true);
-        // } else if (opcion == 2) {
-        //     gestion.cambiarPrioridad(codigo, legajo, false);
-        // } else {
-        //     System.out.println("Opcion incorrecta.");
-        // }
+         if (opcion == 1) {
+             gestion.cambiarPrioridad(codigo, legajo, true);
+         } else if (opcion == 2) {
+             gestion.cambiarPrioridad(codigo, legajo, false);
+         } else {
+             System.out.println("Opcion incorrecta.");
+         }
     }
 
     // Muestra las opciones para trabajar con las evaluaciones.
@@ -684,10 +690,10 @@ public class Main {
         //
         // Tiene que buscar la comision y la instancia correspondiente
         // y cambiar la fecha y hora de esa instancia.
-        //
-        // Cuando este hecho, se descomenta.
+        //REVISAR
+        // Cuando este hecho, se descomenta. LISTO(CREO)
 
-        // gestion.modificarFechaInstancia(comision, instancia, fecha, hora);
+        gestion.modificarFechaInstancia(comision, instancia, fecha, hora);
         
     }
 
@@ -704,8 +710,8 @@ public class Main {
         // y cambiar la hora de esa instancia.
         //
         // Cuando este hecho, se descomenta.
-
-        // gestion.modificarHoraInstancia(comision, instancia, hora);
+        //REVISAR
+         gestion.modificarHoraInstancia(comision, instancia, hora);
         
     }
     
@@ -727,9 +733,9 @@ public class Main {
         // Para eso falta que las instancias evaluativas
         // queden asociadas a la comision correspondiente.
         //
-        // Cuando este hecho, se descomenta.
+        // Cuando este hecho, se descomenta.LISTO
 
-        // gestion.listarInstanciasEvaluativas(codigo);
+         gestion.listarInstanciasEvaluativas(codigo);
     }
 
     // Ejecuta una instancia evaluativa que ya esta creada.

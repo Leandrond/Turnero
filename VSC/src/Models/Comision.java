@@ -5,8 +5,10 @@ public class Comision
 {
     private int codigoComision;
     private String nombre; //Yo lo haria string para poder poner "Comision 1/2/3..."
+    private Materia materia; //Para poder identificar a que materia pertenece la comision
     private ArrayList<Alumno> listaAlumnos;//Lista para poder administrar alumnos
-    private Materia materia; //MANU:Para poder asociar la comision a una materia, ademas ya lo puse en el constructor y puse su getter.
+    private ArrayList<Grupo> listaGrupos; //Lista para poder administrar grupos
+    private ArrayList<InstanciaEvaluativa> listaInstanciasEvaluativas; //Lista para poder administrar instancias evaluativas
     
     public Comision()
     {
@@ -15,10 +17,12 @@ public class Comision
    
     public Comision(int codigoComision, String nombre, Materia materia)
     {
-       this.codigoComision=codigoComision;
-       this.nombre=nombre;
-       this.materia=materia;
-       this.listaAlumnos= new ArrayList<>();
+       this.codigoComision = codigoComision;
+       this.nombre = nombre;
+       this.materia = materia;
+       this.listaAlumnos = new ArrayList<>();
+       this.listaGrupos = new ArrayList<>();
+       this.listaInstanciasEvaluativas = new ArrayList<>();
        
     }
     
@@ -36,10 +40,15 @@ public class Comision
         this.codigoComision=codigoComision;
     }
     
+    public Materia getMateria(){
+        return materia;
+    }
+
     //Devuelvo nombre
     public String getNombre(){ 
         return nombre;
     }
+
     
     //Para poder modificar el nombre
     public void setNombre(String nombre){
@@ -51,10 +60,17 @@ public class Comision
         return listaAlumnos;
     }
 
-    //Devuelvo la materia asociada
-    public Materia getMateria(){
-    return materia;
-}
+    //Devuelvo listaGrupos
+    public ArrayList<Grupo> getListaGrupos() {
+        return listaGrupos;
+    }
+
+    //Devuelvo listaInstanciasEvaluativas
+    public ArrayList<InstanciaEvaluativa> getListaInstanciasEvaluativas(){
+        return listaInstanciasEvaluativas;
+    }
+    
+
     
     //====================================================================================
     // METODOS DE COMPORTAMIENTO
@@ -101,5 +117,26 @@ public class Comision
         return false;//si no hay coincidente retorno false
     }
     
+    public void agregarGrupo(Grupo grupo){
+        boolean grupoExistente = false;
+        for (Grupo g : this.listaGrupos) {
+            if (g.getNumero() == grupo.getNumero()) {
+                grupoExistente = true;
+                break;
+            }
+        }
+        if (!grupoExistente && grupo != null) {
+            this.listaGrupos.add(grupo);
+            System.out.println("Grupo con número " + grupo.getNumero() + " agregado correctamente a la comisión.");
+        }else{
+            System.out.println("ERROR: Ya existe un grupo con ese número en esta comisión.");
+        }
+    }
+
+    public void agregarInstanciaEvaluativa(InstanciaEvaluativa instancia) {
+        if (instancia != null) {
+            this.listaInstanciasEvaluativas.add(instancia);
+        }
+    }
     
 }

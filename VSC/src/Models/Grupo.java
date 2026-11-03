@@ -37,6 +37,11 @@ public class Grupo
             integrantes.add(alumno);
         }
     }
+    
+    public int getCupoMaximo(){
+        return this.cupoMaximo;
+    }
+    
     public void setCupoMaximo(int cupoMaximo){
         if (cupoMaximo > 0 && cupoMaximo >= 
             integrantes.size()){ 
@@ -49,6 +54,7 @@ public class Grupo
         integrantes.remove(alumno);
     }
     
+    
     public boolean tieneDisponibilidad(){
         return integrantes.size()<cupoMaximo;
     }
@@ -58,5 +64,14 @@ public class Grupo
     // vista no modificable de la lista, 
     // evitando que otras clases alteren directamente 
     // los integrantes del grupo. 10-10-26
-
+    public int contarAlumnosPrioritarios(){
+         int contador = 0;
+        for (Alumno a : integrantes) {
+            if (a.getPrioridad()) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+       
 }
