@@ -33,7 +33,7 @@ public class Main {
         // Falta conectar el registro del docente.
         // Los metodos que necesita estan explicados en registrarDocente().
         // Cuando esten hechos, se descomenta esta llamada.
-        // registrarDocente(gestion);
+        //registrarDocente(gestion);.listo
 
         int opcion;
         do {

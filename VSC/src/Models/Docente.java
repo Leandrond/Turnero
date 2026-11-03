@@ -22,11 +22,20 @@ public class Docente
    public String getApellido(){return apellido;}
    public String getLegajo(){return legajo;}
    public ArrayList<Comision> getListaComisiones(){return listaComisiones;}
+  
    //devuelve su nombre completo concatenando nombre y apellido
    public String getNombreCompleto(){return nombre+" "+apellido;}
-  //metodo para agregar una comision a la lista de comisiones del docente
-   public void agregarComision(Comision comision){
-       this.listaComisiones.add(comision);
-   }
+  
+   //metodo para agregar una comision a la lista de comisiones del docente
+   public void agregarComision(Comision comision) {
+        if (comision != null && !listaComisiones.contains(comision)) { //para que no se agreguen comisiones repetidas
+            listaComisiones.add(comision);
+        }
+    }
+    
+    //metodo para eliminar una comision de la lista de comisiones del docente
+     public boolean eliminarComision(Comision comision) {
+        return listaComisiones.remove(comision);
+    }
 
 }
