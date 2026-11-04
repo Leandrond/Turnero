@@ -580,6 +580,18 @@ public class GestionTurnero {
         return null; // Retorna null si no se encuentra
     }
 
+    public Turnero obtenerTurnero(int codigoComision, int codigoInstancia) {
+        Comision c = buscarComisionPorCodigo(codigoComision);
+        if (c != null) {
+            for (InstanciaEvaluativa instancia : c.getListaInstanciasEvaluativas()) {
+                if (instancia.getCodigo() == codigoInstancia) {
+                    return instancia.getTurnero();
+                }
+            }
+        }
+        return null;
+    }
+
 
 
 
