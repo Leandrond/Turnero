@@ -2,18 +2,15 @@ package Controllers;
 
 import Models.Alumno;
 import Models.Comision;
+import Models.DefensaParcial;
 import Models.Docente;
-import Models.Estado;
+import Models.ExamenFinal;
+import Models.Grupo;
+import Models.InstanciaEvaluativa;
 import Models.Materia;
 import Models.PresentacionTPI;
-import Models.Grupo;
-import Models.DefensaParcial;
-import Models.ExamenFinal;
-import Models.InstanciaEvaluativa;
-import Models.Turno;
 import Models.Turnero;
-
-import java.lang.reflect.Array;
+import Models.Turno;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -339,26 +336,79 @@ public class GestionTurnero {
         }
     }
 
-    public void crearDefensaParcial(Comision comisionEncontrada, String fecha, String hora, double duracionEstimada, int codigoDeInstancia, Docente docente, Turnero turnero) { 
-        
-       new DefensaParcial( fecha, hora, duracionEstimada, comisionEncontrada, docente, codigoDeInstancia, turnero);              
-    }
+
+    public void crearDefensaParcial(
+        Comision comisionEncontrada, String fecha, String hora,
+        double duracionEstimada, int codigoDeInstancia,
+        Docente docente, Turnero turnero) {
+
+    InstanciaEvaluativa instancia = new DefensaParcial(
+        "Defensa Parcial",
+        LocalDate.parse(fecha),
+        LocalTime.parse(hora),
+        duracionEstimada,
+        comisionEncontrada,
+        docente,
+        codigoDeInstancia,
+        turnero
+    );
+    // lo agregamos a la lista de instancias evaluativas de la comision, porque la comision es la que tiene la lista de instancias evaluativas
+    comisionEncontrada.agregarInstanciaEvaluativa(instancia);
+}
       
 
-    public void crearExamenFinal(Comision comisionEncontrada, LocalDate fecha, LocalTime hora ,double duracionEstimada, Docente docente, int codigoDeInstancia, Turnero turnero) {
-        
-       InstanciaEvaluativa inst= new ExamenFinal("Examen Final", fecha, hora, duracionEstimada, comisionEncontrada, docente, codigoDeInstancia, turnero);
-       //1. Crear tipo de examen según el tipo recibido (1,2,3) y asignarle la modalidad, fecha y hora.
-       // esta instancia puede tener mas de 1 docente 
-       // preguntamos si se quiere agregar otro docente y lo agregamos a la lista de docentes de la instancia evaluativa
+        // public void crearExamenFinal(Comision comisionEncontrada, LocalDate fecha, LocalTime hora ,double duracionEstimada, Docente docente, int codigoDeInstancia, Turnero turnero) {
+            
+        // InstanciaEvaluativa inst= new ExamenFinal("Examen Final", fecha, hora, duracionEstimada, comisionEncontrada, docente, codigoDeInstancia, turnero);
+        // //1. Crear tipo de examen según el tipo recibido (1,2,3) y asignarle la modalidad, fecha y hora.
+        // // esta instancia puede tener mas de 1 docente 
+        // // preguntamos si se quiere agregar otro docente y lo agregamos a la lista de docentes de la instancia evaluativa
 
-    }
-    public void crearPresentacionTPI(Comision comisionEncontrada, LocalDate fecha, LocalTime hora ,double duracionEstimada, Docente docente, int codigoDeInstancia, Turnero turnero) {
+        // }
+    
+    public void crearExamenFinal(
+        Comision comisionEncontrada, String fecha, String hora,
+        double duracionEstimada, int codigoDeInstancia,
+        Docente docente, Turnero turnero) {
+
+    InstanciaEvaluativa instancia = new ExamenFinal(
+        "Examen Final",
+        LocalDate.parse(fecha),
+        LocalTime.parse(hora),
+        duracionEstimada,
+        comisionEncontrada,
+        docente,
+        codigoDeInstancia,
+        turnero
+    );
+    // lo agregamos a la lista de instancias evaluativas de la comision, porque la comision es la que tiene la lista de instancias evaluativas
+    comisionEncontrada.agregarInstanciaEvaluativa(instancia);}
+    // public void crearPresentacionTPI(Comision comisionEncontrada, LocalDate fecha, LocalTime hora ,double duracionEstimada, Docente docente, int codigoDeInstancia, Turnero turnero) {
         
-        InstanciaEvaluativa instancia3= new PresentacionTPI("Presentacion TPI", fecha, hora, duracionEstimada, comisionEncontrada, docente, codigoDeInstancia, turnero);              
+    //     InstanciaEvaluativa instancia3= new PresentacionTPI("Presentacion TPI", fecha, hora, duracionEstimada, comisionEncontrada, docente, codigoDeInstancia, turnero);              
        
-       //1. Crear tipo de examen según el tipo recibido (1,2,3) y asignarle la modalidad, fecha y hora.
+    //    //1. Crear tipo de examen según el tipo recibido (1,2,3) y asignarle la modalidad, fecha y hora.
+    // }
+
+    public void crearPresentacionTPI(
+        Comision comisionEncontrada, String fecha, String hora,
+        double duracionEstimada, int codigoDeInstancia,
+        Docente docente, Turnero turnero) {
+    InstanciaEvaluativa instancia = new PresentacionTPI(
+        "Presentacion TPI",
+        LocalDate.parse(fecha),
+        LocalTime.parse(hora),
+        duracionEstimada,
+        comisionEncontrada,
+        docente,
+        codigoDeInstancia,
+        turnero
+    );
+    // lo agregamos a la lista de instancias evaluativas de la comision, porque la comision es la que tiene la lista de instancias evaluativas
+    comisionEncontrada.agregarInstanciaEvaluativa(instancia);
     }
+
+
     public Turnero obtenerTurnero(int codigoComision, int codigoInstancia) {
 
     Comision c = buscarComisionPorCodigo(codigoComision);
@@ -482,9 +532,53 @@ public class GestionTurnero {
         }
     }
 
+    public void validacionDocente(String docente) {
+        // Verificar si el docente existe en la lista de docentes
+        boolean docenteValido = false;
+        for (Docente d : listaDocentes) {
+            if (d.getNombreCompleto().equalsIgnoreCase(docente)) {
+                docenteValido = true;
+                break;
+            }
+        }
 
+        if (!docenteValido) {
+            System.out.println("El docente ingresado no está registrado. Por favor, registre al docente antes de continuar.");
+            // Aquí podrías agregar lógica para registrar al docente si es necesario
+            registrarDocenteSiNoExiste(docente.split(" ")[0], docente.split(" ")[1], ""); // Asumiendo que el legajo se puede dejar vacío o se puede solicitar al usuario
+        }
+    }
 
+    // metodo para registrar docente si no esta validado
+    public void registrarDocenteSiNoExiste(String nombre, String apellido, String legajo) {
+        boolean docenteExistente = false;
+        for (Docente d : listaDocentes) {
+            if (d.getNombreCompleto().equalsIgnoreCase(nombre + " " + apellido)) {
+                docenteExistente = true;
+                break;
+            }
+        }
 
+        if (!docenteExistente) {
+            registrarDocente(nombre, apellido, legajo);
+            System.out.println("Docente registrado: " + nombre + " " + apellido + ", Legajo: " + legajo);
+            // lo agregamos a la lista de docentes
+            listaDocentes.add(new Docente(nombre, apellido, legajo));
+               
+        } else {
+            System.out.println("El docente ya está registrado en el sistema.");
+        }
+    }
+    // buscamos el docente y traemos el objoeto docente 
+    public Docente busquedaDocente(String docente) {
+        for (Docente d : listaDocentes) {
+            if (d.getNombreCompleto().equalsIgnoreCase(docente)) {
+                return d; // Retorna el objeto Docente si se encuentra
+            }
+        }
+        System.out.println("El docente ingresado no está registrado.");
+        return null; // Retorna null si no se encuentra
+    }
 
 
 

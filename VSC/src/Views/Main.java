@@ -599,7 +599,7 @@ public class Main {
         int tipo = teclado.nextInt();
         
         switch (tipo) {
-            case 1:
+            case 1: {
                 System.out.println("Fecha (AAAA-MM-DD): ");
                 String fecha = teclado.next();
                 System.out.println("Hora (HH:MM): ");
@@ -608,39 +608,50 @@ public class Main {
                 double duracionEstimada = teclado.nextDouble();
                 System.out.println("Codigo de instancia: ");
                 int codigoDeInstancia = teclado.nextInt();
-                gestion.crearDefensaParcial (comisionEncontrada, fecha,  hora,  duracionEstimada, codigoDeInstancia);
-                break;
-            case 2:
-                System.out.println("Fecha (AAAA-MM-DD): ");
-                fecha = teclado.next();
-                System.out.println("Hora (HH:MM): ");
-                hora = teclado.next();
-                System.out.println("Duracion estimada (en minutos): ");
-                duracionEstimada = teclado.nextDouble();
-                System.out.println("Codigo de instancia: ");
-                codigoDeInstancia = teclado.nextInt();
                 System.out.println("Docente: ");
                 String docente = teclado.next();
-                System.out.println("Turnero");
-                Turnero turnos = new Turnero();
-
-                gestion.crearExamenFinal(comisionEncontrada,"Examen Final", fecha, hora, duracionEstimada, turnos, docente, codigoDeInstancia, turnero);
+                gestion.validacionDocente(docente);
+                gestion.busquedaDocente(docente);
+                System.out.println("Turnero: ");
+                Turnero turnero = new Turnero();
+                gestion.crearDefensaParcial(comisionEncontrada, fecha, hora, duracionEstimada,codigoDeInstancia, docente, turnero);
                 break;
-            case 3:
+            }
+            case 2: {
                 System.out.println("Fecha (AAAA-MM-DD): ");
-                fecha = teclado.next();
+                String fecha = teclado.next();
                 System.out.println("Hora (HH:MM): ");
-                hora = teclado.next();
+                String hora = teclado.next();
                 System.out.println("Duracion estimada (en minutos): ");
-                duracionEstimada = teclado.nextDouble();
+                double duracionEstimada = teclado.nextDouble();
                 System.out.println("Codigo de instancia: ");
-                codigoDeInstancia = teclado.nextInt();
+                int codigoDeInstancia = teclado.nextInt();
+                System.out.println("Docente: ");
+                String docente = teclado.next();
+                gestion.validacionDocente(docente);
                 System.out.println("Turnero");
                 Turnero turnos = new Turnero();
-                System.out.println("Codigo de instancia: ");
-                codigoDeInstancia = teclado.nextInt();
-                gestion.crearPresentacionTPI(comisionEncontrada, "Presentacion TPI", fecha, hora, duracionEstimada, turnos, turnero, codigoDeInstancia); 
+                
+
+                gestion.crearExamenFinal(comisionEncontrada, fecha, hora, duracionEstimada, codigoDeInstancia, docente, turnos);
                 break;
+            }
+            case 3: {
+                System.out.println("Fecha (AAAA-MM-DD): ");
+                String fecha = teclado.next();
+                System.out.println("Hora (HH:MM): ");
+                String hora = teclado.next();
+                System.out.println("Duracion estimada (en minutos): ");
+                double duracionEstimada = teclado.nextDouble();
+                System.out.println("Codigo de instancia: ");
+                int codigoDeInstancia = teclado.nextInt();
+                System.out.println("Docente: ");
+                String docente = teclado.next();
+                gestion.validacionDocente(docente);
+                Turnero turnos = new Turnero();
+                gestion.crearPresentacionTPI(comisionEncontrada, fecha, hora, duracionEstimada, codigoDeInstancia,docente, turnos);
+                break;
+            }
             default:
                 System.out.println("Tipo de instancia no válido.");
         }
@@ -910,7 +921,7 @@ public class Main {
     //
     // Ese cambio no modifica el orden de la comision
     // ni la prioridad permanente de los alumnos.
-    static void cambiarOrdwrnos(GestionTurnero gestion) {
+    static void cambiarOrdenTurnos(GestionTurnero gestion) {
 
         System.out.println("\nCAMBIAR ORDEN DE TURNOS");
         System.out.println("\nCodigo de comision: ");
@@ -921,7 +932,7 @@ public class Main {
         int turno = teclado.nextInt();
         System.out.println("\nNueva posicion: ");
         int posicion = teclado.nextInt();
-        
+
         // Falta en GestionTurnero:
         // void cambiarOrdenTurno(int comision, int instancia,
         //     int turno, int posicion)
