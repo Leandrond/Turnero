@@ -580,23 +580,48 @@ public class GestionTurnero {
         return null; // Retorna null si no se encuentra
     }
 
-    public Turnero obtenerTurnero(int codigoComision, int codigoInstancia) {
-        Comision c = buscarComisionPorCodigo(codigoComision);
-        if (c != null) {
-            for (InstanciaEvaluativa instancia : c.getListaInstanciasEvaluativas()) {
-                if (instancia.getCodigo() == codigoInstancia) {
-                    return instancia.getTurnero();
+    public void cambiarOrdenTurno(int codigoComision, int codigoInstancia, int codigoTurno, int nuevaPosicion) {
+        // Busco el Turnero correspondiente a la comisión y la instancia
+        Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
+       
+        if (turnero != null) {
+            Turno turnoAMover = null;
+            
+            for (Turno t : turnero.getListaTurno()) { // Recorro la lista de turnos para encontrar el turno con el código proporcionado
+                if (t.getCodigoInstancia() == codigoTurno) { // Si el código del turno coincide, lo guardo en turnoAMover
+                    turnoAMover = t;
+                    break;
                 }
             }
+            // Verifico si se encontró el turno y cambio su orden en el Turnero
+            if (turnoAMover != null) {
+               
+                ArrayList<Turno> listaTurnos = turnero.getListaTurno();
+                
+                if(nuevaPosicion >= 0 && nuevaPosicion < listaTurnos.size()){
+                    //Llamo a cambiarOrden del Turnero para cambiar la posicion del turno
+                    turnero.cambiarOrden(turnoAMover, nuevaPosicion);
+                    //Recalculo los horarios estimados porque cambio la posicion del turno
+                    turnero.calcularHorarios();
+                    System.out.println("Orden del turno cambiado correctamente.");
+                }else{
+                    
+                    System.out.println("La nueva posición proporcionada es inválida. Debe estar entre 0 y " + (listaTurnos.size() - 1) + ".");
+                }
+            }else{
+                System.out.println("No se encontró un turno con el código proporcionado en el Turnero.");
+            }
+        }else{
+            System.out.println("No se encontró un Turnero para la comisión y la instancia proporcionadas.");
+                    
         }
-        return null;
     }
-
-
-
-
-
-
 }
+
+
+
+
+
+
 
 
