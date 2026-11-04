@@ -339,9 +339,9 @@ public class GestionTurnero {
         }
     }
 
-    public void crearDefensaParcial(Comision comisionEncontrada, String fecha, String hora, double duracionEstimada, int codigoDeInstancia){ 
+    public void crearDefensaParcial(Comision comisionEncontrada, String fecha, String hora, double duracionEstimada, int codigoDeInstancia, Docente docente, Turnero turnero) { 
         
-        InstanciaEvaluativa instancia = new DefensaParcial( fecha, hora, duracionEstimada, comisionEncontrada, docente, codigoDeInstancia, turnero);              
+       new DefensaParcial( fecha, hora, duracionEstimada, comisionEncontrada, docente, codigoDeInstancia, turnero);              
     }
       
 
@@ -379,7 +379,7 @@ public class GestionTurnero {
 
     if (turneroEncontrado != null) {
         for (Turno t : turneroEncontrado.getListaTurno()) {
-            if (t.getCodigo() == turno) {
+            if (t.getCodigoInstancia() == turno) {
                 turneroEncontrado.cambiarOrden(t, posicion);
                 System.out.println("Orden del turno cambiado correctamente.");
                 return;
@@ -388,18 +388,16 @@ public class GestionTurnero {
 
     }
 }
-
-    public void modificarFechaInstancia(int codigoComision, int codigoInstancia, String nuevaFechaStr, String nuevaHoraStr){
+    //metodo para modificar la fecha y hora de una instancia evaluativa dependiendo su tipo (defensa parcial, presentacion TPI o examen final) y su codigo de instancia
+    public void modificarFechaInstancia(int codigoComision, int codigoInstancia, String nuevaFechaStr){
         //1. Busco la comision con el metodo auxiliar
         Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
 
         if(comisionEncontrada != null){
             //2. Convierto los String a LocalDate y LocalTime
             LocalDate nuevaFecha = LocalDate.parse(nuevaFechaStr);
-            LocalTime nuevaHora = LocalTime.parse(nuevaHoraStr);
 
             boolean instanciaEncontrada = false;
-        
 
             //3. Recorro las instancias de la comision para buscar la que coincide con el codigo
             if(comisionEncontrada.getListaInstanciasEvaluativas() != null){
@@ -407,7 +405,6 @@ public class GestionTurnero {
                     if(ins.getCodigo() == codigoInstancia){
                         //3. Si la encuentro, cambio la fecha y hora
                         ins.setFecha(nuevaFecha);
-                        ins.setHora(nuevaHora);
                         System.out.println("Fecha y hora de la instancia evaluativa modificadas correctamente.");
                         instanciaEncontrada = true;
                         break;
@@ -426,7 +423,7 @@ public class GestionTurnero {
             System.out.println("No se encontró la comisión con el código proporcionado.");
         }
     }        
-
+    
     public void modificarHoraInstancia(int codigoComision, int codigoInstancia, String nuevaHoraStr){
         //1. Busco la comision con el metodo auxiliar
         Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
@@ -443,7 +440,7 @@ public class GestionTurnero {
                 for(InstanciaEvaluativa ins : comisionEncontrada.getListaInstanciasEvaluativas()){
                     if(ins.getCodigo() == codigoInstancia){
                         //3. Si la encuentro, cambio la hora
-                        ins.setHora(nuevaHora);
+                        ins.setHoraInicio(nuevaHora);
                         System.out.println("Hora de la instancia evaluativa modificada correctamente.");
                         instanciaEncontrada = true;
                         break;

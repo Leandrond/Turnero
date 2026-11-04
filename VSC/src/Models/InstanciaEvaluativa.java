@@ -22,6 +22,8 @@ public abstract class InstanciaEvaluativa
         
     }
     // Getters
+    public abstract  int getCodigo();
+    
     public abstract String getTipo();
     public abstract LocalDate getFecha();
     public abstract LocalTime getHoraInicio();  

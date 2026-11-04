@@ -25,7 +25,10 @@ public class ExamenFinal extends InstanciaEvaluativa{
     public String getTipo() {
         return this.tipo;
     }
-
+    @Override
+    public int getCodigo() {
+        return codigo;
+    }
     @Override
     public LocalDate getFecha() {
         return this.fecha;

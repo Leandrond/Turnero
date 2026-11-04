@@ -583,63 +583,6 @@ public class Main {
     // Despues se carga la modalidad, fecha, hora de inicio
     // y cuanto tiempo se estima para cada turno.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // falta de aca para abajo cracks
-
-
-
-
-
-
-
-
-
-    
     static void crearInstancia(GestionTurnero gestion) {
         System.out.println("\nCREAR INSTANCIA EVALUATIVA");
         System.out.println("\nCodigo de comision: ");
@@ -752,11 +695,14 @@ public class Main {
     // aca solo llamo los metodos,
 
     static void modificarFechaInstancia(GestionTurnero gestion) {
-
-        int comision = leerEntero("Codigo de comision: ");
-        int instancia = leerEntero("Codigo de instancia: ");
-        String fecha = leerTexto("Nueva fecha AAAA-MM-DD: ");
-        String hora = leerTexto("Nueva hora HH:MM: ");
+        System.out.println("\nMODIFICAR FECHA Y HORA DE INSTANCIA EVALUATIVA");
+        System.out.println("\nCodigo de comision: ");
+        int comision = teclado.nextInt();
+        System.out.println("\nCodigo de instancia: ");
+        int codigoInstancia = teclado.nextInt();
+        System.out.println("\nNueva fecha (AAAA-MM-DD): ");
+        String nuevaFecha = teclado.next();
+        
 
         // Falta en GestionTurnero:
         // void modificarFechaInstancia(int codigoComision, int codigoInstancia, String nuevaFecha, String nuevaHora)
@@ -766,15 +712,19 @@ public class Main {
         //REVISAR
         // Cuando este hecho, se descomenta. LISTO(CREO)
 
-        gestion.modificarFechaInstancia(comision, instancia, fecha, hora);
+        gestion.modificarFechaInstancia(comision, codigoInstancia, nuevaFecha);
         
     }
 
     static void modificarHoraInstancia(GestionTurnero gestion) {
 
-        int comision = leerEntero("Codigo de comision: ");
-        int instancia = leerEntero("Codigo de instancia: ");
-        String hora = leerTexto("Nueva hora HH:MM: ");
+        System.out.println("\nMODIFICAR HORA DE INSTANCIA EVALUATIVA");
+        System.out.println("\nCodigo de comision: ");
+        int comision = teclado.nextInt();
+        System.out.println("\nCodigo de instancia: ");
+        int codigoInstancia = teclado.nextInt();
+        System.out.println("\nNueva hora (HH:MM): ");
+        String nuevaHora = teclado.next();
 
         // Falta en GestionTurnero:
         // void modificarHoraInstancia(int codigoComision, int codigoInstancia, String nuevaHora)
@@ -784,17 +734,18 @@ public class Main {
         //
         // Cuando este hecho, se descomenta.
         //REVISAR
-         gestion.modificarHoraInstancia(comision, instancia, hora);
+         gestion.modificarHoraInstancia(comision, codigoInstancia, nuevaHora);
         
     }
-    
 
     // Muestra las instancias evaluativas de una comision.
     // Sirve para consultar las evaluaciones que se programaron
     // y elegir cual se quiere ejecutar.
     static void listarInstancias(GestionTurnero gestion) {
 
-        int codigo = leerEntero("Codigo de comision: ");
+        System.out.println("\nLISTAR INSTANCIAS EVALUATIVAS");
+        System.out.println("\nCodigo de comision: ");
+        int codigo = teclado.nextInt();
 
         // Falta en GestionTurnero:
         // void listarInstanciasEvaluativas(int codigoComision)
@@ -810,7 +761,65 @@ public class Main {
 
          gestion.listarInstanciasEvaluativas(codigo);
     }
+    
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // falta de aca para abajo cracks
+
+
+
+
+
+
+
+
+
+    
     // Ejecuta una instancia evaluativa que ya esta creada.
     // Muestra el primer turno que siga en estado Evaluando.
     // Cuando el docente termina, marca Finalizado o Ausente.
@@ -824,10 +833,13 @@ public class Main {
     // no queda nadie por evaluar y termina la instancia.
     static void ejecutarEvaluacion(GestionTurnero gestion) {
 
-        int comision = leerEntero("Codigo de comision: ");
-        int instancia = leerEntero("Codigo de instancia: ");
+        System.out.println("\nEJECUTAR INSTANCIA EVALUATIVA");
+        System.out.println("\nCodigo de comision: ");
+        int comision = teclado.nextInt();
+        System.out.println("\nCodigo de instancia: ");
+        int instancia = teclado.nextInt();
 
-        // Este bloque queda comentado porque faltan los
+        // Este bloque qweda comentado porque faltan los
         // metodos para encontrar la instancia, guardar la nota
         // y cambiar manualmente el estado de cada turno.
         //
@@ -898,13 +910,18 @@ public class Main {
     //
     // Ese cambio no modifica el orden de la comision
     // ni la prioridad permanente de los alumnos.
-    static void cambiarOrdenTurnos(GestionTurnero gestion) {
+    static void cambiarOrdwrnos(GestionTurnero gestion) {
 
-        int comision = leerEntero("Codigo de comision: ");
-        int instancia = leerEntero("Codigo de instancia: ");
-        int turno = leerEntero("Codigo de turno: ");
-        int posicion = leerEntero("Nueva posicion: ");
-
+        System.out.println("\nCAMBIAR ORDEN DE TURNOS");
+        System.out.println("\nCodigo de comision: ");
+        int comision = teclado.nextInt();
+        System.out.println("\nCodigo de instancia: ");
+        int instancia = teclado.nextInt();
+        System.out.println("\nCodigo de turno: ");
+        int turno = teclado.nextInt();
+        System.out.println("\nNueva posicion: ");
+        int posicion = teclado.nextInt();
+        
         // Falta en GestionTurnero:
         // void cambiarOrdenTurno(int comision, int instancia,
         //     int turno, int posicion)
