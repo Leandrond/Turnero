@@ -1,5 +1,5 @@
+package Models;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Turnero
 {
@@ -10,11 +10,15 @@ public class Turnero
     public Turnero()
     {
         // initialise instance variables
+        turnos = new ArrayList<>();
         
     }
 
-    
-    public void addTurno(Turno turno)
+    public ArrayList<Turno> getTurnero()
+    {
+        return this.turnos;
+    }
+    public void agregarTurno(Turno turno)
     {
         turnos.add(turno);
         
@@ -45,4 +49,21 @@ public class Turnero
         return null;
     }
     
+    public void ordenarTurnosPorPrioridad(){
+        // Implementation for ordering turns by priority
+        turnos.sort((t1, t2) -> Boolean.compare(t2.getPrioridad(), t1.getPrioridad()));
     }
+    
+    public void calcularHorarios(){
+        // Implementation for calculating time slots
+        // llamar un metodo del turno para calcular se duracion
+    }
+
+    }
+
+
+
+    //HACER
+
+    
+    

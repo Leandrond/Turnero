@@ -1,0 +1,12 @@
+- docente
+- docente crea comision
+- comision carga los alumnos 
+- docente genera los grupos si lo necesita
+- caga la instancia evaluatica y se cargan solo sus estados
+- se generan los turnos
+- se asigna a alumnos o a grupos
+- se genera la instancia evaluativa 
+- se genera la prioriadad
+- se genera una instancia en donde te dice quien o quienes siguen en el turno
+- se genera el turnero 
+- en turnero cambia prioriadad solo
