@@ -1,19 +1,12 @@
 
 package Views;
 // import 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Scanner;
 import Controllers.GestionTurnero;
 import Models.Comision;
-import Models.DefensaParcial;
 import Models.Docente;
-import Models.Estado;
-import Models.ExamenFinal;
-import Models.Turno;
 import Models.Materia;
-import Models.PresentacionTPI;
 import Models.Turnero;
+import java.util.Scanner;
 
 // Main
 
@@ -37,7 +30,21 @@ public class Main {
 
         int opcion;
         do {
+
+
             System.out.println("\nTURNERO");
+
+            System.out.println("Registro del docente");
+            System.out.println("Ingrese nombre del docente: ");
+            String nombre = teclado.nextLine();
+            System.out.println("Ingrese apellido del docente: ");
+            String apellido = teclado.nextLine();
+            System.out.println("Ingrese legajo del docente: ");
+            String legajo = teclado.nextLine();
+            gestion.registrarDocente(nombre, apellido, legajo);
+
+            System.out.println("\n==============================================================0");
+            System.out.println("\nMENU PRINCIPAL");
             System.out.println("1. Comisiones");
             System.out.println("2. Instancias evaluativas");
             System.out.println("0. Salir");
@@ -153,9 +160,12 @@ public class Main {
     // y a la materia que se esta dictando, porque un docente tiene mas de una comision
     // y mas de una materia.
     static void crearComision(GestionTurnero gestion) {
-        System.out.println("\nCodigo\nNombre\nMateria");
+        System.out.println("\nCodigo");
         int codigo = teclado.nextInt();
+        teclado.nextLine(); // consume el Enter pendiente, sirbe por si tenes un enter antes
+        System.out.println("\nNombre");
         String nombre = teclado.nextLine();
+        System.out.println("\nMateria");
         String materia = teclado.nextLine();
         
         // Tiene que crear la comision y agregarla a las que
@@ -312,7 +322,8 @@ public class Main {
     // Primero pide la comision porque los grupos se arman
     // con alumnos que ya pertenecen a esa comision.
     static void menuGrupos(GestionTurnero gestion) {
-
+        System.out.println("\nADMINISTRAR GRUPOS");
+        System.out.println("\nCodigo de comision: ");
         int codigo = teclado.nextInt();
         int opcion;
 
@@ -611,10 +622,9 @@ public class Main {
                 System.out.println("Docente: ");
                 String docente = teclado.next();
                 gestion.validacionDocente(docente);
-                gestion.busquedaDocente(docente);
                 System.out.println("Turnero: ");
                 Turnero turnero = new Turnero();
-                gestion.crearDefensaParcial(comisionEncontrada, fecha, hora, duracionEstimada,codigoDeInstancia, docente, turnero);
+                gestion.crearDefensaParcial(comisionEncontrada, fecha, hora, duracionEstimada,codigoDeInstancia, gestion.busquedaDocente(docente), turnero);
                 break;
             }
             case 2: {
@@ -633,7 +643,7 @@ public class Main {
                 Turnero turnos = new Turnero();
                 
 
-                gestion.crearExamenFinal(comisionEncontrada, fecha, hora, duracionEstimada, codigoDeInstancia, docente, turnos);
+                gestion.crearExamenFinal(comisionEncontrada, fecha, hora, duracionEstimada, codigoDeInstancia, gestion.busquedaDocente(docente), turnos);
                 break;
             }
             case 3: {
@@ -649,7 +659,7 @@ public class Main {
                 String docente = teclado.next();
                 gestion.validacionDocente(docente);
                 Turnero turnos = new Turnero();
-                gestion.crearPresentacionTPI(comisionEncontrada, fecha, hora, duracionEstimada, codigoDeInstancia,docente, turnos);
+                gestion.crearPresentacionTPI(comisionEncontrada, fecha, hora, duracionEstimada, codigoDeInstancia, gestion.busquedaDocente(docente), turnos);
                 break;
             }
             default:
