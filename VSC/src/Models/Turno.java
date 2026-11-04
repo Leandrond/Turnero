@@ -1,5 +1,4 @@
 package Models;
-import java.util.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -21,7 +20,10 @@ public class Turno
         this.hora=hora;
         this.estado=Estado.Evaluando;
     }
-    
+    public int getCodigoInstancia()
+    {
+        return instancia.getCodigo();
+    }
     public Alumno getAlumno()
     {
         return alumno;

@@ -27,7 +27,10 @@ public class PresentacionTPI extends InstanciaEvaluativa{
     public LocalDate getFecha() {
         return this.fecha;
     }
-
+    @Override
+    public int getCodigo() {
+        return codigo;
+    }
     @Override
     public LocalTime getHoraInicio() {
         return this.horaInicio;
