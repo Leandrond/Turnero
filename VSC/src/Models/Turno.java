@@ -35,10 +35,10 @@ public class Turno
         return instancia;
     }
 
-    public int getCodigoInstancia()
-    {
-        return instancia.getCodigo();
-    }
+    // public int getCodigoInstancia()
+    // {
+    //     return instancia.getCodigo();
+    // }
 
     
     public Alumno getAlumno()

@@ -135,8 +135,7 @@ public class Main {
                 opcion = teclado.nextInt();            
             }while (opcion!=1);} 
             else{ opcion = teclado.nextInt();}
-
-            
+          
             
             switch (opcion) {
                 case 1:
@@ -221,14 +220,6 @@ public class Main {
         int codigo =  teclado.nextInt();  
 
 
-        //validamos que haya un alunos antes de poder hacer algo
-        if (!gestion.validarAlumnos(codigo)){
-        do{                
-            System.out.println("\n Ingrese 1");
-            opcion = teclado.nextInt();            
-        }while (opcion!=1);} 
-        else{ opcion = teclado.nextInt();}
-
         do {
             System.out.println("\nALUMNOS");
             System.out.println("1. Agregar alumno");
@@ -237,6 +228,13 @@ public class Main {
             System.out.println("4. Dar de baja alumno");
             System.out.println("0. Volver");
 
+            //validamos que haya un alunos antes de poder hacer algo
+            if (!gestion.validarAlumnos(codigo)){
+            do{                
+                System.out.println("\n Ingrese 1");
+                opcion = teclado.nextInt();            
+            }while (opcion!=1);} 
+            else{ opcion = teclado.nextInt();}
             opcion = teclado.nextInt();
 
             switch (opcion) {
@@ -360,7 +358,14 @@ public class Main {
             System.out.println("5. Cambiar cupo maximo de grupo");
             System.out.println("0. Volver");
 
-            opcion = teclado.nextInt();
+            //validamos que haya una comision antes de poder hacer algo
+            if (!gestion.validarGrupos()){
+            do{                
+                System.out.println("\n Ingrese 1");
+                opcion = teclado.nextInt();            
+            }while (opcion!=1);} 
+            else{ opcion = teclado.nextInt();}
+
 
             switch (opcion) {
                 case 1:
