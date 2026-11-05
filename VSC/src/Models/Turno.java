@@ -1,18 +1,20 @@
 package Models;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.text.SimpleDateFormat;
+
 
 public class Turno
 {
     /**Atributos**/
     private static int contador = 1; //lo uso para que cada turno tenga su propio numero
-    private int numero;
-    private InstanciaEvaluativa instancia;
-    private Alumno alumno;
+    private int numero; 
+    private InstanciaEvaluativa instancia; //instancia evaluativa a la que pertenece el turno
+    private Alumno alumno; //se carga solo si el turno es de un alumno (individual)
+    private Grupo grupo; //se carga solo si el turno es de un grupo (grupal)
+    private Comision comision; //se carga solo si el turno es de un grupo (general)
     private LocalDate fecha;
     private LocalTime hora;
-    private Estado estado;
+    private Estado estado; //Evaluando, Finalizado o Ausente (arranca en Evaluando)
     private boolean tienePrioridad;
     private String motivoPrioridad;
     
@@ -27,10 +29,18 @@ public class Turno
         this.hora=hora;
         this.estado=Estado.Evaluando;
     }
+
+    public InstanciaEvaluativa getInstancia()
+    {
+        return instancia;
+    }
+
     public int getCodigoInstancia()
     {
         return instancia.getCodigo();
     }
+
+    
     public Alumno getAlumno()
     {
         return alumno;
@@ -60,10 +70,8 @@ public class Turno
     
     //Devuelvo la fecha y la hora juntas en un texto, ej: 2026-09-20 10:30
     public String getFechaHora(){
-        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-        String fechaTexto = formato.format(fecha);
-        String horaTexto = hora.toString();
-        return fechaTexto + " " + horaTexto;
+        return fecha + " " + hora;
+
     }
     
     //este metodo nos sirve para ver si esta en estado "Evaluando" si da true
