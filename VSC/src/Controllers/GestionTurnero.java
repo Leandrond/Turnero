@@ -429,7 +429,7 @@ public class GestionTurnero {
 
     if (turneroEncontrado != null) {
         for (Turno t : turneroEncontrado.getListaTurno()) {
-            if (t.getCodigoInstancia() == turno) {
+            if (t.getInstancia().getCodigoDeInstancia() == turno) {
                 turneroEncontrado.cambiarOrden(t, posicion);
                 System.out.println("Orden del turno cambiado correctamente.");
                 return;
@@ -580,8 +580,9 @@ public class GestionTurnero {
         return null; // Retorna null si no se encuentra
     }
 
+
     public void cambiarOrdenTurno(int codigoComision, int codigoInstancia, int codigoTurno, int nuevaPosicion) {
-<<<<<<< HEAD
+
         // Busco el Turnero correspondiente a la comisión y la instancia
         Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
        
@@ -617,7 +618,7 @@ public class GestionTurnero {
                     
         }
     }
-=======
+
             // Busco el Turnero correspondiente a la comisión y la instancia
             Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
         
@@ -654,12 +655,79 @@ public class GestionTurnero {
                         
             }
             
+
+    // en el menu de instancias evaluativas, validamos que haya comisiones cargadas antes de permitir crear instancias evaluativas
+    public boolean validarComisiones() {
+        if (this.listaComisiones.isEmpty()) {
+            System.out.println("No hay comisiones cargadas. Por favor, registre al menos una comisión .");
+            return false;
+     }
+        return true;
+    }
+    // en el menu de registro de docentes, validamos que haya docentes cargados
+    public boolean validarnDocente() {
+        if (this.listaDocentes.isEmpty()) {
+            System.out.println("No hay docentes cargados. Por favor, registre al menos un docente.");
+            return false;
         }
+        return true;
+    }
+
+    public boolean validarAlumnos(int codigo){
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigo);
+        if (comisionEncontrada .getListaAlumnos() != null)
+            {return true;}
+        return false;
+
+    }
+
+    // public void cambiarOrdenTurno(int codigoComision, int codigoInstancia, int codigoTurno, int nuevaPosicion) {
+    //         // Busco el Turnero correspondiente a la comisión y la instancia
+    //         Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
+        
+    //         if (turnero != null) {
+    //             Turno turnoAMover = null;
+                
+    //             for (Turno t : turnero.getListaTurno()) { // Recorro la lista de turnos para encontrar el turno con el código proporcionado
+    //                 if (t.getInstancia().getCodigoDeInstancia() == codigoTurno) { // Si el código del turno coincide, lo guardo en turnoAMover
+    //                     turnoAMover = t;
+    //                     break;
+    //                 }
+    //             }
+
+    //             // Verifico si se encontró el turno y cambio su orden en el Turnero
+    //             if (turnoAMover != null) {
+                
+    //                 ArrayList<Turno> listaTurnos = turnero.getListaTurno();
+                    
+    //                 if(nuevaPosicion >= 0 && nuevaPosicion < listaTurnos.size()){
+    //                     //Llamo a cambiarOrden del Turnero para cambiar la posicion del turno
+    //                     turnero.cambiarOrden(turnoAMover, nuevaPosicion);
+    //                     //Recalculo los horarios estimados porque cambio la posicion del turno
+    //                     turnero.calcularHorarios();
+    //                     System.out.println("Orden del turno cambiado correctamente.");
+    //                 }else{
+                        
+    //                     System.out.println("La nueva posición proporcionada es inválida. Debe estar entre 0 y " + (listaTurnos.size() - 1) + ".");
+    //                 }
+    //             }else{
+    //                 System.out.println("No se encontró un turno con el código proporcionado en el Turnero.");
+    //             }
+    //         }else{
+    //             System.out.println("No se encontró un Turnero para la comisión y la instancia proporcionadas.");
+                        
+    //         }
+            
+    //     }
 
 
 
 
->>>>>>> 11901613b03fc9744ea6e2ccec85f56b58a65204
+
+    // public Boolean validarGrupos(){
+        
+    // }
+
 }
 
 
