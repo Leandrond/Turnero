@@ -30,6 +30,18 @@ public class Turno
         this.estado=Estado.Evaluando;
     }
 
+      public Turno(InstanciaEvaluativa instancia, Grupo grupo, LocalDate fecha, LocalTime hora)
+    {
+        this.numero = contador;
+        contador = contador + 1; //despues de usarlo le sumo 1 para el proximo turno
+        this.instancia=instancia;
+        this.grupo=grupo;
+        this.fecha=fecha;
+        this.hora=hora;
+        this.estado=Estado.Evaluando;
+    }
+
+
     public InstanciaEvaluativa getInstancia()
     {
         return instancia;
