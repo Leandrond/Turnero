@@ -259,9 +259,7 @@ public class Main {
     // de armar los grupos o generar una evaluacion.
     static void listarAlumnos(GestionTurnero gestion, int codigo) {
 
-        // Falta en GestionTurnero:
-        // void listarAlumnos(int codigoComision)
-        //
+        
         // Tiene que buscar la comision y recorrer los alumnos
         // que devuelve Comision.getListaAlumnos(), que ya existe.
         // Tiene que mostrar por lo menos el legajo de cada uno.
@@ -635,6 +633,17 @@ public class Main {
 
 
 
+/*  FALTANTES:
+    1-Crear instancia de defensa parcial
+    2-Crear instancia de examen final
+    3-Crear instancia de presentacion TPI
+    4-Crear comision. Diferenciar entre Alumno y Grupos
+    5-Modificar la ejecucion de la evaluacion
+    6- 
+    
+*/
+
+
 
 
 
@@ -665,7 +674,7 @@ public class Main {
                 double duracionEstimada = teclado.nextDouble();
                 System.out.println("Codigo de instancia: ");
                 int codigoDeInstancia = teclado.nextInt();
-                gestion.crearDefensaParcial (comisionEncontrada, fecha,  hora,  duracionEstimada, codigoDeInstancia);
+                gestion.crearDefensaParcial (comisionEncontrada, fecha,  hora,  duracionEstimada, codigoDeInstancia, docente, turnero);
                 break;
             case 2:
                 System.out.println("Fecha (AAAA-MM-DD): ");
@@ -719,21 +728,21 @@ public class Main {
         // Actualmente solamente recibe un Alumno.
         //
         // Falta en Grupo:
-        // int contarAlumnosPrioritarios()
+        // int contarAlumnosPrioritarios(). LISTO
         //
         // Tiene que recorrer sus integrantes, consultar
         // la prioridad de cada Alumno y devolver cuantos
         // tienen prioridad.
         //
         // Falta en Turnero:
-        // void ordenarPorPrioridad()
+        // void ordenarPorPrioridad().LISTO 
         //
         // Tiene que poner primero los alumnos prioritarios.
         // En las evaluaciones grupales, los grupos con mas
         // integrantes prioritarios tienen que ir primero.
         //
         // Tambien falta en Turnero:
-        // void calcularHorarios()
+        // void calcularHorarios().FALTA
         //
         // Tiene que calcular la hora estimada de cada turno
         // usando la hora de inicio y los minutos configurados.
@@ -824,33 +833,84 @@ public class Main {
     // no queda nadie por evaluar y termina la instancia.
     static void ejecutarEvaluacion(GestionTurnero gestion) {
 
-        int comision = leerEntero("Codigo de comision: ");
-        int instancia = leerEntero("Codigo de instancia: ");
+        System.out.println("\nEJECUTAR EVALUACION");
+        System.out.println("\nCodigo de comision: ");
+        int codigoComision = teclado.nextInt();
+        System.out.println("\nCodigo de instancia: ");
+        int codigoInstancia = teclado.nextInt();
 
-        // Este bloque queda comentado porque faltan los
-        // metodos para encontrar la instancia, guardar la nota
-        // y cambiar manualmente el estado de cada turno.
-        //
-        // Falta en GestionTurnero:
-        // Turnero obtenerTurnero(int codigoComision, int codigoInstancia)
-        //
-        // Tiene que buscar la instancia de esa comision
-        // y devolver el Turnero que le corresponde.
-        //
-        // Falta en Turno:
-        // void setEstado(Estado estado)
-        //
-        // Tiene que cambiar el estado a Finalizado o Ausente
-        // segun lo que indique el docente.
-        //
-        // Tambien falta definir donde se guarda la nota.
-        // Si se guarda en Turno, hace falta:
-        // void setNota(double nota)
-        //
-        // Turnero.siguienteTurno() ya existe.
-        // Devuelve el primer turno en Evaluando o null
-        // cuando ya no encuentra ninguno.
-        //
+        
+        
+        Turnero turnero = gestion.obtenerTurnero(codigoComision, codigoInstancia);
+
+        if(turnero.getTurnoActual().getInstancia().getTipo() == "Defensa Parcial"){
+
+            int tipoTurnero = 1;
+
+        } else if(turnero.getTurnoActual().getInstancia().getTipo() == "Examen Final"){
+            int tipoTurnero = 1;
+            
+        } else if(turnero.getTurnoActual().getInstancia().getTipo() == "Presentacion TPI"){
+
+            int tipoTurnero = 2;
+        }
+
+        switch (tipoTurnero) {
+            case 1:
+                    System.out.println("\nMENU EVALUACION");
+                    System.out.println("1. Siguiente turno");
+                    System.out.println("2. Marcar como ausente");
+
+                    int opcion = teclado.nextInt();
+
+                    switch (opcion) {
+                        case 1:
+                        
+                            gestion.siguienteTurno(codigoComision, codigoInstancia);
+
+                            break;
+                        
+                        case 2:
+
+                            gestion.ponerAusente(codigoComision, codigoInstancia);
+                            break;
+
+                        default:
+                            break;
+                    }
+                break;
+
+            case 2:
+                
+                    
+                break;
+        
+            default:
+                break;
+        }
+
+        System.out.println("\nMENU EVALUACION");
+        System.out.println("1. Siguiente turno");
+        System.out.println("2. Marcar como ausente");
+
+        int opcion = teclado.nextInt();
+
+        switch (opcion) {
+            case 1:
+               
+                gestion.siguienteTurno(codigoComision, codigoInstancia);
+
+                break;
+            
+            case 2:
+
+                gestion.ponerAusente(codigoComision, codigoInstancia);
+                break;
+
+            default:
+                break;
+        }
+
         // Para evaluaciones grupales o generales tambien
         // falta poder mostrar el grupo o la comision,
         // porque actualmente Turno solo tiene getAlumno().
@@ -900,31 +960,18 @@ public class Main {
     // ni la prioridad permanente de los alumnos.
     static void cambiarOrdenTurnos(GestionTurnero gestion) {
 
-        int comision = leerEntero("Codigo de comision: ");
-        int instancia = leerEntero("Codigo de instancia: ");
-        int turno = leerEntero("Codigo de turno: ");
-        int posicion = leerEntero("Nueva posicion: ");
+        System.out.println("\nCAMBIAR ORDEN DE TURNOS");
+        System.out.println("\nCodigo de comision: ");
+        int codigoComision = teclado.nextInt();
+        System.out.println("\nCodigo de instancia: ");
+        int codigoInstancia = teclado.nextInt();
+        System.out.println("\nCodigo de turno: ");
+        int codigoTurno = teclado.nextInt();
+        System.out.println("\nNueva posicion: ");
+        int nuevaPosicion = teclado.nextInt();
 
-        // Falta en GestionTurnero:
-        // void cambiarOrdenTurno(int comision, int instancia,
-        //     int turno, int posicion)
-        //
-        // Tiene que encontrar el Turnero de esa instancia
-        // y el turno que se quiere mover.
-        //
-        // Despues tiene que llamar a cambiarOrden(Turno, int),
-        // que ya existe en Turnero.
-        //
-        // Tambien tiene que comprobar que la posicion
-        // ingresada sea valida para no generar un error.
-        //
-        // Despues de mover el turno tiene que recalcular
-        // los horarios estimados, porque cambia el orden.
-        //
-        // Cuando este hecho, se descomenta.
+        gestion.cambiarOrdenTurno(codigoComision, codigoInstancia, codigoTurno, nuevaPosicion);
 
-        // gestion.cambiarOrdenTurno(
-        //     comision, instancia, turno, posicion);
     }
 }
 
