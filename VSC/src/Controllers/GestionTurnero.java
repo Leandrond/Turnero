@@ -429,7 +429,7 @@ public class GestionTurnero {
 
     if (turneroEncontrado != null) {
         for (Turno t : turneroEncontrado.getListaTurno()) {
-            if (t.getCodigoInstancia() == turno) {
+            if (t.getInstancia().getCodigoDeInstancia() == turno) {
                 turneroEncontrado.cambiarOrden(t, posicion);
                 System.out.println("Orden del turno cambiado correctamente.");
                 return;
@@ -579,6 +579,30 @@ public class GestionTurnero {
         System.out.println("El docente ingresado no está registrado.");
         return null; // Retorna null si no se encuentra
     }
+    // en el menu de instancias evaluativas, validamos que haya comisiones cargadas antes de permitir crear instancias evaluativas
+    public boolean validarComisiones() {
+        if (this.listaComisiones.isEmpty()) {
+            System.out.println("No hay comisiones cargadas. Por favor, registre al menos una comisión .");
+            return false;
+        }
+        return true;
+    }
+    // en el menu de registro de docentes, validamos que haya docentes cargados
+    public boolean validarnDocente() {
+        if (this.listaDocentes.isEmpty()) {
+            System.out.println("No hay docentes cargados. Por favor, registre al menos un docente.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validarAlumnos(int codigo){
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigo);
+        if (comisionEncontrada .getListaAlumnos() != null)
+            {return true;}
+        return false;
+
+    }
 
     public void cambiarOrdenTurno(int codigoComision, int codigoInstancia, int codigoTurno, int nuevaPosicion) {
             // Busco el Turnero correspondiente a la comisión y la instancia
@@ -618,10 +642,6 @@ public class GestionTurnero {
             }
             
         }
-
-
-
-
 }
 
 

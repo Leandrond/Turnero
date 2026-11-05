@@ -23,31 +23,38 @@ public class Main {
 
         GestionTurnero gestion = new GestionTurnero();
 
-        // Falta conectar el registro del docente.
-        // Los metodos que necesita estan explicados en registrarDocente().
-        // Cuando esten hechos, se descomenta esta llamada.
-        // registrarDocente(gestion);
+        
+        // validamos si no hay docentes cargados
+            if (!gestion.validarnDocente()) {
+                // en caso de que no haya docentes cargados, pedimos los datos para registrar uno
+                System.out.println("Registro del docente");
+                System.out.println("Ingrese nombre del docente: ");
+                String nombre = teclado.nextLine();
+                System.out.println("Ingrese apellido del docente: ");
+                String apellido = teclado.nextLine();
+                System.out.println("Ingrese legajo del docente: ");
+                String legajo = teclado.nextLine();
+                gestion.registrarDocente(nombre, apellido, legajo);
+                // y en caso de que si haya docentes cargados, continuamos 
+                }
+
 
         int opcion;
         do {
 
-
+            
+            
+        
             System.out.println("\nTURNERO");
 
-            System.out.println("Registro del docente");
-            System.out.println("Ingrese nombre del docente: ");
-            String nombre = teclado.nextLine();
-            System.out.println("Ingrese apellido del docente: ");
-            String apellido = teclado.nextLine();
-            System.out.println("Ingrese legajo del docente: ");
-            String legajo = teclado.nextLine();
-            gestion.registrarDocente(nombre, apellido, legajo);
+            
 
-            System.out.println("\n==============================================================0");
+            System.out.println("\n==============================================================");
             System.out.println("\nMENU PRINCIPAL");
             System.out.println("1. Comisiones");
             System.out.println("2. Instancias evaluativas");
             System.out.println("0. Salir");
+            System.out.println("\n\n==============================================================");
 
             opcion = teclado.nextInt();
             switch (opcion) {
@@ -121,9 +128,16 @@ public class Main {
             System.out.println("4. Administrar grupos");
             System.out.println("5. Prioridades de alumnos");
             System.out.println("0. Volver");
+            //validamos que haya una comision antes de poder hacer algo
+            if (!gestion.validarComisiones()){
+            do{                
+                System.out.println("\n Ingrese 1");
+                opcion = teclado.nextInt();            
+            }while (opcion!=1);} 
+            else{ opcion = teclado.nextInt();}
 
-            opcion = teclado.nextInt();
-
+            
+            
             switch (opcion) {
                 case 1:
                     crearComision(gestion);
@@ -202,8 +216,18 @@ public class Main {
     // se hagan sobre la lista de alumnos que corresponde.
     static void menuAlumnos(GestionTurnero gestion) {
 
-        int codigo = teclado.nextInt();
         int opcion;
+        System.out.println("Ingrese el codigo de Comision");
+        int codigo =  teclado.nextInt();  
+
+
+        //validamos que haya un alunos antes de poder hacer algo
+        if (!gestion.validarAlumnos(codigo)){
+        do{                
+            System.out.println("\n Ingrese 1");
+            opcion = teclado.nextInt();            
+        }while (opcion!=1);} 
+        else{ opcion = teclado.nextInt();}
 
         do {
             System.out.println("\nALUMNOS");
@@ -549,9 +573,11 @@ public class Main {
     // Permite crear una instancia, ver las que hay cargadas,
     // iniciar una evaluacion y cambiar el orden de sus turnos.
     static void menuEvaluaciones(GestionTurnero gestion) {
-
+        // validamos si no hay comisiones cargadas antes de permitir crear instancias evaluativas
+        if (!gestion.validarComisiones()) {
+            return;// con el return volvemos al menu principal        
+        }
         int opcion;
-
         do {
             System.out.println("\nINSTANCIAS EVALUATIVAS");
             System.out.println("1. Crear instancia");
@@ -587,6 +613,7 @@ public class Main {
             }
 
         } while (opcion != 0);
+
     }
 
     // Pide los datos para programar una instancia evaluativa.
