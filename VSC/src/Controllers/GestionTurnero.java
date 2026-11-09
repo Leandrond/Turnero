@@ -4,6 +4,7 @@ import Models.Alumno;
 import Models.Comision;
 import Models.DefensaParcial;
 import Models.Docente;
+import Models.Estado;
 import Models.ExamenFinal;
 import Models.Grupo;
 import Models.InstanciaEvaluativa;
@@ -411,33 +412,19 @@ public class GestionTurnero {
 
     public Turnero obtenerTurnero(int codigoComision, int codigoInstancia) {
 
-    Comision c = buscarComisionPorCodigo(codigoComision);
-
-    if (c != null) {
-        for (InstanciaEvaluativa instancia : c.getListaInstanciasEvaluativas()) {
-            if (instancia.getCodigo() == codigoInstancia) {
-                return instancia.getTurnero();
+        Comision c = buscarComisionPorCodigo(codigoComision);
+        if (c != null) {
+            for (InstanciaEvaluativa instancia : c.getListaInstanciasEvaluativas()) {
+                if (instancia.getCodigo() == codigoInstancia) {
+                    return instancia.getTurnero();
+                }
             }
         }
+        return null;
     }
-    return null;
-    }
 
-    public void cambiarOrdenTurno(int comision, int instancia, int turno, int posicion) {
 
-    Turnero turneroEncontrado = obtenerTurnero(comision, instancia);
 
-    if (turneroEncontrado != null) {
-        for (Turno t : turneroEncontrado.getListaTurno()) {
-            if (t.getCodigoInstancia() == turno) {
-                turneroEncontrado.cambiarOrden(t, posicion);
-                System.out.println("Orden del turno cambiado correctamente.");
-                return;
-            }
-        }
-
-    }
-}
     //metodo para modificar la fecha y hora de una instancia evaluativa dependiendo su tipo (defensa parcial, presentacion TPI o examen final) y su codigo de instancia
     public void modificarFechaInstancia(int codigoComision, int codigoInstancia, String nuevaFechaStr){
         //1. Busco la comision con el metodo auxiliar
@@ -569,6 +556,8 @@ public class GestionTurnero {
             System.out.println("El docente ya está registrado en el sistema.");
         }
     }
+    
+    
     // buscamos el docente y traemos el objoeto docente 
     public Docente busquedaDocente(String docente) {
         for (Docente d : listaDocentes) {
@@ -580,48 +569,159 @@ public class GestionTurnero {
         return null; // Retorna null si no se encuentra
     }
 
-    public void cambiarOrdenTurno(int codigoComision, int codigoInstancia, int codigoTurno, int nuevaPosicion) {
-            // Busco el Turnero correspondiente a la comisión y la instancia
-            Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
-        
-            if (turnero != null) {
-                Turno turnoAMover = null;
-                
-                for (Turno t : turnero.getListaTurno()) { // Recorro la lista de turnos para encontrar el turno con el código proporcionado
-                    if (t.getCodigoInstancia() == codigoTurno) { // Si el código del turno coincide, lo guardo en turnoAMover
-                        turnoAMover = t;
-                        break;
-                    }
-                }
 
-                // Verifico si se encontró el turno y cambio su orden en el Turnero
-                if (turnoAMover != null) {
+     public void cambiarOrdenTurno(int codigoComision, int codigoInstancia, int codigoTurno, int nuevaPosicion) {
+
+        // Busco el Turnero correspondiente a la comisión y la instancia
+        Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
+       
+        if (turnero != null) {
+            Turno turnoAMover = null;
+            
+            for (Turno t : turnero.getListaTurno()) { // Recorro la lista de turnos para encontrar el turno con el código proporcionado
+                if (t.getInstancia().getCodigoDeInstancia() == codigoTurno) { // Si el código del turno coincide, lo guardo en turnoAMover
+                    turnoAMover = t;
+                    break;
+                }
+            }
+            // Verifico si se encontró el turno y cambio su orden en el Turnero
+            if (turnoAMover != null) {
+               
+                ArrayList<Turno> listaTurnos = turnero.getListaTurno();
                 
-                    ArrayList<Turno> listaTurnos = turnero.getListaTurno();
-                    
-                    if(nuevaPosicion >= 0 && nuevaPosicion < listaTurnos.size()){
-                        //Llamo a cambiarOrden del Turnero para cambiar la posicion del turno
-                        turnero.cambiarOrden(turnoAMover, nuevaPosicion);
-                        //Recalculo los horarios estimados porque cambio la posicion del turno
-                        turnero.calcularHorarios();
-                        System.out.println("Orden del turno cambiado correctamente.");
-                    }else{
-                        
-                        System.out.println("La nueva posición proporcionada es inválida. Debe estar entre 0 y " + (listaTurnos.size() - 1) + ".");
-                    }
+                if(nuevaPosicion >= 0 && nuevaPosicion < listaTurnos.size()){
+                    //Llamo a cambiarOrden del Turnero para cambiar la posicion del turno
+                    turnero.cambiarOrden(turnoAMover, nuevaPosicion);
+                    //Recalculo los horarios estimados porque cambio la posicion del turno
+                    turnero.calcularHorarios();
+                    System.out.println("Orden del turno cambiado correctamente.");
                 }else{
-                    System.out.println("No se encontró un turno con el código proporcionado en el Turnero.");
+                    
+                    System.out.println("La nueva posición proporcionada es inválida. Debe estar entre 0 y " + (listaTurnos.size() - 1) + ".");
                 }
             }else{
-                System.out.println("No se encontró un Turnero para la comisión y la instancia proporcionadas.");
-                        
+                System.out.println("No se encontró un turno con el código proporcionado en el Turnero.");
             }
-            
+        }else{
+            System.out.println("No se encontró un Turnero para la comisión y la instancia proporcionadas.");
+                    
+        }
+    }
+
+
+    // en el menu de instancias evaluativas, validamos que haya comisiones cargadas antes de permitir crear instancias evaluativas
+    public boolean validarComisiones() {
+        if (this.listaComisiones.isEmpty()) {
+            System.out.println("No hay comisiones cargadas. Por favor, registre al menos una comisión .");
+            return false;
+     }
+        return true;
+    }
+    // en el menu de registro de docentes, validamos que haya docentes cargados
+    public boolean validarnDocente() {
+        if (this.listaDocentes.isEmpty()) {
+            System.out.println("No hay docentes cargados. Por favor, registre al menos un docente.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validarAlumnos(int codigo){
+        Comision comisionEncontrada = buscarComisionPorCodigo(codigo);
+        if (comisionEncontrada .getListaAlumnos() != null)
+            {return true;}
+        return false;
+
+    }
+
+
+    
+    public ArrayList<Turno> filtrarYOrdenarPorPrioridad(int codigoComision, int codigoInstancia) {
+
+        Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
+
+        if (turnero != null) {
+
+            ArrayList<Turno> listaTurnos = turnero.getListaTurno();
+            ArrayList<Turno> turnosPendientes = new ArrayList<>();
+
+            for (Turno turno : listaTurnos) {
+                if (turno.getEstado() == Estado.Evaluando) {
+                    turnosPendientes.add(turno);
+                }
+            }
+
+            // Prioritarios primero
+            for (int i = 0; i < turnosPendientes.size() - 1; i++) {
+                for (int j = i + 1; j < turnosPendientes.size(); j++) {
+
+                        if (turnosPendientes.get(j).getAlumno().getPrioridad()
+                            && !turnosPendientes.get(i).getAlumno().getPrioridad()) {
+
+                        Turno aux = turnosPendientes.get(i);
+                        turnosPendientes.set(i, turnosPendientes.get(j));
+                        turnosPendientes.set(j, aux);
+                    }
+                }
+            }
+
+            return turnosPendientes;
         }
 
+        return new ArrayList<>();
+    }
 
 
+    public void siguienteTurno(int codigoComision, int codigoInstancia) {
+        Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
+        if (turnero != null) {
+            Turno turnoActual = turnero.getTurnoActual();
+            if (turnoActual != null) {
+                turnoActual.setEstado(Estado.Finalizado);
+                Turno siguienteTurno = turnero.obtenerSiguienteTurno(turnoActual);
+                if (siguienteTurno != null) {
+                    siguienteTurno.setEstado(Estado.Evaluando);
+                    System.out.println("Se ha pasado al siguiente turno: " + siguienteTurno.getInstancia().getCodigoDeInstancia());
+                } else {
+                    System.out.println("No hay más turnos disponibles.");
+                }
+            } else {
+                System.out.println("No hay un turno actual en proceso.");
+            }
+        } else {
+            System.out.println("No se encontró un Turnero para la comisión y la instancia proporcionadas.");
+        }
+
+    }
+
+    public void ponerAusente(int codigoComision, int codigoInstancia) {
+        Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
+        if (turnero != null) {
+            Turno turnoActual = turnero.getTurnoActual();
+            if (turnoActual != null) {
+
+                turnoActual.setEstado(Estado.Ausente);
+                System.out.println("El alumno con legajo " + turnoActual.getAlumno().getLegajo() + " ha sido marcado como ausente.");
+            } else {
+                System.out.println("No hay un turno actual en proceso.");
+            }
+        } else {
+            System.out.println("No se encontró un Turnero para la comisión y la instancia proporcionadas.");
+        }
+
+    }
+
+
+    // public Boolean validarGrupos(){
+        
+    // }
 
 }
+
+
+
+
+
+
 
 

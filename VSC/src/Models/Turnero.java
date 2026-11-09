@@ -34,25 +34,18 @@ public class Turnero
         turnos.remove(t);
         turnos.add(nuevaPosicion, t);
     }
-    //Recorre la lista de turnos y devuelve el primer turno que se encuentre
-    //en estado "Evaluando". Si no encuentra ninguno devuelve NUll.
-    //como queremos que nos devuelva al "siguiente alumno" ya el for esta 
-    //recorriendo por lo tanto todo alumno que el estado sea "Evaluando" va a
-    //ser el siguiente. Cuando le cambias el estado y no es evaluando el for
-    //pasa al que si tenga evaluando. Me explico?DV
-    public Turno siguienteTurno(){
-        for (Turno t: turnos){
-            if (t.estaEvaluando()){
-                return t;
-            }
-        }
-        return null;
-    }
+   
     
+
     public void ordenarTurnosPorPrioridad(){
         
         turnos.sort((t1, t2) -> Boolean.compare(t2.getPrioridad(), t1.getPrioridad()));
     }
+
+    // public void ordenarTurnosPorPrioridad(){
+    //     // Implementation for ordering turns by priority
+    //     turnos.sort((t1, t2) -> Boolean.compare(t2.getPrioridad(), t1.getPrioridad()));
+    // }
     
     
 public void calcularHorarios() {
@@ -150,7 +143,31 @@ public void ordenarPorPrioridad() {
 }
 
 
+
+    public Turno getTurnoActual() {
+        for (Turno turno : turnos) {
+            if (turno.getEstado() == Estado.Evaluando) {
+                return turno;
+            }
+        }
+        return null; // No hay turno en curso
     }
+
+    public Turno obtenerSiguienteTurno(Turno turnoActual) {
+        for (int i = 0; i < turnos.size(); i++) {
+            if (turnos.get(i).equals(turnoActual) && i + 1 < turnos.size()) {
+                return turnos.get(i + 1);
+            }
+        }
+        return null; // No hay siguiente turno
+    }
+
+    
+
+
+
+}
+    
 
 
 
