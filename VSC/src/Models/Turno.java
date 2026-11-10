@@ -80,11 +80,33 @@ public class Turno
         return grupo;
     }
     
+    //Devuelvo la fecha del turno
+    public LocalDate getFecha(){
+        return fecha;
+    }
+
+    //Devuelvo la hora del turno
+    public LocalTime getHora(){
+        return hora;
+    }
+
+    //Para cambiar la fecha del turno (lo usa Turnero al calcular los horarios)
+    public void setFecha(LocalDate fecha){
+        this.fecha = fecha;
+    }
+
+    //Para cambiar la hora del turno (lo usa Turnero al calcular los horarios)
+    public void setHora(LocalTime hora){
+        this.hora = hora;
+    }
+
     //Devuelvo la fecha y la hora juntas en un texto, ej: 2026-09-20 10:30
     public String getFechaHora(){
         return fecha + " " + hora;
 
     }
+
+    
     
     //este metodo nos sirve para ver si esta en estado "Evaluando" si da true
     //en el metodo del turnero siguiente turno va a dar true y nos va a 
