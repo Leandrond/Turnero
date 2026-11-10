@@ -15,8 +15,6 @@ public class Turno
     private LocalDate fecha;
     private LocalTime hora;
     private Estado estado; //Evaluando, Finalizado o Ausente (arranca en Evaluando)
-    private boolean tienePrioridad;
-    private String motivoPrioridad;
     
     //Turno de un ALUMNO > Se usa en las evaluaciones individuales
     //donde podemos dar de alta un turno por cada alumno de la comision
