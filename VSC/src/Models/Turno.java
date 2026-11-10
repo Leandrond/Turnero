@@ -136,7 +136,13 @@ public class Turno
         return estado==Estado.Evaluando;
     }
 
+    //Devuelve si el turno tiene prioridad
+    //La prioridad es del alumno, asi que se lo pregunta a el
+    //Si el turnoo es de un grupo o una comision y no de un alumno, devuelve false
     public boolean getPrioridad(){
-        return alumno.getPrioridad();
+        if (alumno != null){
+            return alumno.getPrioridad();
+        }
+        return false;
     }
 }
