@@ -1,18 +1,52 @@
 
 package Views;
 // import 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Scanner;
 import Controllers.GestionTurnero;
 import Models.Comision;
+import Models.DefensaParcial;
 import Models.Docente;
+import Models.Estado;
+import Models.ExamenFinal;
+import Models.Turno;
 import Models.Materia;
+import Models.PresentacionTPI;
 import Models.Turnero;
+import Models.Turno;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Scanner;
 
 // Main
 
 public class Main {
 
+
+    
+
     static Scanner teclado = new Scanner(System.in);
+
+
+    // VOLVI A PONER Esto q no se potque lo borraron
+    static int leerEntero(String mensaje) {
+        while (true) {
+        System.out.print(mensaje);
+
+            try {
+                return Integer.parseInt(teclado.next());
+        }       catch (NumberFormatException e) {
+            System.out.println("Ingrese un numero entero valido.");
+        }
+    }
+}
+
+    static String leerTexto(String mensaje) {
+    System.out.print(mensaje);
+    return teclado.next();
+}
 
     // Arranca el programa y crea el objeto que va a manejar
     // los datos del turnero. Despues muestra el menu principal
@@ -21,40 +55,23 @@ public class Main {
     //estan explicados en el mismo metodo, arriba de la linea donde se llama.
     public static void main(String[] args) {
 
+
+
+
+
         GestionTurnero gestion = new GestionTurnero();
 
-        
-        // validamos si no hay docentes cargados
-            if (!gestion.validarnDocente()) {
-                // en caso de que no haya docentes cargados, pedimos los datos para registrar uno
-                System.out.println("Registro del docente");
-                System.out.println("Ingrese nombre del docente: ");
-                String nombre = teclado.nextLine();
-                System.out.println("Ingrese apellido del docente: ");
-                String apellido = teclado.nextLine();
-                System.out.println("Ingrese legajo del docente: ");
-                String legajo = teclado.nextLine();
-                gestion.registrarDocente(nombre, apellido, legajo);
-                // y en caso de que si haya docentes cargados, continuamos 
-                }
-
+        // Falta conectar el registro del docente.
+        // Los metodos que necesita estan explicados en registrarDocente().
+        // Cuando esten hechos, se descomenta esta llamada.
+        registrarDocente(gestion);
 
         int opcion;
         do {
-
-            
-            
-        
             System.out.println("\nTURNERO");
-
-            
-
-            System.out.println("\n==============================================================");
-            System.out.println("\nMENU PRINCIPAL");
             System.out.println("1. Comisiones");
             System.out.println("2. Instancias evaluativas");
             System.out.println("0. Salir");
-            System.out.println("\n\n==============================================================");
 
             opcion = teclado.nextInt();
             switch (opcion) {
@@ -84,33 +101,26 @@ public class Main {
     // pide nombre, apellido y legajo para darlo de alta.
     // todavia no lo vimos pero tenemos que meterle algo donde guardar esos datos 
     // sino es un pijaso tener que cargar todo cada vez que se arranca el programa.
-    static void registrarDocente(GestionTurnero gestion) {
+    
 
-        // Esta parte queda comentada porque faltan dos metodos
-        // en GestionTurnero:
-        //
-        // boolean tieneDocenteRegistrado()
-        // Tiene que devolver true si ya hay un docente cargado
-        // y false si todavia no se registro ninguno. LISTO 
-        //
-        // void registrarDocente(String nombre, String apellido, String legajo)
-        // Tiene que crear el objeto Docente y guardar la referencia
-        // para poder usarlo mientras el programa este abierto. LISTO
-        //
-        // Docente ya tiene el constructor con esos tres datos.
-        // Cuando esten hechos los metodos de GestionTurnero,
-        // se descomenta este bloque.
-        // ustedes se preguntaran, porque el if a continuacion no tiene un else.
-        // bueno es porque solo entra al if si no esta registrado el decente.
+static void registrarDocente(GestionTurnero gestion) {
+
+    // los metodos de gestionturnero ya estan implementados.
+    if (!gestion.tieneDocenteRegistrado()) {
+
         System.out.println("\nREGISTRO DEL DOCENTE");
-                
-        String nombre = teclado.nextLine();
-        String apellido = teclado.nextLine();
-        String legajo = teclado.nextLine();     
-        
-        
+
+        String nombre = leerTexto("Nombre: ");
+        String apellido = leerTexto("Apellido: ");
+        String legajo = leerTexto("Legajo: ");
+
         gestion.registrarDocente(nombre, apellido, legajo);
+
+        System.out.println("Docente registrado correctamente.");
     }
+}
+
+
 
     // Muestra las opciones para trabajar con las comisiones.
     // Desde aca el docente puede crear comisiones, consultar
@@ -128,16 +138,9 @@ public class Main {
             System.out.println("4. Administrar grupos");
             System.out.println("5. Prioridades de alumnos");
             System.out.println("0. Volver");
-            //validamos que haya una comision antes de poder hacer algo
-            if (!gestion.validarComisiones()){
-            do{                
-                System.out.println("\n Ingrese 1");
-                opcion = teclado.nextInt();            
-            }while (opcion!=1);} 
-            else{ opcion = teclado.nextInt();}
 
-            
-            
+            opcion = teclado.nextInt();
+
             switch (opcion) {
                 case 1:
                     crearComision(gestion);
@@ -174,12 +177,9 @@ public class Main {
     // y a la materia que se esta dictando, porque un docente tiene mas de una comision
     // y mas de una materia.
     static void crearComision(GestionTurnero gestion) {
-        System.out.println("\nCodigo");
+        System.out.println("\nCodigo\nNombre\nMateria");
         int codigo = teclado.nextInt();
-        teclado.nextLine(); // consume el Enter pendiente, sirbe por si tenes un enter antes
-        System.out.println("\nNombre");
         String nombre = teclado.nextLine();
-        System.out.println("\nMateria");
         String materia = teclado.nextLine();
         
         // Tiene que crear la comision y agregarla a las que
@@ -216,18 +216,8 @@ public class Main {
     // se hagan sobre la lista de alumnos que corresponde.
     static void menuAlumnos(GestionTurnero gestion) {
 
+        int codigo = teclado.nextInt();
         int opcion;
-        System.out.println("Ingrese el codigo de Comision");
-        int codigo =  teclado.nextInt();  
-
-
-        //validamos que haya un alunos antes de poder hacer algo
-        if (!gestion.validarAlumnos(codigo)){
-        do{                
-            System.out.println("\n Ingrese 1");
-            opcion = teclado.nextInt();            
-        }while (opcion!=1);} 
-        else{ opcion = teclado.nextInt();}
 
         do {
             System.out.println("\nALUMNOS");
@@ -293,9 +283,7 @@ public class Main {
     // de armar los grupos o generar una evaluacion.
     static void listarAlumnos(GestionTurnero gestion, int codigo) {
 
-        // Falta en GestionTurnero:
-        // void listarAlumnos(int codigoComision)
-        //
+        
         // Tiene que buscar la comision y recorrer los alumnos
         // que devuelve Comision.getListaAlumnos(), que ya existe.
         // Tiene que mostrar por lo menos el legajo de cada uno.
@@ -346,8 +334,7 @@ public class Main {
     // Primero pide la comision porque los grupos se arman
     // con alumnos que ya pertenecen a esa comision.
     static void menuGrupos(GestionTurnero gestion) {
-        System.out.println("\nADMINISTRAR GRUPOS");
-        System.out.println("\nCodigo de comision: ");
+
         int codigo = teclado.nextInt();
         int opcion;
 
@@ -572,243 +559,65 @@ public class Main {
     // Muestra las opciones para trabajar con las evaluaciones.
     // Permite crear una instancia, ver las que hay cargadas,
     // iniciar una evaluacion y cambiar el orden de sus turnos.
-    static void menuEvaluaciones(GestionTurnero gestion) {
-        // validamos si no hay comisiones cargadas antes de permitir crear instancias evaluativas
-        if (!gestion.validarComisiones()) {
-            return;// con el return volvemos al menu principal        
+    
+static void menuEvaluaciones(GestionTurnero gestion) {
+
+    int opcion;
+
+    do {
+        System.out.println("\nINSTANCIAS EVALUATIVAS");
+        System.out.println("1. Crear instancia");
+        System.out.println("2. Ver instancias");
+        System.out.println("3. Iniciar evaluacion");
+        System.out.println("4. Cambiar orden de turnos");
+        System.out.println("5. Modificar fecha");
+        System.out.println("6. Modificar hora");
+        System.out.println("0. Volver");
+
+        opcion = leerEntero("Opcion: ");
+
+        switch (opcion) {
+
+            case 1:
+                crearInstancia(gestion);
+                break;
+
+            case 2:
+                listarInstancias(gestion);
+                break;
+
+            case 3:
+                ejecutarEvaluacion(gestion);
+                break;
+
+            case 4:
+                cambiarOrdenTurnos(gestion);
+                break;
+
+            case 5:
+                modificarFechaInstancia(gestion);
+                break;
+
+            case 6:
+                modificarHoraInstancia(gestion);
+                break;
+
+            case 0:
+                break;
+
+            default:
+                System.out.println("MAL!!!.");
         }
-        int opcion;
-        do {
-            System.out.println("\nINSTANCIAS EVALUATIVAS");
-            System.out.println("1. Crear instancia");
-            System.out.println("2. Ver instancias");
-            System.out.println("3. Iniciar evaluacion");
-            System.out.println("4. Cambiar orden de turnos");
-            System.out.println("0. Volver");
 
-            opcion = teclado.nextInt();
+    } while (opcion != 0);
+}
 
-            switch (opcion) {
-                case 1:
-                    crearInstancia(gestion);
-                    break;
-
-                case 2:
-                    listarInstancias(gestion);
-                    break;
-
-                case 3:
-                    ejecutarEvaluacion(gestion);
-                    break;
-
-                case 4:
-                    cambiarOrdenTurnos(gestion);
-                    break;
-
-                case 0:
-                    break;
-
-                default:
-                    System.out.println("Opcion incorrecta.");
-            }
-
-        } while (opcion != 0);
-
-    }
 
     // Pide los datos para programar una instancia evaluativa.
     // Primero se elige la comision y el tipo de examen.
     // Despues se carga la modalidad, fecha, hora de inicio
     // y cuanto tiempo se estima para cada turno.
 
-    static void crearInstancia(GestionTurnero gestion) {
-        System.out.println("\nCREAR INSTANCIA EVALUATIVA");
-        System.out.println("\nCodigo de comision: ");
-        int comision = teclado.nextInt();
-
-        // metodo para buscar la comision por codigo y devolverla, si no existe avisar.
-        Comision comisionEncontrada = gestion.buscarComisionPorCodigo(comision);
-
-        // con comision Encontrada podemos crear la instancia evaluativa, pero primero necesitamos que tipo de instancia es, fecha, hora y duracion estimada.
-        System.out.println("1. Defensa parcial");
-        System.out.println("2. Examen final");
-        System.out.println("3. Presentacion TPI");
-        System.out.println("Tipo de instancia: ");
-        int tipo = teclado.nextInt();
-        
-        switch (tipo) {
-            case 1: {
-                System.out.println("Fecha (AAAA-MM-DD): ");
-                String fecha = teclado.next();
-                System.out.println("Hora (HH:MM): ");
-                String hora = teclado.next();
-                System.out.println("Duracion estimada (en minutos): ");
-                double duracionEstimada = teclado.nextDouble();
-                System.out.println("Codigo de instancia: ");
-                int codigoDeInstancia = teclado.nextInt();
-                System.out.println("Docente: ");
-                String docente = teclado.next();
-                gestion.validacionDocente(docente);
-                System.out.println("Turnero: ");
-                Turnero turnero = new Turnero();
-                gestion.crearDefensaParcial(comisionEncontrada, fecha, hora, duracionEstimada,codigoDeInstancia, gestion.busquedaDocente(docente), turnero);
-                break;
-            }
-            case 2: {
-                System.out.println("Fecha (AAAA-MM-DD): ");
-                String fecha = teclado.next();
-                System.out.println("Hora (HH:MM): ");
-                String hora = teclado.next();
-                System.out.println("Duracion estimada (en minutos): ");
-                double duracionEstimada = teclado.nextDouble();
-                System.out.println("Codigo de instancia: ");
-                int codigoDeInstancia = teclado.nextInt();
-                System.out.println("Docente: ");
-                String docente = teclado.next();
-                gestion.validacionDocente(docente);
-                System.out.println("Turnero");
-                Turnero turnos = new Turnero();
-                
-
-                gestion.crearExamenFinal(comisionEncontrada, fecha, hora, duracionEstimada, codigoDeInstancia, gestion.busquedaDocente(docente), turnos);
-                break;
-            }
-            case 3: {
-                System.out.println("Fecha (AAAA-MM-DD): ");
-                String fecha = teclado.next();
-                System.out.println("Hora (HH:MM): ");
-                String hora = teclado.next();
-                System.out.println("Duracion estimada (en minutos): ");
-                double duracionEstimada = teclado.nextDouble();
-                System.out.println("Codigo de instancia: ");
-                int codigoDeInstancia = teclado.nextInt();
-                System.out.println("Docente: ");
-                String docente = teclado.next();
-                gestion.validacionDocente(docente);
-                Turnero turnos = new Turnero();
-                gestion.crearPresentacionTPI(comisionEncontrada, fecha, hora, duracionEstimada, codigoDeInstancia, gestion.busquedaDocente(docente), turnos);
-                break;
-            }
-            default:
-                System.out.println("Tipo de instancia no válido.");
-        }
-
-
-        
-        // Tiene que buscar la comision y crear la instancia
-        // que corresponda al tipo de examen seleccionado.
-        // Las clases DefensaParcial, ExamenFinal y PresentacionTPI
-        // ya existen asi que no las hagan potra vez que se me enoja el CEO.
-        //
-        // Tambien tiene que generar el Turnero de esa instancia.
-        // Para una evaluacion individual se crea un turno
-        // por alumno. Para una grupal, un turno por grupo.
-        // Para una general, u tnurno para toda la comision.
-        //
-        // Falta adaptar Turno para que pueda representar
-        // un alumno, un grupo o una comision completa.
-        // Actualmente solamente recibe un Alumno.
-        //
-        // Falta en Grupo:
-        // int contarAlumnosPrioritarios()
-        //
-        // Tiene que recorrer sus integrantes, consultar
-        // la prioridad de cada Alumno y devolver cuantos
-        // tienen prioridad.
-        //
-        // Falta en Turnero:
-        // void ordenarPorPrioridad()
-        //
-        // Tiene que poner primero los alumnos prioritarios.
-        // En las evaluaciones grupales, los grupos con mas
-        // integrantes prioritarios tienen que ir primero.
-        //
-        // Tambien falta en Turnero:
-        // void calcularHorarios()
-        //
-        // Tiene que calcular la hora estimada de cada turno
-        // usando la hora de inicio y los minutos configurados.
-        // Tambien tiene que calcular cuando termina la evaluacion.
-        // por eso hay que diferenciar las instancias individuales, grupales y generales.
-        //
-        // Cuando esten esas funciones, se puede descomentar
-        // la creacion de la instancia.
-
-        // gestion.crearInstanciaEvaluativa(
-        //     comision, tipo, modalidad, fecha, hora, minutos);
-    }
-
-    //FALTA UN METODO PARA MODIFICAR LA FECHA Y HORA DE UNA INSTANCIA, 
-    // POR SI SE EQUIVOCA AL CARGARLA O SI NECESITA HACERLO PORQUE DEJA JULI.
-    // aca solo llamo los metodos,
-
-    static void modificarFechaInstancia(GestionTurnero gestion) {
-        System.out.println("\nMODIFICAR FECHA Y HORA DE INSTANCIA EVALUATIVA");
-        System.out.println("\nCodigo de comision: ");
-        int comision = teclado.nextInt();
-        System.out.println("\nCodigo de instancia: ");
-        int codigoInstancia = teclado.nextInt();
-        System.out.println("\nNueva fecha (AAAA-MM-DD): ");
-        String nuevaFecha = teclado.next();
-        
-
-        // Falta en GestionTurnero:
-        // void modificarFechaInstancia(int codigoComision, int codigoInstancia, String nuevaFecha, String nuevaHora)
-        //
-        // Tiene que buscar la comision y la instancia correspondiente
-        // y cambiar la fecha y hora de esa instancia.
-        //REVISAR
-        // Cuando este hecho, se descomenta. LISTO(CREO)
-
-        gestion.modificarFechaInstancia(comision, codigoInstancia, nuevaFecha);
-        
-    }
-
-    static void modificarHoraInstancia(GestionTurnero gestion) {
-
-        System.out.println("\nMODIFICAR HORA DE INSTANCIA EVALUATIVA");
-        System.out.println("\nCodigo de comision: ");
-        int comision = teclado.nextInt();
-        System.out.println("\nCodigo de instancia: ");
-        int codigoInstancia = teclado.nextInt();
-        System.out.println("\nNueva hora (HH:MM): ");
-        String nuevaHora = teclado.next();
-
-        // Falta en GestionTurnero:
-        // void modificarHoraInstancia(int codigoComision, int codigoInstancia, String nuevaHora)
-        //
-        // Tiene que buscar la comision y la instancia correspondiente
-        // y cambiar la hora de esa instancia.
-        //
-        // Cuando este hecho, se descomenta.
-        //REVISAR
-         gestion.modificarHoraInstancia(comision, codigoInstancia, nuevaHora);
-        
-    }
-
-    // Muestra las instancias evaluativas de una comision.
-    // Sirve para consultar las evaluaciones que se programaron
-    // y elegir cual se quiere ejecutar.
-    static void listarInstancias(GestionTurnero gestion) {
-
-        System.out.println("\nLISTAR INSTANCIAS EVALUATIVAS");
-        System.out.println("\nCodigo de comision: ");
-        int codigo = teclado.nextInt();
-
-        // Falta en GestionTurnero:
-        // void listarInstanciasEvaluativas(int codigoComision)
-        //
-        // Tiene que encontrar la comision y mostrar las
-        // instancias que tiene asociadas, con su tipo,
-        // fecha, hora y duracion estimada.
-        //
-        // Para eso falta que las instancias evaluativas
-        // queden asociadas a la comision correspondiente.
-        //
-        // Cuando este hecho, se descomenta.LISTO
-
-         gestion.listarInstanciasEvaluativas(codigo);
-    }
     
 
 
@@ -863,94 +672,413 @@ public class Main {
 
 
 
+/*  FALTANTES:
+    1-Crear instancia de defensa parcial
+    2-Crear instancia de examen final
+    3-Crear instancia de presentacion TPI
+    4-Crear comision. Diferenciar entre Alumno y Grupos
+    5-Modificar la ejecucion de la evaluacion
+    6- 
+    
+*/
+
+
 
 
 
 
     
-    // Ejecuta una instancia evaluativa que ya esta creada.
-    // Muestra el primer turno que siga en estado Evaluando.
-    // Cuando el docente termina, marca Finalizado o Ausente.
-    // Despues busca el siguiente turno que siga en Evaluando.
-    //
-    // No hace falta un estado Pendiente porque todos los
-    // turnos empiezan en Evaluando y se van descartando
-    // de la busqueda a medida que se terminan.
-    //
-    // Cuando siguienteTurno() devuelve null significa que
-    // no queda nadie por evaluar y termina la instancia.
-    static void ejecutarEvaluacion(GestionTurnero gestion) {
-
-        System.out.println("\nEJECUTAR INSTANCIA EVALUATIVA");
+    static void crearInstancia(GestionTurnero gestion) {
+        System.out.println("\nCREAR INSTANCIA EVALUATIVA");
         System.out.println("\nCodigo de comision: ");
         int comision = teclado.nextInt();
-        System.out.println("\nCodigo de instancia: ");
-        int instancia = teclado.nextInt();
 
-        // Este bloque qweda comentado porque faltan los
-        // metodos para encontrar la instancia, guardar la nota
-        // y cambiar manualmente el estado de cada turno.
-        //
-        // Falta en GestionTurnero:
-        // Turnero obtenerTurnero(int codigoComision, int codigoInstancia)
-        //
-        // Tiene que buscar la instancia de esa comision
-        // y devolver el Turnero que le corresponde.
-        //
-        // Falta en Turno:
-        // void setEstado(Estado estado)
-        //
-        // Tiene que cambiar el estado a Finalizado o Ausente
-        // segun lo que indique el docente.
-        //
-        // Tambien falta definir donde se guarda la nota.
-        // Si se guarda en Turno, hace falta:
-        // void setNota(double nota)
-        //
-        // Turnero.siguienteTurno() ya existe.
-        // Devuelve el primer turno en Evaluando o null
-        // cuando ya no encuentra ninguno.
-        //
-        // Para evaluaciones grupales o generales tambien
-        // falta poder mostrar el grupo o la comision,
-        // porque actualmente Turno solo tiene getAlumno().
-        //
-        // Cuando esten esos metodos y las clases se puedan
-        // importar correctamente, se descomenta el bloque.
+static void crearInstancia(GestionTurnero gestion) {
 
-        // Turnero turnero = gestion.obtenerTurnero(comision, instancia);
-        // Turno turno = turnero.siguienteTurno();
-        //
-        // while (turno != null) {
-        //
-        //     System.out.println("Alumno: "
-        //         + turno.getAlumno().getLegajo());
-        //
-        //     System.out.println("1. Finalizado");
-        //     System.out.println("2. Ausente");
-        //
-        //     int opcion = leerEntero("Estado: ");
-        //
-        //     if (opcion == 1) {
-        //         double nota = Double.parseDouble(
-        //             leerTexto("Nota: "));
-        //
-        //         turno.setNota(nota);
-        //         turno.setEstado(Estado.Finalizado);
-        //
-        //     } else if (opcion == 2) {
-        //         turno.setEstado(Estado.Ausente);
-        //
-        //     } else {
-        //         System.out.println("Opcion incorrecta.");
-        //         continue;
-        //     }
-        //
-        //     turno = turnero.siguienteTurno();
-        // }
-        //
-        // System.out.println("Instancia evaluativa finalizada");
+    System.out.println("\nCREAR INSTANCIA EVALUATIVA");
+
+    // aca buscamos la comision donde se realizara la evaluacion.
+    int codigoComision = leerEntero("Codigo de comision: ");
+
+    Comision comisionEncontrada =
+        gestion.buscarComisionPorCodigo(codigoComision);
+
+    if (comisionEncontrada == null) {
+        System.out.println("No se encontro la comision.");
+        return;
     }
+
+    // aca seleccionamos el tipo de instancia evaluativa.
+    System.out.println("\n1. Defensa parcial");
+    System.out.println("2. Examen final");
+    System.out.println("3. Presentacion TPI");
+
+    int tipo = leerEntero("Tipo de instancia: ");
+
+    if (tipo < 1 || tipo > 3) {
+        System.out.println("Tipo de instancia no valido.");
+        return;
+    }
+
+    // aca seleccionamos la modalidad de la evaluacion.
+    System.out.println("\nMODALIDAD DE EVALUACION");
+    System.out.println("1. Individual");
+    System.out.println("2. Grupal");
+    System.out.println("3. General");
+
+    int modalidad = leerEntero("Modalidad: ");
+
+    if (modalidad < 1 || modalidad > 3) {
+        System.out.println("Modalidad no valida.");
+        return;
+    }
+
+    // aca pedimos los datos necesarios para crear la instancia q no se porque estan en string asi q despues diganme.
+    String fecha = leerTexto("Fecha (AAAA-MM-DD): ");
+    String hora = leerTexto("Hora (HH:MM): ");
+
+    double duracionEstimada;
+    int codigoDeInstancia;
+
+    try {
+        LocalDate.parse(fecha);
+        LocalTime.parse(hora);
+
+        duracionEstimada = Double.parseDouble(
+            leerTexto("Duracion estimada en minutos: ")
+        );
+
+        if (duracionEstimada <= 0) {
+            System.out.println("La duracion debe ser mayor a cero.");
+            return;
+        }
+
+    } catch (java.time.format.DateTimeParseException |
+             NumberFormatException e) {
+        System.out.println("Fecha, hora o duracion no valida.");
+        return;
+    }
+
+    codigoDeInstancia = leerEntero("Codigo de instancia: ");
+
+    // aca recuperamos el docente que esta registrado.
+    Docente docente = gestion.getDocenteActual();
+
+    if (docente == null) {
+        System.out.println("No hay un docente registrado.");
+        return;
+    }
+
+    // aca creamos el turnero que se asociara a la instancia.
+    Turnero turnero = new Turnero();
+
+    // PENDIENTE GESTIONTURNERO:
+    // Los metodos de creacion no reciben la modalidad.
+    // hay q adaptarlos para generar los turnos 
+    // Individual: un turno por alumno.
+    // Grupal: un turno por grupo.
+    // General: un turno para toda la comision.
+    //
+    // Por ahora, Main pide la modalidad, pero no puede
+    // enviarla a gestionturnero.
+
+    switch (tipo) {
+
+        case 1:
+            gestion.crearDefensaParcial(
+                comisionEncontrada,
+                fecha,
+                hora,
+                duracionEstimada,
+                codigoDeInstancia,
+                docente,
+                turnero
+            );
+            break;
+
+        case 2:
+            gestion.crearExamenFinal(
+                comisionEncontrada,
+                fecha,
+                hora,
+                duracionEstimada,
+                codigoDeInstancia,
+                docente,
+                turnero
+            );
+            break;
+
+        case 3:
+            // PENDIENTE EN PRESENTACIONTPI:
+            // Completar los getters que lanzan UnsupportedOperationException.
+            gestion.crearPresentacionTPI(
+                comisionEncontrada,
+                fecha,
+                hora,
+                duracionEstimada,
+                codigoDeInstancia,
+                docente,
+                turnero
+            );
+            break;
+    }
+
+    System.out.println("Instancia evaluativa registrada.");
+    System.out.println(
+        "Modalidad seleccionada: " +
+        (modalidad == 1 ? "Individual" :
+         modalidad == 2 ? "Grupal" : "General")
+    );
+
+    // PENDIENTE:
+    // La modalidad se muestra, pero no queda guardada, ni se utiliza para generar los turnos.
+    // 
+    // Turnero.calcularHorarios() tambien esta incompleto.
+}
+
+
+
+
+        
+        // Tiene que buscar la comision y crear la instancia
+        // que corresponda al tipo de examen seleccionado.
+        // Las clases DefensaParcial, ExamenFinal y PresentacionTPI
+        // ya existen asi que no las hagan potra vez que se me enoja el CEO.
+        //
+        // Tambien tiene que generar el Turnero de esa instancia.
+        // Para una evaluacion individual se crea un turno
+        // por alumno. Para una grupal, un turno por grupo.
+        // Para una general, u tnurno para toda la comision.
+        //
+        // Falta adaptar Turno para que pueda representar
+        // un alumno, un grupo o una comision completa.
+        // Actualmente solamente recibe un Alumno.
+        //
+        // Falta en Grupo:
+        // int contarAlumnosPrioritarios(). LISTO
+        //
+        // Tiene que recorrer sus integrantes, consultar
+        // la prioridad de cada Alumno y devolver cuantos
+        // tienen prioridad.
+        //
+        // Falta en Turnero:
+        // void ordenarPorPrioridad().LISTO 
+        //
+        // Tiene que poner primero los alumnos prioritarios.
+        // En las evaluaciones grupales, los grupos con mas
+        // integrantes prioritarios tienen que ir primero.
+        //
+        // Tambien falta en Turnero:
+        // void calcularHorarios().FALTA
+        //
+        // Tiene que calcular la hora estimada de cada turno
+        // usando la hora de inicio y los minutos configurados.
+        // Tambien tiene que calcular cuando termina la evaluacion.
+        // por eso hay que diferenciar las instancias individuales, grupales y generales.
+        //
+        // Cuando esten esas funciones, se puede descomentar
+        // la creacion de la instancia.
+
+        // gestion.crearInstanciaEvaluativa(
+        //     comision, tipo, modalidad, fecha, hora, minutos);
+    
+
+    //FALTA UN METODO PARA MODIFICAR LA FECHA Y HORA DE UNA INSTANCIA, 
+    // POR SI SE EQUIVOCA AL CARGARLA O SI NECESITA HACERLO PORQUE DEJA JULI.
+    // aca solo llamo los metodos,
+
+    
+static void modificarFechaInstancia(GestionTurnero gestion) {
+
+    System.out.println("\nMODIFICAR FECHA DE INSTANCIA");
+
+    int codigoComision = leerEntero("Codigo de comision: ");
+    int codigoInstancia = leerEntero("Codigo de instancia: ");
+
+    String nuevaFecha = leerTexto("Nueva fecha (AAAA-MM-DD): ");
+
+    try {
+        LocalDate.parse(nuevaFecha);
+
+        // Este metodo ya existe en GestionTurnero.
+        gestion.modificarFechaInstancia(
+            codigoComision,
+            codigoInstancia,
+            nuevaFecha
+        );
+
+    } catch (java.time.format.DateTimeParseException e) {
+        System.out.println("Formato de fecha no valido.");
+    }
+
+    // PENDIENTE:
+    // Revisar la busqueda de instancias mediante getCodigo(),
+    // porque no coincide con codigoDeInstancia.
+}
+
+
+    
+static void modificarHoraInstancia(GestionTurnero gestion) {
+
+    System.out.println("\nMODIFICAR HORA DE INSTANCIA");
+
+    int codigoComision = leerEntero("Codigo de comision: ");
+    int codigoInstancia = leerEntero("Codigo de instancia: ");
+
+    String nuevaHora = leerTexto("Nueva hora (HH:MM): ");
+
+    try {
+        LocalTime.parse(nuevaHora);
+
+        // Este metodo ya existe en GestionTurnero.
+        gestion.modificarHoraInstancia(
+            codigoComision,
+            codigoInstancia,
+            nuevaHora
+        );
+
+    } catch (java.time.format.DateTimeParseException e) {
+        System.out.println("Formato de hora no valido.");
+    }
+    
+
+    // PENDIENTE:
+    // Revisar la identificacion de instancias por codigo.
+    // Al cambiar la hora tambien deberian recalcularse
+    // los horarios de los turnos asociados.
+}
+
+    // Muestra las instancias evaluativas de una comision.
+    // Sirve para consultar las evaluaciones que se programaron
+    // y elegir cual se quiere ejecutar.
+    static void listarInstancias(GestionTurnero gestion) {
+
+        int codigo = leerEntero("Codigo de comision: ");
+
+        // Falta en GestionTurnero:
+        // void listarInstanciasEvaluativas(int codigoComision)
+        //
+        // Tiene que encontrar la comision y mostrar las
+        // instancias que tiene asociadas, con su tipo,
+        // fecha, hora y duracion estimada.
+        //
+        // Para eso falta que las instancias evaluativas
+        // queden asociadas a la comision correspondiente.
+        //
+        // Cuando este hecho, se descomenta.LISTO
+
+         gestion.listarInstanciasEvaluativas(codigo);
+    }
+    
+
+    
+static void ejecutarEvaluacion(GestionTurnero gestion) {
+
+    System.out.println("\nEJECUTAR EVALUACION");
+
+    int codigoComision = leerEntero("Codigo de comision: ");
+    int codigoInstancia = leerEntero("Codigo de instancia: ");
+
+    // Obtenemos el turnero asociado a la instancia.
+    Turnero turnero = gestion.obtenerTurnero(
+        codigoComision, codigoInstancia
+    );
+
+    if (turnero == null) {
+        System.out.println("No se encontro el turnero.");
+        return;
+    }
+
+    // aca comprobamos que existan turnos para evaluar.
+    if (turnero.getListaTurno().isEmpty()) {
+        System.out.println("Esta instancia no tiene turnos cargados.");
+        return;
+    }
+
+    int opcion;
+
+    do {
+        // aca buscamos el primer turno que sigue en evaluacion.
+        Turno turnoActual = turnero.getTurnoActual();
+
+        if (turnoActual == null) {
+            System.out.println("Evaluacion finalizada.");
+            break;
+        }
+
+        System.out.println("\nTURNO ACTUAL");
+        System.out.println("Numero: " + turnoActual.getNumero());
+
+        // Identificamos a quien corresponde el turno.
+        if (turnoActual.getAlumno() != null) {
+
+            System.out.println(
+                "Alumno: " + turnoActual.getAlumno().getLegajo()
+            );
+
+        } else if (turnoActual.getGrupo() != null) {
+
+            System.out.println(
+                "Grupo: " + turnoActual.getGrupo().getNumero()
+            );
+
+        } else {
+
+            // PENDIENTE TURNO:
+            // Incorporar getComision() para ver las evaluaciones generales.
+            System.out.println("Evaluacion de comision completa.");
+        }
+
+        System.out.println("\nMENU EVALUACION");
+        System.out.println("1. Finalizar turno y continuar");
+        System.out.println("2. Marcar como ausente");
+        System.out.println("0. Volver");
+
+        opcion = leerEntero("Opcion: ");
+
+        switch (opcion) {
+
+            case 1:
+                // PENDIENTE  GESTIONTURNERO:
+                // Revisar siguienteTurno() para todas
+                // las modalidades de evaluacion.
+                gestion.siguienteTurno(
+                    codigoComision,
+                    codigoInstancia
+                );
+                break;
+
+            case 2:
+                // PENDIENTE GESTIONTURNERO:
+                // ponerAusente() solamente contempla alumnos.
+                // hay que adaptarse para grupos y comisiones.
+                if (turnoActual.getAlumno() == null) {
+
+                    System.out.println(
+                        "Marcar ausente no esta disponible " +
+                        "para turnos grupales o generales."
+                    );
+
+                } else {
+
+                    gestion.ponerAusente(
+                        codigoComision,
+                        codigoInstancia
+                    );
+                }
+                break;
+
+            case 0:
+                System.out.println("Volviendo al menu.");
+                break;
+
+            default:
+                System.out.println("Opcion incorrecta.");
+        }
+
+    } while (opcion != 0);
+}
+
 
     // Permite mover un turno a otra posicion de la lista.
     // Sirve cuando el docente necesita cambiar el orden
@@ -962,34 +1090,16 @@ public class Main {
 
         System.out.println("\nCAMBIAR ORDEN DE TURNOS");
         System.out.println("\nCodigo de comision: ");
-        int comision = teclado.nextInt();
+        int codigoComision = teclado.nextInt();
         System.out.println("\nCodigo de instancia: ");
-        int instancia = teclado.nextInt();
+        int codigoInstancia = teclado.nextInt();
         System.out.println("\nCodigo de turno: ");
-        int turno = teclado.nextInt();
+        int codigoTurno = teclado.nextInt();
         System.out.println("\nNueva posicion: ");
-        int posicion = teclado.nextInt();
+        int nuevaPosicion = teclado.nextInt();
 
-        // Falta en GestionTurnero:
-        // void cambiarOrdenTurno(int comision, int instancia,
-        //     int turno, int posicion)
-        //
-        // Tiene que encontrar el Turnero de esa instancia
-        // y el turno que se quiere mover.
-        //
-        // Despues tiene que llamar a cambiarOrden(Turno, int),
-        // que ya existe en Turnero.
-        //
-        // Tambien tiene que comprobar que la posicion
-        // ingresada sea valida para no generar un error.
-        //
-        // Despues de mover el turno tiene que recalcular
-        // los horarios estimados, porque cambia el orden.
-        //
-        // Cuando este hecho, se descomenta.
+        gestion.cambiarOrdenTurno(codigoComision, codigoInstancia, codigoTurno, nuevaPosicion);
 
-        // gestion.cambiarOrdenTurno(
-        //     comision, instancia, turno, posicion);
     }
 }
 
