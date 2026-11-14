@@ -1,16 +1,22 @@
-package Models;
+
+package Models.Instancias;
 import java.time.LocalDate;
 import java.time.LocalTime;
-public class DefensaParcial extends InstanciaEvaluativa{
 
+import Models.Comision;
+import Models.Docente;
+import Models.Modalidad;
+import Models.Turnero;
+
+public class PresentacionTPI extends InstanciaEvaluativa{
+    
     // Constructor con atributos heredados de la clase InstanciaEvaluativa
-    public DefensaParcial(
-
-        String tipo, LocalDate fecha,LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero, Modalidad modalidad) {
+    public PresentacionTPI(
+        String tipo, LocalDate fecha, LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero, Modalidad modalidad) {
         super(modalidad);
         super.tipo = tipo;
         super.fecha = fecha;
-        super.horaInicio = hora;   
+        super.horaInicio = hora;
         super.duracionEstimada = duracionEstimada;
         super.comision = comision;
         super.docente = docente;
@@ -22,20 +28,17 @@ public class DefensaParcial extends InstanciaEvaluativa{
     public String getTipo() {
         return this.tipo;
     }
+
+    @Override
+    public LocalDate getFecha() {
+        return this.fecha;
+    }
     @Override
     public int getCodigo() {
         return codigoDeInstancia;
     }
     @Override
-
-    public LocalDate getFecha() {   
-
-        return this.fecha;
-    }
-
-    @Override
     public LocalTime getHoraInicio() {
-
         return this.horaInicio;
     }
 
@@ -58,20 +61,24 @@ public class DefensaParcial extends InstanciaEvaluativa{
     public void setDuracionEstimada(Double duracionEstimada) {
         this.duracionEstimada = duracionEstimada;
     }
+
     @Override
     public Turnero getTurnero() {
-        return this.turnero;
+        return turnero;
     }
+
     @Override
     public Docente getDocente() {
-        return this.docente;
+        return docente;
     }
+
     @Override
     public int getCodigoDeInstancia() {
-        return this.codigoDeInstancia;
+        return codigoDeInstancia;
     }
+
     @Override
     public void setCodigoDeInstancia(int codigoDeInstancia) {
         this.codigoDeInstancia = codigoDeInstancia;
     }
-} 
+}

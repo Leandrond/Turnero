@@ -1,6 +1,11 @@
-package Models;
+package Models.Instancias;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import Models.Comision;
+import Models.Docente;
+import Models.Modalidad;
+import Models.Turnero;
 
 // es una clase que hereda porque hay 3 tipos de instancia evaluativa Defensa de Parcial - Presentacion de Trabajo Practico - Examen Final
 public abstract class InstanciaEvaluativa

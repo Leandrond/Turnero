@@ -4,15 +4,25 @@ public class Materia
 {
     private String nombre;
     private Docente representanteCatedra;
+    private int materiaId;
     
     public Materia(String nombre, Docente representanteCatedra)
     {
         this.nombre = nombre;
         this.representanteCatedra = representanteCatedra;
+        
     }
     //getters para devolver nombre y el representante de catedra
     public String getNombre(){
         return nombre;
+    }
+
+    public int getMateriaId(){
+        return materiaId;
+    }
+
+    public void setMateriaId(int materiaId){
+        this.materiaId = materiaId;
     }
 
     public Docente getRepresentanteCatedra(){

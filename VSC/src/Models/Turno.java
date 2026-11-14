@@ -2,6 +2,8 @@ package Models;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import Models.Instancias.InstanciaEvaluativa;
+
 
 public class Turno implements Priorizable
 {

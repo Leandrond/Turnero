@@ -1,6 +1,8 @@
 package Models;
 import java.util.ArrayList;
 
+import Models.Instancias.InstanciaEvaluativa;
+
 public class Turnero
 {
     // instance variables - replace the example below with your own
