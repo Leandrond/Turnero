@@ -1,9 +1,7 @@
 package Views;
 
+import Controllers.GestionTurnero;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-//Importo la biblioteca de Swing para poder usarla y crear la ventana principal del programa
 
 
 public class VentanaPrincipal extends JFrame {
@@ -14,8 +12,8 @@ public class VentanaPrincipal extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cierra la ventana al presionar el botón de cierre
         setLocationRelativeTo(null); // centra la ventana en la pantalla
 
-        JLabel titulo = new JLabel("TURNERO", SwingConstants.CENTER);
-        add(titulo);
+        GestionTurnero gestion = new GestionTurnero();
+        add(new PanelIngreso(gestion));// Agrega el panel de ingreso a la ventana
     }
 
     public static void main(String[] args) {
