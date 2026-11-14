@@ -2,5 +2,5 @@ package Models;
 
 public enum Estado
 {
-    Finalizado, Ausente, Evaluando
+    Finalizado, Ausente, Evaluando, Pendiente
 }

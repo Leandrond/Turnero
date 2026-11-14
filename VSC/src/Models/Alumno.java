@@ -1,21 +1,18 @@
 package Models;
 
 
-public class Alumno
+public class Alumno extends Persona implements Priorizable
 {
     
     private int legajo;
     private Estado estado;
     private boolean prioridad;
 
-    public Alumno()
-    {
-    }
-    
-    public Alumno(int legajo,Estado estado){
-        this.legajo=legajo;
-        this.estado=estado.Evaluando;
-        this.prioridad=false;
+    public Alumno(String nombre, String apellido, int legajo) {
+        super(nombre, apellido);
+        this.legajo = legajo;
+        this.estado = Estado.Evaluando;
+        this.prioridad = false;
     }
 
     public Estado getEstado(){
@@ -24,6 +21,14 @@ public class Alumno
 
     public void setEstado(Estado estado){
         this.estado=estado;
+    }
+
+    @Override
+    public int getNivelPrioridad() {
+        if (getPrioridad()) {
+            return 1;
+        }
+        return 0;
     }
 
     public boolean getPrioridad(){
