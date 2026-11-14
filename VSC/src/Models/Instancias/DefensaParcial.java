@@ -1,25 +1,26 @@
-// Leandro
-package Models;
+package Models.Instancias;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 
-public class ExamenFinal extends InstanciaEvaluativa{
-    //lista docente
-    ArrayList<Docente> listaDocentes = new ArrayList<Docente>();
+import Models.Comision;
+import Models.Docente;
+import Models.Modalidad;
+import Models.Turnero;
+public class DefensaParcial extends InstanciaEvaluativa{
 
     // Constructor con atributos heredados de la clase InstanciaEvaluativa
-    public ExamenFinal(
-        String tipo, LocalDate fecha, LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero, Modalidad modalidad) {
+    public DefensaParcial(
+
+        String tipo, LocalDate fecha,LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero, Modalidad modalidad) {
         super(modalidad);
         super.tipo = tipo;
         super.fecha = fecha;
-        super.horaInicio = hora;
+        super.horaInicio = hora;   
         super.duracionEstimada = duracionEstimada;
         super.comision = comision;
-        this.listaDocentes.add(docente);
+        super.docente = docente;
         super.codigoDeInstancia = codigoDeInstancia;
-        super.turnero= turnero;
+        super.turnero = turnero;
     }
     //getters y setters de los atributos heredados de la clase InstanciaEvaluativa
     @Override
@@ -31,12 +32,15 @@ public class ExamenFinal extends InstanciaEvaluativa{
         return codigoDeInstancia;
     }
     @Override
-    public LocalDate getFecha() {
+
+    public LocalDate getFecha() {   
+
         return this.fecha;
     }
 
     @Override
     public LocalTime getHoraInicio() {
+
         return this.horaInicio;
     }
 
@@ -60,29 +64,19 @@ public class ExamenFinal extends InstanciaEvaluativa{
         this.duracionEstimada = duracionEstimada;
     }
     @Override
-    public int getCodigoDeInstancia() {
-        return this.codigoDeInstancia;
-    }
-
-    @Override
-    public void setCodigoDeInstancia(int codigoDeInstancia) {
-        this.codigoDeInstancia = codigoDeInstancia;
-    }
-    @Override
     public Turnero getTurnero() {
         return this.turnero;
     }
-
-    public ArrayList<Docente> getListaDocente() {
-            return this.listaDocentes; // Devuelve la lista completa de docentes
-        }
-    public void agregarDocente(Docente docente) {
-        this.listaDocentes.add(docente);
-    }
-
     @Override
     public Docente getDocente() {
         return this.docente;
     }
-
-}
+    @Override
+    public int getCodigoDeInstancia() {
+        return this.codigoDeInstancia;
+    }
+    @Override
+    public void setCodigoDeInstancia(int codigoDeInstancia) {
+        this.codigoDeInstancia = codigoDeInstancia;
+    }
+} 
