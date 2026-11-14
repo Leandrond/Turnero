@@ -29,120 +29,119 @@ public class Turnero
         return turnos;
     }
     
-    public void cambiarOrden(Turno t, int nuevaPosicion)
-    {
-        turnos.remove(t);
-        turnos.add(nuevaPosicion, t);
-    }
-   
-    
-
-    public void ordenarTurnosPorPrioridad(){
-        
-        turnos.sort((t1, t2) -> Boolean.compare(t2.getPrioridad(), t1.getPrioridad()));
-    }
-
-    // public void ordenarTurnosPorPrioridad(){
-    //     // Implementation for ordering turns by priority
-    //     turnos.sort((t1, t2) -> Boolean.compare(t2.getPrioridad(), t1.getPrioridad()));
-    // }
-    
-    
-public void calcularHorarios() {
-
-    if (turnos.isEmpty()) {
-        return;
-    }
-
-    // aca obtenemos los datos de la instancia evaluativa.
-    InstanciaEvaluativa instancia =
-        turnos.get(0).getInstancia();
-
-    if (instancia == null) {
-        return;
-    }
-
-    java.time.LocalDate fecha = instancia.getFecha();
-    java.time.LocalDateTime horario =
-        java.time.LocalDateTime.of(
-            fecha,
-            instancia.getHoraInicio()
-        );
-
-    double duracion = instancia.getDuracionEstimada();
-
-    if (duracion <= 0) {
-        return;
-    }
-
-    // aca recorremos los turnos en su orden actual.
-    for (Turno turno : turnos) {
-
-        // Asignamos la fecha y hora estimadas.
-        turno.setFecha(horario.toLocalDate());
-        turno.setHora(horario.toLocalTime());
-
-        // Avanzamos la duracion estimada del turno.
-        horario = horario.plusSeconds(
-            Math.round(duracion * 60)
-        );
-    }
-
-    // PENDIENTE GESTIONTURNERO:
-    // Llamar a calcularHorarios() despues de
-    // ordenar los turnos o modificar su orden.
-    //
-    // La variable horario contiene al finalizar
-    // la fecha y hora estimadas de finalizacion.
-    // para consultarlo tambien habra que agregar un atributo o getter.
-}
-
-
-
-public void ordenarPorPrioridad() {
-
-    // aca ordenamos la lista de turnos segun su prioridad.
-    // Los turnos prioritarios quedan al principio.
-
-    turnos.sort((turno1, turno2) -> {
-
-        int prioridad1 = 0;
-        int prioridad2 = 0;
-
-        // Evaluaciones individuales.
-        if (turno1.getAlumno() != null &&
-            turno1.getAlumno().getPrioridad()) {
-            prioridad1 = 1;
+    public boolean cambiarOrden(Turno turno, int nuevaPosicion) {
+        int posicionActual = turnos.indexOf(turno);
+        if (posicionActual < 0 || nuevaPosicion < 0 || nuevaPosicion >= turnos.size()) {
+            return false;
         }
 
-        if (turno2.getAlumno() != null &&
-            turno2.getAlumno().getPrioridad()) {
-            prioridad2 = 1;
+        int desde = Math.min(posicionActual, nuevaPosicion);
+        int hasta = Math.max(posicionActual, nuevaPosicion);
+        for (int i = desde; i <= hasta; i++) {
+            if (turnos.get(i).getEstado() != Estado.Pendiente) {
+                return false;
+            }
         }
 
-        // Evaluaciones grupales.
-        // Los grupos con mas alumnos prioritarios
-        // deben aparecer primero.
-        if (turno1.getGrupo() != null) {
-            prioridad1 = turno1.getGrupo()
-                .contarAlumnosPrioritarios();
+        turnos.remove(posicionActual);
+        turnos.add(nuevaPosicion, turno);
+        return true;
+    }
+
+    public void ordenarTurnosPorPrioridad() {
+        ordenarPorPrioridad();
+    }
+
+    public boolean estaIniciado() {
+        for (Turno turno : turnos) {
+            if (turno.getEstado() != Estado.Pendiente) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void calcularHorarios() {
+        if (turnos.isEmpty()) {
+            return;
         }
 
-        if (turno2.getGrupo() != null) {
-            prioridad2 = turno2.getGrupo()
-                .contarAlumnosPrioritarios();
+        InstanciaEvaluativa instancia = turnos.get(0).getInstancia();
+        if (instancia == null || instancia.getDuracionEstimada() <= 0) {
+            return;
         }
 
-        // Orden descendente: mayor prioridad primero.
-        return Integer.compare(prioridad2, prioridad1);
-    });
+        java.time.LocalDateTime horario = java.time.LocalDateTime.of(
+                instancia.getFecha(), instancia.getHoraInicio());
+        long segundos = Math.round(instancia.getDuracionEstimada() * 60);
 
-    // PENDIENTE EN GESTIONTURNERO:
-    // Llamar a este metodo despues de generar
-    // los turnos de cada instancia evaluativa.
-}
+        for (Turno turno : turnos) {
+            if (turno.getEstado() == Estado.Pendiente) {
+                turno.setFecha(horario.toLocalDate());
+                turno.setHora(horario.toLocalTime());
+            } else {
+                horario = java.time.LocalDateTime.of(turno.getFecha(), turno.getHora());
+            }
+            horario = horario.plusSeconds(segundos);
+        }
+    }
 
+    public void ordenarPorPrioridad() {
+        for (int i = 1; i < turnos.size(); i++) {
+            Turno turno = turnos.get(i);
+            if (turno.getEstado() != Estado.Pendiente) {
+                continue;
+            }
 
+            int posicion = i;
+            while (posicion > 0
+                    && turnos.get(posicion - 1).getEstado() == Estado.Pendiente
+                    && turnos.get(posicion - 1).getNivelPrioridad() < turno.getNivelPrioridad()) {
+                turnos.set(posicion, turnos.get(posicion - 1));
+                posicion--;
+            }
+            turnos.set(posicion, turno);
+        }
+    }
+
+    public void actualizarPendientes(Alumno alumno, Grupo grupo) {
+        boolean afectado = false;
+        for (int i = turnos.size() - 1; i >= 0; i--) {
+            Turno turno = turnos.get(i);
+            if (turno.getEstado() != Estado.Pendiente) {
+                continue;
+            }
+            if (alumno != null && turno.getAlumno() == alumno) {
+                turnos.remove(i);
+                afectado = true;
+            } else if (grupo != null && turno.getGrupo() == grupo) {
+                if (grupo.getlistaAlumnos().isEmpty()) {
+                    turnos.remove(i);
+                }
+                afectado = true;
+            }
+        }
+        if (afectado) {
+            ordenarPorPrioridad();
+            calcularHorarios();
+        }
+    }
+
+    public Turno iniciarOContinuar() {
+        Turno actual = getTurnoActual();
+        if (actual != null) {
+            return actual;
+        }
+
+        for (Turno turno : turnos) {
+            if (turno.getEstado() == Estado.Pendiente) {
+                turno.fijarIntegrantes();
+                turno.setEstado(Estado.Evaluando);
+                return turno;
+            }
+        }
+        return null;
+    }
 
     public Turno getTurnoActual() {
         for (Turno turno : turnos) {
