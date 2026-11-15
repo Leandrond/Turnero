@@ -4,8 +4,7 @@ public class Materia
 {
     private String nombre;
     private Docente representanteCatedra;
-    private int materiaId;
-    
+    private int idMateria;
     public Materia(String nombre, Docente representanteCatedra)
     {
         this.nombre = nombre;
@@ -17,12 +16,12 @@ public class Materia
         return nombre;
     }
 
-    public int getMateriaId(){
-        return materiaId;
+    public int getIdMateria(){
+        return idMateria;
     }
 
-    public void setMateriaId(int materiaId){
-        this.materiaId = materiaId;
+    public void setIdMateria(int idMateria){
+        this.idMateria = idMateria;
     }
 
     public Docente getRepresentanteCatedra(){

@@ -1,21 +1,24 @@
 package Controllers;
-import Models.Modalidad;
-
 import Models.Alumno;
 import Models.Comision;
-import Models.DefensaParcial;
 import Models.Docente;
 import Models.Estado;
-import Models.ExamenFinal;
 import Models.Grupo;
-import Models.InstanciaEvaluativa;
+import Models.Instancias.DefensaParcial;
+import Models.Instancias.ExamenFinal;
+import Models.Instancias.InstanciaEvaluativa;
+import Models.Instancias.PresentacionTPI;
 import Models.Materia;
-import Models.PresentacionTPI;
+import Models.Modalidad;
 import Models.Turnero;
 import Models.Turno;
+
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+
+import Dao.DocenteDao;
 
 public class GestionTurnero {
 
@@ -29,8 +32,11 @@ public class GestionTurnero {
     }
 
     //metodo para agregar un docente nuevo recibiendo sus datos
-    public void registrarDocente(String nombre, String apellido, String legajo){
+    public void registrarDocente(String nombre, String apellido, String legajo)
+            throws SQLException {
         Docente nuevoDocente = new Docente(nombre, apellido, legajo);
+
+        new DocenteDao().registrar(nuevoDocente);
         listaDocentes.add(nuevoDocente);
     }
 
@@ -63,8 +69,12 @@ public class GestionTurnero {
     public void registroDocente(String nombre, String apellido, String legajo){
         if(!tieneDocenteRegistrado()){
             // Simulamos la entrada de datos del docente
-            registrarDocente(nombre, apellido, legajo);
-            System.out.println("Docente registrado: " + nombre + " " + apellido + ", Legajo: " + legajo);
+            try {
+                registrarDocente(nombre, apellido, legajo);
+                System.out.println("Docente registrado: " + nombre + " " + apellido + ", Legajo: " + legajo);
+            } catch (SQLException e) {
+                System.err.println("Error al registrar el docente: " + e.getMessage());
+            }
         }else{
             System.out.println("Ya hay un docente registrado en el sistema.");
         }
@@ -385,7 +395,7 @@ public class GestionTurnero {
 
             Turnero turnero = instancia.getTurnero();
             for (Turno turno : turnero.getListaTurno()) {
-                if (turno.getEstado() == Estado.Pendiente &&
+                if (turno.getEstado() == Estado.PENDIENTE &&
                         (turno.getAlumno() == alumno || (turno.getGrupo() != null
                                 && turno.getGrupo().getlistaAlumnos().contains(alumno)))) {
                     turnero.ordenarPorPrioridad();
@@ -659,10 +669,12 @@ public class GestionTurnero {
         }
 
         if (!docenteExistente) {
-            registrarDocente(nombre, apellido, legajo);
-            System.out.println("Docente registrado: " + nombre + " " + apellido + ", Legajo: " + legajo);
-            // lo agregamos a la lista de docentes
-            listaDocentes.add(new Docente(nombre, apellido, legajo));
+            try {
+                registrarDocente(nombre, apellido, legajo);
+                System.out.println("Docente registrado: " + nombre + " " + apellido + ", Legajo: " + legajo);
+            } catch (SQLException e) {
+                System.err.println("Error al registrar el docente: " + e.getMessage());
+            }
                
         } else {
             System.out.println("El docente ya está registrado en el sistema.");
@@ -682,7 +694,7 @@ public class GestionTurnero {
     }
 
 
-     public void cambiarOrdenTurno(int codigoComision, int codigoInstancia, int codigoTurno, int nuevaPosicion) {
+    public void cambiarOrdenTurno(int codigoComision, int codigoInstancia, int codigoTurno, int nuevaPosicion) {
 
         // Busco el Turnero correspondiente a la comisión y la instancia
         Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
@@ -761,7 +773,7 @@ public class GestionTurnero {
             ArrayList<Turno> turnosPendientes = new ArrayList<>();
 
             for (Turno turno : listaTurnos) {
-                if (turno.getEstado() == Estado.Pendiente) {
+                if (turno.getEstado() == Estado.PENDIENTE) {
                     turnosPendientes.add(turno);
                 }
             }
@@ -787,50 +799,134 @@ public class GestionTurnero {
     }
 
 
-    public void siguienteTurno(int codigoComision, int codigoInstancia) {
-        Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
-        if (turnero != null) {
-            Turno turnoActual = turnero.getTurnoActual();
-            if (turnoActual != null) {
-                turnoActual.setEstado(Estado.Finalizado);
-                turnero.iniciarOContinuar();
-                System.out.println("Turno finalizado.");
-            } else {
-                System.out.println("No hay un turno actual en proceso.");
-            }
-        } else {
-            System.out.println("No se encontró un Turnero para la comisión y la instancia proporcionadas.");
+    public void siguienteTurno(
+            int codigoComision,
+            int codigoInstancia,
+            Integer nota) {
+
+        Turnero turnero = obtenerTurnero(
+            codigoComision, codigoInstancia
+        );
+
+        if (turnero == null) {
+            System.out.println("No se encontro el turnero.");
+            return;
         }
 
-    }
+        Turno turnoActual = turnero.getTurnoActual();
 
-    public void ponerAusente(int codigoComision, int codigoInstancia) {
-        Turnero turnero = obtenerTurnero(codigoComision, codigoInstancia);
-        if (turnero != null) {
-            Turno turnoActual = turnero.getTurnoActual();
-            if (turnoActual != null) {
-
-                turnoActual.setEstado(Estado.Ausente);
-                turnero.iniciarOContinuar();
-                System.out.println("Turno marcado como ausente.");
-            } else {
-                System.out.println("No hay un turno actual en proceso.");
-            }
-        } else {
-            System.out.println("No se encontró un Turnero para la comisión y la instancia proporcionadas.");
+        if (turnoActual == null) {
+            System.out.println("No hay un turno en evaluacion.");
+            return;
         }
 
+        Modalidad modalidad =
+            turnoActual.getInstancia().getModalidad();
+
+        // Validar segun la modalidad
+        if (modalidad == Modalidad.GENERAL) {
+
+            if (nota != null) {
+                System.out.println(
+                    "La evaluacion general no recibe nota."
+                );
+                return;
+            }
+
+        } else {
+
+            if (nota == null || nota < 1 || nota > 10) {
+                System.out.println(
+                    "La nota debe estar entre 1 y 10."
+                );
+                return;
+            }
+
+            turnoActual.setNota(nota);
+        }
+
+        // Finalizar solamente despues de validar
+        turnoActual.setEstado(Estado.FINALIZADO);
+
+        System.out.println("Turno finalizado.");
+
+        turnero.iniciarOContinuar();
     }
 
+        public void ponerAusente(
+            int codigoComision,
+            int codigoInstancia) {
+
+        Turnero turnero = obtenerTurnero(
+            codigoComision, codigoInstancia
+        );
+
+        if (turnero == null) {
+            System.out.println("No se encontro el turnero.");
+            return;
+        }
+
+        Turno turnoActual = turnero.getTurnoActual();
+
+        if (turnoActual == null) {
+            System.out.println("No hay un turno en evaluacion.");
+            return;
+        }
+
+        Modalidad modalidad =
+            turnoActual.getInstancia().getModalidad();
+
+
+        if (modalidad != Modalidad.GENERAL) {
+            turnoActual.setNota(0);
+        }
+
+        turnoActual.setEstado(Estado.AUSENTE);
+
+        System.out.println("Turno marcado como ausente.");
+
+        turnero.iniciarOContinuar();
+    }
 
     // public Boolean validarGrupos(){
         
     // }
 
+
+   
+    public ArrayList<Turno> obtenerCalificacionesAlumno(
+        int codigoComision,
+        int legajo) {
+
+    ArrayList<Turno> resultados = new ArrayList<>();
+
+        Comision comision =
+            buscarComisionPorCodigo(codigoComision);
+
+        if (comision == null) {
+            return resultados;
+        }
+
+        for (InstanciaEvaluativa instancia :
+                comision.getListaInstanciasEvaluativas()) {
+
+            if (instancia.getModalidad() == Modalidad.GENERAL) {
+                continue;
+            }
+
+            for (Turno turno :
+                    instancia.getTurnero().getListaTurno()) {
+
+                if (turno.getNota() != null && turno.incluyeAlumno(legajo) && (turno.getEstado() == Estado.FINALIZADO || turno.getEstado() == Estado.AUSENTE)) {
+
+                    resultados.add(turno);
+                }
+            }
+        }
+
+        return resultados;
+    }
 }
-
-
-
 
 
 

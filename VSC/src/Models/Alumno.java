@@ -11,7 +11,7 @@ public class Alumno extends Persona implements Priorizable
     public Alumno(String nombre, String apellido, int legajo) {
         super(nombre, apellido);
         this.legajo = legajo;
-        this.estado = Estado.Evaluando;
+        this.estado = Estado.EVALUANDO;
         this.prioridad = false;
     }
 
