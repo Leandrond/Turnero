@@ -1,22 +1,16 @@
 
 package Views;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Scanner;
+import Conexion.InicializadorBD;
 import Controllers.GestionTurnero;
 import Models.Alumno;
 import Models.Comision;
-import Models.DefensaParcial;
 import Models.Docente;
 import Models.Estado;
-import Models.ExamenFinal;
-import Models.Turno;
 import Models.Materia;
 import Models.Modalidad;
-import Models.PresentacionTPI;
 import Models.Turnero;
 import Models.Turno;
-
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Scanner;
@@ -24,19 +18,39 @@ import java.util.Scanner;
 public class Main {
 
     static Scanner teclado = new Scanner(System.in);
-    static int leerEntero(String mensaje) {
-        while (true) {
-        System.out.print(mensaje);
 
-            try {
-                return Integer.parseInt(teclado.nextLine().trim());
-        }       catch (NumberFormatException e) {
-            System.out.println("Ingrese un numero entero valido.");
+
+        static int leerEntero(String mensaje) {
+            while (true) {
+            System.out.print(mensaje);
+
+                try {
+                    return Integer.parseInt(teclado.nextLine().trim());
+            }       catch (NumberFormatException e) {
+                System.out.println("Ingrese un numero entero valido.");
+            }
         }
     }
-}
 
-    static Modalidad leerModalidad() {
+
+    static int leerNota(String mensaje) {
+
+            while (true) {
+
+                Integer nota = leerEntero(mensaje);
+
+                if (nota >= 1 && nota <= 10) {
+                    return nota;
+                }
+
+                System.out.println(
+                    "La nota debe estar entre 1 y 10."
+                );
+            }
+        }
+
+
+        static Modalidad leerModalidad() {
         while (true) {
             System.out.println("\nMODALIDAD DE EVALUACION");
             System.out.println("1. Individual");
@@ -57,6 +71,7 @@ public class Main {
         }
     }
 
+
     static String leerTexto(String mensaje) {
         while (true) {
             System.out.print(mensaje);
@@ -67,8 +82,21 @@ public class Main {
             System.out.println("El dato no puede quedar vacio.");
         }
     }
+
+
     public static void main(String[] args) {
 
+
+        try{
+            InicializadorBD.crearBD();
+        } catch (SQLException e) {
+            System.err.println(
+                "No se pudo preparar la base de datos: " + e.getMessage()
+            );
+            return;
+        }
+
+        
         GestionTurnero gestion = new GestionTurnero();
         registrarDocente(gestion);
 
@@ -111,9 +139,12 @@ static void registrarDocente(GestionTurnero gestion) {
         String apellido = leerTexto("Apellido: ");
         String legajo = leerTexto("Legajo: ");
 
-        gestion.registrarDocente(nombre, apellido, legajo);
-
-        System.out.println("Docente registrado correctamente.");
+        try {
+            gestion.registrarDocente(nombre, apellido, legajo);
+            System.out.println("Docente registrado correctamente.");
+        } catch (SQLException e) {
+            System.err.println("No se pudo registrar el docente: " + e.getMessage());
+        }
     }
 }
     static void menuComisiones(GestionTurnero gestion) {
@@ -184,6 +215,7 @@ static void registrarDocente(GestionTurnero gestion) {
             System.out.println("2. Ver alumnos");
             System.out.println("3. Buscar alumno");
             System.out.println("4. Dar de baja alumno");
+            System.out.println("5. Consultar Nota");
             System.out.println("0. Volver");
 
             opcion = leerEntero("Opcion: ");
@@ -204,7 +236,9 @@ static void registrarDocente(GestionTurnero gestion) {
                 case 4:
                     darDeBajaAlumno(gestion, codigo);
                     break;
-
+                case 5:
+                    consultarCalificaciones(gestion,codigo);
+                    break;
                 case 0:
                     break;
 
@@ -555,7 +589,7 @@ static void modificarHoraInstancia(GestionTurnero gestion) {
 
         int codigo = leerEntero("Codigo de comision: ");
 
-         gestion.listarInstanciasEvaluativas(codigo);
+        gestion.listarInstanciasEvaluativas(codigo);
     }
 
 static void ejecutarEvaluacion(GestionTurnero gestion) {
@@ -621,10 +655,41 @@ static void ejecutarEvaluacion(GestionTurnero gestion) {
         switch (opcion) {
 
             case 1:
+
+                Modalidad modalidad =
+                    turnoActual.getInstancia().getModalidad();
+
+                Integer nota = null;
+
+                if (modalidad == Modalidad.INDIVIDUAL) {
+
+                    System.out.println(
+                        "Alumno: " +
+                        turnoActual.getAlumno().getNombreCompleto()
+                    );
+
+                    nota = leerNota(
+                        "Ingrese la nota del alumno (1-10): "
+                    );
+
+                } else if (modalidad == Modalidad.GRUPAL) {
+
+                    System.out.println(
+                        "Grupo: " +
+                        turnoActual.getGrupo().getNumero()
+                    );
+
+                    nota = leerNota(
+                        "Ingrese la nota del grupo (1-10): "
+                    );
+                }
+
                 gestion.siguienteTurno(
                     codigoComision,
-                    codigoInstancia
+                    codigoInstancia,
+                    nota
                 );
+
                 break;
 
             case 2:
@@ -641,7 +706,8 @@ static void ejecutarEvaluacion(GestionTurnero gestion) {
 
     } while (opcion != 0);
 }
-    static void cambiarOrdenTurnos(GestionTurnero gestion) {
+    
+static void cambiarOrdenTurnos(GestionTurnero gestion) {
 
         System.out.println("\nCAMBIAR ORDEN DE TURNOS");
         System.out.println("\nCodigo de comision: ");
@@ -676,5 +742,69 @@ static void ejecutarEvaluacion(GestionTurnero gestion) {
         gestion.cambiarOrdenTurno(codigoComision, codigoInstancia, codigoTurno, nuevaPosicion - 1);
 
     }
+    
+    static void consultarCalificaciones(
+            GestionTurnero gestion,
+            int codigoComision) {
+
+        int legajo = leerEntero("Legajo del alumno: ");
+
+        Comision comision =
+            gestion.buscarComisionPorCodigo(codigoComision);
+
+        if (comision == null) {
+            System.out.println("Comision no encontrada.");
+            return;
+        }
+
+        Alumno alumno = comision.buscarAlumnoPorLegajo(legajo);
+
+        if (alumno == null) {
+            System.out.println("Alumno no encontrado.");
+            return;
+        }
+
+        java.util.ArrayList<Turno> calificaciones =
+            gestion.obtenerCalificacionesAlumno(
+                codigoComision, legajo
+            );
+
+        System.out.println("\nHISTORIAL DE CALIFICACIONES");
+        System.out.println(
+            "Alumno: " + alumno.getNombreCompleto()
+        );
+
+        if (calificaciones.isEmpty()) {
+            System.out.println("No hay calificaciones registradas.");
+            return;
+        }
+
+        for (Turno turno : calificaciones) {
+
+            System.out.println("-------------------------");
+
+            System.out.println(
+                "Instancia: " + turno.getInstancia().getTipo()
+            );
+
+            System.out.println(
+                "Modalidad: " +
+                turno.getInstancia().getModalidad()
+            );
+
+            if (turno.getGrupo() != null) {
+                System.out.println(
+                    "Grupo: " + turno.getGrupo().getNumero()
+                );
+            }
+
+            System.out.println("Nota: " + turno.getNota());
+
+            if (turno.getEstado() == Estado.AUSENTE) {
+                System.out.println("Estado: Ausente");
+            }
+        }
+    }
+
 }
 

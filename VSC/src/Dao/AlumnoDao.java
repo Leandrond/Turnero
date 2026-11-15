@@ -93,8 +93,11 @@ public class AlumnoDao {
 
             try (ResultSet resultado = sentencia.executeQuery()) {
                 while (resultado.next()) {
-                    Alumno alumno = new Alumno();
-                    alumno.setLegajo(resultado.getInt("legajo"));
+                    Alumno alumno = new Alumno(
+                        null,
+                        null,
+                        resultado.getInt("legajo")
+                    );
 
                     String estado = resultado.getString("estado");
                     if (estado != null) {

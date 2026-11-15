@@ -4,12 +4,12 @@ import Controllers.GestionTurnero;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 public class PanelIngreso extends JPanel {
 
     private GestionTurnero gestion; // GestionTurnero que se usa para registrar docentes y obtener el docente actual
@@ -57,7 +57,12 @@ public class PanelIngreso extends JPanel {
             return;
         }
 
-        gestion.registrarDocente(nombre, apellido, legajo);// Registra el docente con los datos ingresados
+        try {
+            gestion.registrarDocente(nombre, apellido, legajo);// Registra el docente con los datos ingresados
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "No se pudo registrar el docente: " + ex.getMessage());
+            return;
+        }
         JOptionPane.showMessageDialog(this, "Docente registrado: " + gestion.getDocenteActual().getNombreCompleto());// Muestra un mensaje de confirmacion con el nombre completo del docente registrado
         ventana.mostrarPantalla("menu");// Cambia a la pantalla del menu principal
     }

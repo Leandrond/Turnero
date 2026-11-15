@@ -113,6 +113,7 @@ public static void crearBD() throws SQLException {
             "fecha DATE NOT NULL, " +
             "hora TIME NOT NULL, " +
             "estado VARCHAR(20) NOT NULL, " +
+            "nota INT NULL, " +
             "UNIQUE (codigo_comision, codigo_instancia, posicion), " +
             "FOREIGN KEY (codigo_comision, codigo_instancia) " +
             "REFERENCES instancia_evaluativa(codigo_comision, codigo_instancia), " +

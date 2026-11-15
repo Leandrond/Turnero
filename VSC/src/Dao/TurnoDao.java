@@ -1,7 +1,5 @@
 package Dao;
 
-package Dao;
-
 import Conexion.ConexionBD;
 import Models.Turno;
 import java.sql.Connection;
