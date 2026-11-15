@@ -1,4 +1,5 @@
 package Models;
+import Models.Instancias.InstanciaEvaluativa;
 import java.util.ArrayList;
 
 public class Turnero
@@ -38,7 +39,7 @@ public class Turnero
         int desde = Math.min(posicionActual, nuevaPosicion);
         int hasta = Math.max(posicionActual, nuevaPosicion);
         for (int i = desde; i <= hasta; i++) {
-            if (turnos.get(i).getEstado() != Estado.Pendiente) {
+            if (turnos.get(i).getEstado() != Estado.PENDIENTE) {
                 return false;
             }
         }
@@ -54,7 +55,7 @@ public class Turnero
 
     public boolean estaIniciado() {
         for (Turno turno : turnos) {
-            if (turno.getEstado() != Estado.Pendiente) {
+            if (turno.getEstado() != Estado.PENDIENTE) {
                 return true;
             }
         }
@@ -76,7 +77,7 @@ public class Turnero
         long segundos = Math.round(instancia.getDuracionEstimada() * 60);
 
         for (Turno turno : turnos) {
-            if (turno.getEstado() == Estado.Pendiente) {
+            if (turno.getEstado() == Estado.PENDIENTE) {
                 turno.setFecha(horario.toLocalDate());
                 turno.setHora(horario.toLocalTime());
             } else {
@@ -89,13 +90,13 @@ public class Turnero
     public void ordenarPorPrioridad() {
         for (int i = 1; i < turnos.size(); i++) {
             Turno turno = turnos.get(i);
-            if (turno.getEstado() != Estado.Pendiente) {
+            if (turno.getEstado() != Estado.PENDIENTE) {
                 continue;
             }
 
             int posicion = i;
             while (posicion > 0
-                    && turnos.get(posicion - 1).getEstado() == Estado.Pendiente
+                    && turnos.get(posicion - 1).getEstado() == Estado.PENDIENTE
                     && turnos.get(posicion - 1).getNivelPrioridad() < turno.getNivelPrioridad()) {
                 turnos.set(posicion, turnos.get(posicion - 1));
                 posicion--;
@@ -108,7 +109,7 @@ public class Turnero
         boolean afectado = false;
         for (int i = turnos.size() - 1; i >= 0; i--) {
             Turno turno = turnos.get(i);
-            if (turno.getEstado() != Estado.Pendiente) {
+            if (turno.getEstado() != Estado.PENDIENTE   ) {
                 continue;
             }
             if (alumno != null && turno.getAlumno() == alumno) {
@@ -134,9 +135,9 @@ public class Turnero
         }
 
         for (Turno turno : turnos) {
-            if (turno.getEstado() == Estado.Pendiente) {
+            if (turno.getEstado() == Estado.PENDIENTE) {
                 turno.fijarIntegrantes();
-                turno.setEstado(Estado.Evaluando);
+                turno.setEstado(Estado.EVALUANDO);
                 return turno;
             }
         }
@@ -145,7 +146,7 @@ public class Turnero
 
     public Turno getTurnoActual() {
         for (Turno turno : turnos) {
-            if (turno.getEstado() == Estado.Evaluando) {
+            if (turno.getEstado() == Estado.EVALUANDO) {
                 return turno;
             }
         }

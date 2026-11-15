@@ -1,4 +1,5 @@
 package Models;
+import Models.Instancias.InstanciaEvaluativa;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -7,7 +8,7 @@ public class Turno implements Priorizable
 {
     /**Atributos**/
     private static int contador = 1; //lo uso para que cada turno tenga su propio numero
-    private int numero; 
+    private int numero;
     private InstanciaEvaluativa instancia; //instancia evaluativa a la que pertenece el turno
     private Alumno alumno; //se carga solo si el turno es de un alumno (individual)
     private Grupo grupo; //se carga solo si el turno es de un grupo (grupal)
@@ -15,6 +16,7 @@ public class Turno implements Priorizable
     private LocalDate fecha;
     private LocalTime hora;
     private Estado estado;
+    private Integer nota;
     
     //Turno de un ALUMNO > Se usa en las evaluaciones individuales
     //donde podemos dar de alta un turno por cada alumno de la comision
@@ -26,7 +28,7 @@ public class Turno implements Priorizable
         this.alumno=alumno;
         this.fecha=fecha;
         this.hora=hora;
-        this.estado=Estado.Pendiente;
+        this.estado=Estado.PENDIENTE;
     }
 
     //Turno de un GRUPO > Se usa en las evaluaciones grupales
@@ -39,7 +41,7 @@ public class Turno implements Priorizable
         this.grupo=grupo;
         this.fecha=fecha;
         this.hora=hora;
-        this.estado=Estado.Pendiente;
+        this.estado=Estado.PENDIENTE;
     }
 
     //Turno de una COMISION > Se usa en las evaluaciones generales
@@ -52,8 +54,39 @@ public class Turno implements Priorizable
         this.comision=comision;
         this.fecha=fecha;
         this.hora=hora;
-        this.estado=Estado.Pendiente;
+        this.estado=Estado.PENDIENTE;
     }
+
+    public Integer getNota(){
+        return nota;
+    }
+
+    public void setNota(int nota){
+        if (nota < 0 || nota > 10){
+            throw new IllegalArgumentException("La nota tiene que ser entre 0 y 10");
+        }
+        this.nota = nota;
+    }
+
+    public boolean incluyeAlumno(int legajo) {
+
+    // Turno individual
+    if (alumno != null) {
+        return alumno.getLegajo() == legajo;
+    }
+
+    // Turno grupal
+    if (grupo != null) {
+        for (Alumno integrante : grupo.getlistaAlumnos()) {
+            if (integrante.getLegajo() == legajo) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 
     //Devuelvo la comision (si el turno es de un alumno o grupo devuelve null)
     public Comision getComision()
@@ -135,7 +168,7 @@ public class Turno implements Priorizable
     //en el metodo del turnero siguiente turno va a dar true y nos va a 
     //devolver el objeto t y si es false no devuelve nada y avanza al que sigue.
     public boolean estaEvaluando(){
-        return estado==Estado.Evaluando;
+        return estado==Estado.EVALUANDO;
     }
 
     //Devuelve si el turno tiene prioridad
