@@ -672,6 +672,7 @@ public class GestionTurnero {
                         }
                         ins.setFecha(nuevaFecha);
                         ins.getTurnero().calcularHorarios();
+                        guardarFechaHora(codigoComision, ins); // Guarda la nueva fecha en la base
                         System.out.println("Fecha y hora de la instancia evaluativa modificadas correctamente.");
                         instanciaEncontrada = true;
                         break;
@@ -713,6 +714,7 @@ public class GestionTurnero {
                         }
                         ins.setHoraInicio(nuevaHora);
                         ins.getTurnero().calcularHorarios();
+                        guardarFechaHora(codigoComision, ins); // Guarda la nueva hora en la base
                         System.out.println("Hora de la instancia evaluativa modificada correctamente.");
                         instanciaEncontrada = true;
                         break;
@@ -806,6 +808,22 @@ public class GestionTurnero {
         return null; // Retorna null si no se encuentra
     }
 
+    // Guarda en la base la fecha y la hora de la instancia y los horarios de sus turnos
+    private void guardarFechaHora(
+            int codigoComision, InstanciaEvaluativa instancia) {
+        try {
+            new InstanciaEvaluativaDao().actualizarFechaHora(
+                codigoComision, instancia.getCodigo(),
+                instancia.getFecha(), instancia.getHoraInicio()
+            );
+            guardarTurnos(
+                codigoComision, instancia.getCodigo(), instancia.getTurnero()
+            );
+        } catch (SQLException e) {
+            System.err.println("No se pudo guardar la fecha y la hora: " + e.getMessage());
+        }
+    }
+    
     // Guarda en la base todos los turnos de una instancia tal como estan en memoria
     private void guardarTurnos(
             int codigoComision, int codigoInstancia, Turnero turnero) {

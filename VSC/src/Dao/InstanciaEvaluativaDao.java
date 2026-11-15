@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public class InstanciaEvaluativaDao {
@@ -84,6 +86,25 @@ public class InstanciaEvaluativaDao {
         }
     }
 
+    // Actualiza la fecha y la hora de inicio de una instancia
+    public void actualizarFechaHora(
+            int codigoComision, int codigoInstancia,
+            LocalDate fecha, LocalTime hora) throws SQLException {
+
+        String sql =
+            "UPDATE instancia_evaluativa SET fecha = ?, hora_inicio = ? " +
+            "WHERE codigo_comision = ? AND codigo_instancia = ?";
+
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+
+            sentencia.setDate(1, java.sql.Date.valueOf(fecha));
+            sentencia.setTime(2, java.sql.Time.valueOf(hora));
+            sentencia.setInt(3, codigoComision);
+            sentencia.setInt(4, codigoInstancia);
+            sentencia.executeUpdate();
+        }
+    }
 
 
     public void listarPorComision(int codigoComision) throws SQLException {
