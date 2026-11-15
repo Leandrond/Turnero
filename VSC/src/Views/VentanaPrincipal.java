@@ -1,34 +1,107 @@
-package Views;
 
+package Views;
+import Conexion.InicializadorBD;
+import java.sql.SQLException;
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import Controllers.GestionTurnero;
 
 public class VentanaPrincipal extends JFrame {
 
-    private CardLayout cartas = new CardLayout(); // Mazo de pantallas donde se muestra una sola a la vez
-    private JPanel contenedor = new JPanel(cartas); // Panel que guarda todas las pantallas
+    private CardLayout cartas = new CardLayout();
+    private JPanel contenedor = new JPanel(cartas);
+
+    private GestionTurnero gestion;
 
     public VentanaPrincipal() {
-        setTitle("Turnero UTN-FRVM"); // Coloca el titulo de la ventana
-        setSize(1920, 1080); // Establece el tamano de la ventana
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cierra la ventana al presionar el boton de cierre
-        setLocationRelativeTo(null); // Centra la ventana en la pantalla
 
-        GestionTurnero gestion = new GestionTurnero(); // Crea la gestion que usan todas las pantallas
+        setTitle("Sistema Turnero - UTN FRVM");
 
-        contenedor.add(new PanelIngreso(gestion, this), "ingreso"); // Agrega la pantalla de ingreso (es la primera que se ve)
-        contenedor.add(new PanelMenu(this), "menu"); // Agrega la pantalla del menu principal
-        add(contenedor); // Agrega el mazo de pantallas a la ventana
+        setSize(1100, 700);
+        setMinimumSize(new Dimension(850, 550));
+        setLocationRelativeTo(null);
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        getContentPane().setBackground(EstiloTurnero.CHOCOLATE);
+        contenedor.setBackground(EstiloTurnero.CHOCOLATE);
+
+        // Una sola gestión para todas las pantallas
+        gestion = new GestionTurnero();
+
+        // Pantalla de ingreso
+        contenedor.add(
+            new PanelIngreso(gestion, this),
+            "ingreso"
+        );
+        contenedor.add(
+            new PanelComisiones(gestion, this),
+            "comisiones"
+        );
+
+        // Menú principal
+        contenedor.add(
+            new PanelMenu(this),
+            "menu"
+        );
+
+        // Pantalla de comisiones
+        
+        contenedor.add(
+            new PanelAlumnos(gestion, this),
+            "alumnos"
+        );
+        
+        contenedor.add(
+            new PanelGrupos(gestion, this),
+            "grupos"
+        );
+
+
+        contenedor.add(
+            new PanelInstancias(gestion, this),
+            "instancias"
+        );
+
+        contenedor.add(
+            new PanelTurnos(gestion, this),
+            "turnos"
+        );
+
+
+
+        add(contenedor);
     }
 
     public void mostrarPantalla(String nombre) {
-        cartas.show(contenedor, nombre); // Muestra la pantalla que tiene el nombre indicado
+        cartas.show(contenedor, nombre);
     }
 
-    public static void main(String[] args) {
-        VentanaPrincipal ventana = new VentanaPrincipal(); // Crea una instancia de la ventana principal
-        ventana.setVisible(true); // Hace visible la ventana
+    public GestionTurnero getGestion() {
+        return gestion;
     }
+
+    
+    public static void main(String[] args) {
+
+        try {
+            InicializadorBD.crearBD();
+
+            SwingUtilities.invokeLater(() -> {
+                VentanaPrincipal ventana = new VentanaPrincipal();
+                ventana.setVisible(true);
+            });
+
+        } catch (SQLException ex) {
+            javax.swing.JOptionPane.showMessageDialog(
+                null,
+                "No se pudo inicializar la base de datos: "
+                + ex.getMessage()
+            );
+        }
+    }
+
 }
