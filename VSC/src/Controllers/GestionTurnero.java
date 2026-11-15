@@ -285,6 +285,13 @@ public class GestionTurnero {
             Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
             
             if(alumnoEncontrado != null){
+                // Primero se da de baja en la base y si falla no se cambia nada en memoria
+                try {
+                    new AlumnoDao().darDeBaja(codigoComision, legajoAlumno);
+                } catch (SQLException e) {
+                    System.out.println("No se pudo dar de baja al alumno. Puede que ya tenga evaluaciones registradas: " + e.getMessage());
+                    return;
+                }
                 comisionEncontrada.darDeBajaAlumno(legajoAlumno);
                 for (Grupo grupo : comisionEncontrada.getListaGrupos()) {
                     if (grupo.quitarAlumno(alumnoEncontrado)) {
@@ -293,6 +300,7 @@ public class GestionTurnero {
                 }
                 for (InstanciaEvaluativa instancia : comisionEncontrada.getListaInstanciasEvaluativas()) {
                     instancia.getTurnero().actualizarPendientes(alumnoEncontrado, null);
+                    guardarTurnos(codigoComision, instancia.getCodigo(), instancia.getTurnero()); // Guarda en la base los turnos sin el alumno
                 }
                 System.out.println("Alumno con legajo " + legajoAlumno + " dado de baja de la comisión " + comisionEncontrada.getNombre() + ".");
             } else {
