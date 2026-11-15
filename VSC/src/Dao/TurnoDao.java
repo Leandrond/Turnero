@@ -1,8 +1,10 @@
 package Dao;
+import Conexion.ConexionBD;
 import Models.Turno;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 public class TurnoDao {
 
@@ -79,4 +81,43 @@ public class TurnoDao {
 
         sentencia.executeUpdate();
     }
-}}
+}
+
+    // Reemplaza todos los turnos de una instancia por los que estan en memoria
+    public void reemplazarTurnos(
+            int codigoComision, int codigoInstancia, List<Turno> turnos)
+            throws SQLException {
+
+        String borrar =
+            "DELETE FROM turno " +
+            "WHERE codigo_comision = ? AND codigo_instancia = ?";
+
+        try (Connection conexion = ConexionBD.conectar()) {
+            conexion.setAutoCommit(false); // Los cambios se confirman todos juntos al final
+
+            try {
+                try (PreparedStatement sentencia =
+                        conexion.prepareStatement(borrar)) {
+                    sentencia.setInt(1, codigoComision);
+                    sentencia.setInt(2, codigoInstancia);
+                    sentencia.executeUpdate(); // Borra los turnos viejos de esa instancia
+                }
+
+                for (int posicion = 0; posicion < turnos.size(); posicion++) {
+                    registrar(
+                        conexion, turnos.get(posicion), codigoComision, posicion
+                    ); // Vuelve a guardar cada turno con su posicion actual
+                }
+
+                conexion.commit(); // Confirma todo
+            } catch (SQLException | RuntimeException e) {
+                try {
+                    conexion.rollback(); // Si algo falla deshace todo y la base queda como estaba
+                } catch (SQLException errorRollback) {
+                    e.addSuppressed(errorRollback);
+                }
+                throw e;
+            }
+        }
+    }
+}
