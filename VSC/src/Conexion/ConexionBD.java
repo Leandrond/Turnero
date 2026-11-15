@@ -28,17 +28,36 @@ public class ConexionBD {
 }
 
 
-// Agregar al main con el ejemplo
-
-// Integración en Views/Main.java:
-// 1. Agregar estos imports:
+// Agregar al main.java:
+//
+//
 //    import Conexion.InicializadorBD;
 //    import java.sql.SQLException;
-
-// 2. Al comienzo de main(), antes de mostrar el menú:
+//
+//y antes que nada en el primer metodo agregar esto
+//
 //    try {
-//        InicializadorBD.inicializar();
+//        InicializadorBD.crearBD();
 //    } catch (SQLException e) {
-//        System.err.println("No se pudo validar la base de datos: " + e.getMessage());
+//        System.err.println(
+//            "No se pudo preparar la base de datos: " + e.getMessage()
+//        );
 //        return;
 //    }
+// para docente
+// DocenteDao docenteDao = new DocenteDao();
+// docenteDao.registrar(docente);
+
+//         AGREGAR EN Materia
+//         private int idMateria;
+
+        // public int getIdMateria() {
+        //     return idMateria;
+        // }
+
+        // public void setIdMateria(int idMateria) {
+        //     this.idMateria = idMateria;
+        // }
+
+
+        
