@@ -1,5 +1,6 @@
 {
-  "java.project.referencedLibraries": [
-    "VSC/src/lib/**/*.jar"
-  ]
+    "java.project.referencedLibraries": [
+        "VSC/lib/**/*.jar"
+    ]
+
 }
