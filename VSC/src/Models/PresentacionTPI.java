@@ -7,7 +7,8 @@ public class PresentacionTPI extends InstanciaEvaluativa{
     
     // Constructor con atributos heredados de la clase InstanciaEvaluativa
     public PresentacionTPI(
-        String tipo, LocalDate fecha, LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero) {
+        String tipo, LocalDate fecha, LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero, Modalidad modalidad) {
+        super(modalidad);
         super.tipo = tipo;
         super.fecha = fecha;
         super.horaInicio = hora;
@@ -29,7 +30,7 @@ public class PresentacionTPI extends InstanciaEvaluativa{
     }
     @Override
     public int getCodigo() {
-        return codigo;
+        return codigoDeInstancia;
     }
     @Override
     public LocalTime getHoraInicio() {
@@ -58,21 +59,21 @@ public class PresentacionTPI extends InstanciaEvaluativa{
 
     @Override
     public Turnero getTurnero() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return turnero;
     }
 
     @Override
     public Docente getDocente() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return docente;
     }
 
     @Override
     public int getCodigoDeInstancia() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return codigoDeInstancia;
     }
 
     @Override
     public void setCodigoDeInstancia(int codigoDeInstancia) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.codigoDeInstancia = codigoDeInstancia;
     }
 }

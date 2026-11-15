@@ -6,7 +6,8 @@ public class DefensaParcial extends InstanciaEvaluativa{
     // Constructor con atributos heredados de la clase InstanciaEvaluativa
     public DefensaParcial(
 
-        String tipo, LocalDate fecha,LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero) {
+        String tipo, LocalDate fecha,LocalTime hora ,double duracionEstimada, Comision comision, Docente docente, int codigoDeInstancia, Turnero turnero, Modalidad modalidad) {
+        super(modalidad);
         super.tipo = tipo;
         super.fecha = fecha;
         super.horaInicio = hora;   
@@ -23,7 +24,7 @@ public class DefensaParcial extends InstanciaEvaluativa{
     }
     @Override
     public int getCodigo() {
-        return codigo;
+        return codigoDeInstancia;
     }
     @Override
 
