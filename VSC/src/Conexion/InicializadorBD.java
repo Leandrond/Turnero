@@ -43,10 +43,11 @@ public static void crearBD() throws SQLException {
         ejecutarDDL(conexion,
             "CREATE TABLE IF NOT EXISTS alumno (" +
             "legajo INT PRIMARY KEY, " +
+            "nombre VARCHAR(100) NOT NULL DEFAULT '', " +
+            "apellido VARCHAR(100) NOT NULL DEFAULT '', " +
             "estado VARCHAR(20), " +
             "prioridad BOOLEAN NOT NULL DEFAULT FALSE" +
             ") ENGINE=InnoDB");
-
         ejecutarDDL(conexion,
             "CREATE TABLE IF NOT EXISTS comision_alumno (" +
             "codigo_comision INT NOT NULL, " +
@@ -82,6 +83,7 @@ public static void crearBD() throws SQLException {
             "codigo_comision INT NOT NULL, " +
             "codigo_instancia INT NOT NULL, " +
             "tipo VARCHAR(40) NOT NULL, " +
+            "modalidad VARCHAR(20) NOT NULL, " +
             "fecha DATE NOT NULL, " +
             "hora_inicio TIME NOT NULL, " +
             "duracion_estimada DECIMAL(8,2) NOT NULL, " +
