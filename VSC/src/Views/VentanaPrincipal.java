@@ -1,13 +1,13 @@
 
 package Views;
 import Conexion.InicializadorBD;
-import java.sql.SQLException;
+import Controllers.GestionTurnero;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.sql.SQLException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import Controllers.GestionTurnero;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -21,7 +21,7 @@ public class VentanaPrincipal extends JFrame {
         setTitle("Sistema Turnero - UTN FRVM");
 
         setSize(1100, 700);
-        setMinimumSize(new Dimension(850, 550));
+        setMinimumSize(new Dimension(1920, 1080));
         setLocationRelativeTo(null);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
