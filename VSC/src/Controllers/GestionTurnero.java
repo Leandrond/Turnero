@@ -4,7 +4,7 @@ import Dao.ComisionDao;
 import Dao.DocenteDao;
 import Dao.GrupoDao;
 import Dao.InstanciaEvaluativaDao;
-import java.util.Collections;
+import Dao.TurnoDao;
 import Models.Alumno;
 import Models.Comision;
 import Models.Docente;
@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class GestionTurnero {
 
@@ -805,6 +806,17 @@ public class GestionTurnero {
         return null; // Retorna null si no se encuentra
     }
 
+    // Guarda en la base todos los turnos de una instancia tal como estan en memoria
+    private void guardarTurnos(
+            int codigoComision, int codigoInstancia, Turnero turnero) {
+        try {
+            new TurnoDao().reemplazarTurnos(
+                codigoComision, codigoInstancia, turnero.getListaTurno()
+            );
+        } catch (SQLException e) {
+            System.err.println("No se pudieron guardar los turnos: " + e.getMessage());
+        }
+    }
 
     public void cambiarOrdenTurno(int codigoComision, int codigoInstancia, int codigoTurno, int nuevaPosicion) {
 
@@ -834,6 +846,7 @@ public class GestionTurnero {
                     //Recalculo los horarios estimados porque cambio la posicion del turno
                     turnero.calcularHorarios();
                     System.out.println("Orden del turno cambiado correctamente.");
+                    guardarTurnos(codigoComision, codigoInstancia, turnero); // Guarda en la base el nuevo orden
                 }else{
                     
                     System.out.println("La nueva posición proporcionada es inválida. Debe estar entre 1 y " + listaTurnos.size() + ".");
@@ -963,6 +976,7 @@ public class GestionTurnero {
         System.out.println("Turno finalizado.");
 
         turnero.iniciarOContinuar();
+        guardarTurnos(codigoComision, codigoInstancia, turnero); // Guarda en la base la nota y el estado
     }
 
         public void ponerAusente(
@@ -998,6 +1012,7 @@ public class GestionTurnero {
         System.out.println("Turno marcado como ausente.");
 
         turnero.iniciarOContinuar();
+        guardarTurnos(codigoComision, codigoInstancia, turnero); // Guarda en la base el estado ausente
     }
 
     // public Boolean validarGrupos(){
@@ -1039,8 +1054,3 @@ public class GestionTurnero {
         return resultados;
     }
 }
-
-
-
-
-
