@@ -21,8 +21,7 @@ public class PanelMenu extends JPanel {
 
         JButton botonComisiones = new JButton("Comisiones");// Crea un boton para acceder a la pantalla de comisiones
         menu.add(botonComisiones);// Agrega el boton al menu
-        botonComisiones.addActionListener(e ->
-            JOptionPane.showMessageDialog(this, "Pantalla de comisiones: próximamente."));//Agrega el evento de click al boton de comisiones
+        botonComisiones.addActionListener(e -> ventana.mostrarComisiones());//Agrega el evento de click al boton de comisiones para mostrar la pantalla de comisiones
 
         JButton botonInstancias = new JButton("Instancias evaluativas");// Crea un boton para acceder a la pantalla de instancias evaluativas
         menu.add(botonInstancias);// Agrega el boton al menu
