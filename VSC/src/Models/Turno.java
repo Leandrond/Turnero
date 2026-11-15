@@ -3,7 +3,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 
-public class Turno
+public class Turno implements Priorizable
 {
     /**Atributos**/
     private static int contador = 1; //lo uso para que cada turno tenga su propio numero
@@ -14,7 +14,7 @@ public class Turno
     private Comision comision; //se carga solo si el turno es de una comision (general)
     private LocalDate fecha;
     private LocalTime hora;
-    private Estado estado; //Evaluando, Finalizado o Ausente (arranca en Evaluando)
+    private Estado estado;
     
     //Turno de un ALUMNO > Se usa en las evaluaciones individuales
     //donde podemos dar de alta un turno por cada alumno de la comision
@@ -26,7 +26,7 @@ public class Turno
         this.alumno=alumno;
         this.fecha=fecha;
         this.hora=hora;
-        this.estado=Estado.Evaluando;
+        this.estado=Estado.Pendiente;
     }
 
     //Turno de un GRUPO > Se usa en las evaluaciones grupales
@@ -39,7 +39,7 @@ public class Turno
         this.grupo=grupo;
         this.fecha=fecha;
         this.hora=hora;
-        this.estado=Estado.Evaluando;
+        this.estado=Estado.Pendiente;
     }
 
     //Turno de una COMISION > Se usa en las evaluaciones generales
@@ -52,7 +52,7 @@ public class Turno
         this.comision=comision;
         this.fecha=fecha;
         this.hora=hora;
-        this.estado=Estado.Evaluando;
+        this.estado=Estado.Pendiente;
     }
 
     //Devuelvo la comision (si el turno es de un alumno o grupo devuelve null)
@@ -89,6 +89,16 @@ public class Turno
     }
     
     //Devuelvo grupo (si el turno es de un alumno devuelve null)
+    void fijarIntegrantes() {
+        if (grupo != null) {
+            Grupo copia = new Grupo(grupo.getNumero(), grupo.getCupoMaximo());
+            for (Alumno integrante : grupo.getlistaAlumnos()) {
+                copia.agregarAlumno(integrante);
+            }
+            grupo = copia;
+        }
+    }
+
     public Grupo getGrupo(){
         return grupo;
     }
@@ -131,6 +141,17 @@ public class Turno
     //Devuelve si el turno tiene prioridad
     //La prioridad es del alumno, asi que se lo pregunta a el
     //Si el turnoo es de un grupo o una comision y no de un alumno, devuelve false
+    @Override
+    public int getNivelPrioridad() {
+        if (grupo != null) {
+            return grupo.getNivelPrioridad();
+        }
+        if (alumno != null) {
+            return alumno.getNivelPrioridad();
+        }
+        return 0;
+    }
+
     public boolean getPrioridad(){
         if (alumno != null){
             return alumno.getPrioridad();

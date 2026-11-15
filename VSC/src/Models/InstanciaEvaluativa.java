@@ -12,14 +12,19 @@ public abstract class InstanciaEvaluativa
     protected LocalTime horaInicio;
     protected Comision comision;
     protected double duracionEstimada;
+    private Modalidad modalidad;
 
     protected Turnero turnero;
     protected Docente docente;
     protected int codigoDeInstancia;
     // Constructor
-    public InstanciaEvaluativa()
+    public InstanciaEvaluativa(Modalidad modalidad)
     {
-        
+        this.modalidad = modalidad;
+    }
+
+    public Modalidad getModalidad() {
+        return modalidad;
     }
     // Getters
     public abstract  int getCodigo();

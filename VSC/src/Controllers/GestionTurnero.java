@@ -1,4 +1,5 @@
 package Controllers;
+import Models.Modalidad;
 
 import Models.Alumno;
 import Models.Comision;
@@ -34,6 +35,12 @@ public class GestionTurnero {
     }
 
     public void crearComision(int codigo, String nombre, Materia materia){
+        for (Comision comision : listaComisiones) {
+            if (comision.getCodigoComision() == codigo) {
+                System.out.println("Ya existe una comision con ese codigo.");
+                return;
+            }
+        }
         Comision nuevaComision = new Comision(codigo, nombre, materia);
         listaComisiones.add(nuevaComision);
         //Se la asignamos al docente registrado (asumiendo que trabajamos con el docente actual)
@@ -82,7 +89,7 @@ public class GestionTurnero {
             }
     }
 
-    public void agregarAlumno(int codigoComision, int legajoAlumno){
+    public void agregarAlumno(int codigoComision, int legajoAlumno, String nombre, String apellido){
         //1- Busco la comision por su codigo en el docente actual
         Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
         
@@ -98,7 +105,7 @@ public class GestionTurnero {
             }
 
             if (!alumnoExistente) {
-                Alumno nuevoAlumno = new Alumno(legajoAlumno, null); // Estado y prioridad se pueden establecer según sea necesario
+                Alumno nuevoAlumno = new Alumno(nombre, apellido, legajoAlumno);
                 comisionEncontrada.agregarAlumno(nuevoAlumno);// Usamos el método que ya tiene Comision
                 System.out.println("Alumno con legajo " + legajoAlumno + " agregado correctamente a la comisión.");
             } else {
@@ -120,7 +127,7 @@ public class GestionTurnero {
             if(!listaAlumnos.isEmpty()){
                 System.out.println("Alumnos de la comisión " + comisionEncontrada.getNombre() + ":");
                 for (Alumno a : listaAlumnos) {
-                    System.out.println("Legajo: " + a.getLegajo() + ", Estado: " + a.getEstado());
+                    System.out.println("Nombre: " + a.getNombreCompleto() + ", Legajo: " + a.getLegajo());
                 }
             } else {
                 System.out.println("No hay alumnos registrados en esta comisión.");
@@ -144,7 +151,7 @@ public class GestionTurnero {
                     System.out.println("Número de Grupo: " + g.getNumero() + ", Cupo Máximo: " + g.getCupoMaximo());
                     System.out.println("Integrantes:");
                     for (Alumno a : g.getlistaAlumnos()) {
-                        System.out.println("Legajo: " + a.getLegajo() + ", Estado: " + a.getEstado());
+                        System.out.println("Nombre: " + a.getNombreCompleto() + ", Legajo: " + a.getLegajo());
                     }
                 }
             } else {
@@ -165,7 +172,7 @@ public class GestionTurnero {
             Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
             if(alumnoEncontrado != null){
                 System.out.println("Alumno encontrado en la comisión " + comisionEncontrada.getNombre() + ":");
-                System.out.println("Legajo: " + alumnoEncontrado.getLegajo() + ", Estado: " + alumnoEncontrado.getEstado());
+                System.out.println("Nombre: " + alumnoEncontrado.getNombreCompleto() + ", Legajo: " + alumnoEncontrado.getLegajo());
             } else {
                 System.out.println("No se encontró un alumno con ese legajo en esta comisión.");
             }
@@ -183,7 +190,15 @@ public class GestionTurnero {
             Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
             
             if(alumnoEncontrado != null){
-                comisionEncontrada.getListaAlumnos().remove(alumnoEncontrado);
+                comisionEncontrada.darDeBajaAlumno(legajoAlumno);
+                for (Grupo grupo : comisionEncontrada.getListaGrupos()) {
+                    if (grupo.quitarAlumno(alumnoEncontrado)) {
+                        actualizarGrupo(comisionEncontrada, grupo);
+                    }
+                }
+                for (InstanciaEvaluativa instancia : comisionEncontrada.getListaInstanciasEvaluativas()) {
+                    instancia.getTurnero().actualizarPendientes(alumnoEncontrado, null);
+                }
                 System.out.println("Alumno con legajo " + legajoAlumno + " dado de baja de la comisión " + comisionEncontrada.getNombre() + ".");
             } else {
                 System.out.println("No se encontró un alumno con ese legajo en esta comisión.");
@@ -232,6 +247,10 @@ public class GestionTurnero {
         Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
 
         if(comisionEncontrada != null){
+            if (cupo <= 0) {
+                System.out.println("El cupo tiene que ser mayor que cero.");
+                return;
+            }
             Grupo nuevoGrupo = new Grupo(numeroGrupo, cupo);
             comisionEncontrada.agregarGrupo(nuevoGrupo);
         } else {
@@ -253,7 +272,10 @@ public class GestionTurnero {
             }
 
             if(grupoEncontrado != null){
-                grupoEncontrado.setCupoMaximo(nuevoCupo);
+                if (!grupoEncontrado.setCupoMaximo(nuevoCupo)) {
+                    System.out.println("El cupo tiene que ser positivo y alcanzar para los integrantes actuales.");
+                    return;
+                }
                 System.out.println("Cupo máximo del grupo " + numeroGrupo + " cambiado a " + nuevoCupo + ".");
             } else {
                 System.out.println("No se encontró un grupo con ese número en esta comisión.");
@@ -283,7 +305,11 @@ public class GestionTurnero {
                 Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
                 if(alumnoEncontrado != null){
                     //Se agrega el alumno al grupo
-                    grupoEncontrado.agregarAlumno(alumnoEncontrado);
+                    if (!grupoEncontrado.agregarAlumno(alumnoEncontrado)) {
+                        System.out.println("El grupo esta lleno o el alumno ya es integrante.");
+                        return;
+                    }
+                    actualizarGrupo(buscarComisionPorCodigo(codigoComision), grupoEncontrado);
                     System.out.println("Alumno con legajo " + legajoAlumno + " agregado al grupo con éxito.");
                 } else {
                     System.out.println("Error: No se encontró un alumno con ese legajo en esta comisión.");
@@ -306,7 +332,11 @@ public class GestionTurnero {
             Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
             
             if(alumnoEncontrado != null){
-                grupoEncontrado.quitarAlumno(alumnoEncontrado);
+                if (!grupoEncontrado.quitarAlumno(alumnoEncontrado)) {
+                    System.out.println("El alumno no es integrante del grupo.");
+                    return;
+                }
+                actualizarGrupo(buscarComisionPorCodigo(codigoComision), grupoEncontrado);
                 System.out.println("Alumno con legajo " + legajoAlumno + " removido del grupo con éxito.");
                 
             } else {
@@ -318,6 +348,12 @@ public class GestionTurnero {
     }
 
 
+    private void actualizarGrupo(Comision comision, Grupo grupo) {
+        for (InstanciaEvaluativa instancia : comision.getListaInstanciasEvaluativas()) {
+            instancia.getTurnero().actualizarPendientes(null, grupo);
+        }
+    }
+
     public void cambiarPrioridad(int codigoComision, int legajoAlumno, boolean nuevaPrioridad){
         //1- Busco la comision por su codigo en el docente actual
         Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
@@ -327,7 +363,10 @@ public class GestionTurnero {
             Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
             
             if(alumnoEncontrado != null){
-                alumnoEncontrado.setPrioridad(nuevaPrioridad);
+                if (alumnoEncontrado.getPrioridad() != nuevaPrioridad) {
+                    alumnoEncontrado.setPrioridad(nuevaPrioridad);
+                    actualizarTurnosPendientes(comisionEncontrada, alumnoEncontrado);
+                }
                 System.out.println("Prioridad del alumno con legajo " + legajoAlumno + " cambiada a " + nuevaPrioridad + ".");
             } else {
                 System.out.println("No se encontró un alumno con ese legajo en esta comisión.");
@@ -338,10 +377,29 @@ public class GestionTurnero {
     }
 
 
-    public void crearDefensaParcial(
+    private void actualizarTurnosPendientes(Comision comision, Alumno alumno) {
+        for (InstanciaEvaluativa instancia : comision.getListaInstanciasEvaluativas()) {
+            if (instancia.getModalidad() == Modalidad.GENERAL) {
+                continue;
+            }
+
+            Turnero turnero = instancia.getTurnero();
+            for (Turno turno : turnero.getListaTurno()) {
+                if (turno.getEstado() == Estado.Pendiente &&
+                        (turno.getAlumno() == alumno || (turno.getGrupo() != null
+                                && turno.getGrupo().getlistaAlumnos().contains(alumno)))) {
+                    turnero.ordenarPorPrioridad();
+                    turnero.calcularHorarios();
+                    break;
+                }
+            }
+        }
+    }
+
+    public boolean crearDefensaParcial(
         Comision comisionEncontrada, String fecha, String hora,
         double duracionEstimada, int codigoDeInstancia,
-        Docente docente, Turnero turnero) {
+        Docente docente, Turnero turnero, Modalidad modalidad) {
 
     InstanciaEvaluativa instancia = new DefensaParcial(
         "Defensa Parcial",
@@ -351,14 +409,15 @@ public class GestionTurnero {
         comisionEncontrada,
         docente,
         codigoDeInstancia,
-        turnero
+        turnero,
+        modalidad
     );
     // lo agregamos a la lista de instancias evaluativas de la comision, porque la comision es la que tiene la lista de instancias evaluativas
-    comisionEncontrada.agregarInstanciaEvaluativa(instancia);
+    return registrarInstancia(comisionEncontrada, instancia);
 }
       
 
-        // public void crearExamenFinal(Comision comisionEncontrada, LocalDate fecha, LocalTime hora ,double duracionEstimada, Docente docente, int codigoDeInstancia, Turnero turnero) {
+        // public boolean crearExamenFinal(Comision comisionEncontrada, LocalDate fecha, LocalTime hora ,double duracionEstimada, Docente docente, int codigoDeInstancia, Turnero turnero) {
             
         // InstanciaEvaluativa inst= new ExamenFinal("Examen Final", fecha, hora, duracionEstimada, comisionEncontrada, docente, codigoDeInstancia, turnero);
         // //1. Crear tipo de examen según el tipo recibido (1,2,3) y asignarle la modalidad, fecha y hora.
@@ -367,10 +426,10 @@ public class GestionTurnero {
 
         // }
     
-    public void crearExamenFinal(
+    public boolean crearExamenFinal(
         Comision comisionEncontrada, String fecha, String hora,
         double duracionEstimada, int codigoDeInstancia,
-        Docente docente, Turnero turnero) {
+        Docente docente, Turnero turnero, Modalidad modalidad) {
 
     InstanciaEvaluativa instancia = new ExamenFinal(
         "Examen Final",
@@ -380,21 +439,22 @@ public class GestionTurnero {
         comisionEncontrada,
         docente,
         codigoDeInstancia,
-        turnero
+        turnero,
+        modalidad
     );
     // lo agregamos a la lista de instancias evaluativas de la comision, porque la comision es la que tiene la lista de instancias evaluativas
-    comisionEncontrada.agregarInstanciaEvaluativa(instancia);}
-    // public void crearPresentacionTPI(Comision comisionEncontrada, LocalDate fecha, LocalTime hora ,double duracionEstimada, Docente docente, int codigoDeInstancia, Turnero turnero) {
+    return registrarInstancia(comisionEncontrada, instancia);}
+    // public boolean crearPresentacionTPI(Comision comisionEncontrada, LocalDate fecha, LocalTime hora ,double duracionEstimada, Docente docente, int codigoDeInstancia, Turnero turnero) {
         
     //     InstanciaEvaluativa instancia3= new PresentacionTPI("Presentacion TPI", fecha, hora, duracionEstimada, comisionEncontrada, docente, codigoDeInstancia, turnero);              
        
     //    //1. Crear tipo de examen según el tipo recibido (1,2,3) y asignarle la modalidad, fecha y hora.
     // }
 
-    public void crearPresentacionTPI(
+    public boolean crearPresentacionTPI(
         Comision comisionEncontrada, String fecha, String hora,
         double duracionEstimada, int codigoDeInstancia,
-        Docente docente, Turnero turnero) {
+        Docente docente, Turnero turnero, Modalidad modalidad) {
     InstanciaEvaluativa instancia = new PresentacionTPI(
         "Presentacion TPI",
         LocalDate.parse(fecha),
@@ -403,12 +463,54 @@ public class GestionTurnero {
         comisionEncontrada,
         docente,
         codigoDeInstancia,
-        turnero
+        turnero,
+        modalidad
     );
     // lo agregamos a la lista de instancias evaluativas de la comision, porque la comision es la que tiene la lista de instancias evaluativas
-    comisionEncontrada.agregarInstanciaEvaluativa(instancia);
+    return registrarInstancia(comisionEncontrada, instancia);
     }
 
+
+    private boolean registrarInstancia(Comision comision, InstanciaEvaluativa instancia) {
+        for (InstanciaEvaluativa registrada : comision.getListaInstanciasEvaluativas()) {
+            if (registrada.getCodigo() == instancia.getCodigo()) {
+                System.out.println("Ya hay una instancia con ese codigo en la comision.");
+                return false;
+            }
+        }
+
+        Turnero turnero = instancia.getTurnero();
+        LocalDate fecha = instancia.getFecha();
+        LocalTime hora = instancia.getHoraInicio();
+
+        switch (instancia.getModalidad()) {
+            case INDIVIDUAL:
+                for (Alumno alumno : comision.getListaAlumnos()) {
+                    turnero.agregarTurno(new Turno(instancia, alumno, fecha, hora));
+                }
+                break;
+            case GRUPAL:
+                for (Grupo grupo : comision.getListaGrupos()) {
+                    if (!grupo.getlistaAlumnos().isEmpty()) {
+                        turnero.agregarTurno(new Turno(instancia, grupo, fecha, hora));
+                    }
+                }
+                break;
+            case GENERAL:
+                turnero.agregarTurno(new Turno(instancia, comision, fecha, hora));
+                break;
+        }
+
+        if (turnero.getListaTurno().isEmpty()) {
+            System.out.println("No hay alumnos o grupos con integrantes para generar turnos.");
+            return false;
+        }
+
+        turnero.ordenarPorPrioridad();
+        turnero.calcularHorarios();
+        comision.agregarInstanciaEvaluativa(instancia);
+        return true;
+    }
 
     public Turnero obtenerTurnero(int codigoComision, int codigoInstancia) {
 
@@ -441,7 +543,12 @@ public class GestionTurnero {
                 for(InstanciaEvaluativa ins : comisionEncontrada.getListaInstanciasEvaluativas()){
                     if(ins.getCodigo() == codigoInstancia){
                         //3. Si la encuentro, cambio la fecha y hora
+                        if (ins.getTurnero().estaIniciado()) {
+                            System.out.println("La evaluacion ya empezo. No se puede cambiar el inicio.");
+                            return;
+                        }
                         ins.setFecha(nuevaFecha);
+                        ins.getTurnero().calcularHorarios();
                         System.out.println("Fecha y hora de la instancia evaluativa modificadas correctamente.");
                         instanciaEncontrada = true;
                         break;
@@ -477,7 +584,12 @@ public class GestionTurnero {
                 for(InstanciaEvaluativa ins : comisionEncontrada.getListaInstanciasEvaluativas()){
                     if(ins.getCodigo() == codigoInstancia){
                         //3. Si la encuentro, cambio la hora
+                        if (ins.getTurnero().estaIniciado()) {
+                            System.out.println("La evaluacion ya empezo. No se puede cambiar el inicio.");
+                            return;
+                        }
                         ins.setHoraInicio(nuevaHora);
+                        ins.getTurnero().calcularHorarios();
                         System.out.println("Hora de la instancia evaluativa modificada correctamente.");
                         instanciaEncontrada = true;
                         break;
@@ -579,7 +691,7 @@ public class GestionTurnero {
             Turno turnoAMover = null;
             
             for (Turno t : turnero.getListaTurno()) { // Recorro la lista de turnos para encontrar el turno con el código proporcionado
-                if (t.getInstancia().getCodigoDeInstancia() == codigoTurno) { // Si el código del turno coincide, lo guardo en turnoAMover
+                if (t.getNumero() == codigoTurno) { // Si el código del turno coincide, lo guardo en turnoAMover
                     turnoAMover = t;
                     break;
                 }
@@ -591,13 +703,16 @@ public class GestionTurnero {
                 
                 if(nuevaPosicion >= 0 && nuevaPosicion < listaTurnos.size()){
                     //Llamo a cambiarOrden del Turnero para cambiar la posicion del turno
-                    turnero.cambiarOrden(turnoAMover, nuevaPosicion);
+                    if (!turnero.cambiarOrden(turnoAMover, nuevaPosicion)) {
+                        System.out.println("Solo se pueden mover turnos entre posiciones pendientes.");
+                        return;
+                    }
                     //Recalculo los horarios estimados porque cambio la posicion del turno
                     turnero.calcularHorarios();
                     System.out.println("Orden del turno cambiado correctamente.");
                 }else{
                     
-                    System.out.println("La nueva posición proporcionada es inválida. Debe estar entre 0 y " + (listaTurnos.size() - 1) + ".");
+                    System.out.println("La nueva posición proporcionada es inválida. Debe estar entre 1 y " + listaTurnos.size() + ".");
                 }
             }else{
                 System.out.println("No se encontró un turno con el código proporcionado en el Turnero.");
@@ -646,7 +761,7 @@ public class GestionTurnero {
             ArrayList<Turno> turnosPendientes = new ArrayList<>();
 
             for (Turno turno : listaTurnos) {
-                if (turno.getEstado() == Estado.Evaluando) {
+                if (turno.getEstado() == Estado.Pendiente) {
                     turnosPendientes.add(turno);
                 }
             }
@@ -655,8 +770,8 @@ public class GestionTurnero {
             for (int i = 0; i < turnosPendientes.size() - 1; i++) {
                 for (int j = i + 1; j < turnosPendientes.size(); j++) {
 
-                        if (turnosPendientes.get(j).getAlumno().getPrioridad()
-                            && !turnosPendientes.get(i).getAlumno().getPrioridad()) {
+                        if (turnosPendientes.get(j).getNivelPrioridad()
+                            > turnosPendientes.get(i).getNivelPrioridad()) {
 
                         Turno aux = turnosPendientes.get(i);
                         turnosPendientes.set(i, turnosPendientes.get(j));
@@ -678,13 +793,8 @@ public class GestionTurnero {
             Turno turnoActual = turnero.getTurnoActual();
             if (turnoActual != null) {
                 turnoActual.setEstado(Estado.Finalizado);
-                Turno siguienteTurno = turnero.obtenerSiguienteTurno(turnoActual);
-                if (siguienteTurno != null) {
-                    siguienteTurno.setEstado(Estado.Evaluando);
-                    System.out.println("Se ha pasado al siguiente turno: " + siguienteTurno.getInstancia().getCodigoDeInstancia());
-                } else {
-                    System.out.println("No hay más turnos disponibles.");
-                }
+                turnero.iniciarOContinuar();
+                System.out.println("Turno finalizado.");
             } else {
                 System.out.println("No hay un turno actual en proceso.");
             }
@@ -701,7 +811,8 @@ public class GestionTurnero {
             if (turnoActual != null) {
 
                 turnoActual.setEstado(Estado.Ausente);
-                System.out.println("El alumno con legajo " + turnoActual.getAlumno().getLegajo() + " ha sido marcado como ausente.");
+                turnero.iniciarOContinuar();
+                System.out.println("Turno marcado como ausente.");
             } else {
                 System.out.println("No hay un turno actual en proceso.");
             }
