@@ -4,7 +4,7 @@ import Dao.ComisionDao;
 import Dao.DocenteDao;
 import Dao.GrupoDao;
 import Dao.InstanciaEvaluativaDao;
-import java.util.Collections;
+import Dao.TurnoDao;
 import Models.Alumno;
 import Models.Comision;
 import Models.Docente;
@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class GestionTurnero {
 
@@ -104,6 +105,24 @@ public class GestionTurnero {
                 }
 
                 comision.agregarGrupo(grupo);
+            }
+        }
+    }
+    
+    
+    public void cargarInstanciasDeComisiones() throws SQLException {
+        Docente docente = getDocenteActual();
+
+        if (docente == null) {
+            throw new IllegalStateException("Primero debe cargarse un docente.");
+        }
+
+        InstanciaEvaluativaDao instanciaDao = new InstanciaEvaluativaDao();
+
+        for (Comision comision : listaComisiones) {
+            for (InstanciaEvaluativa instancia :
+                    instanciaDao.cargarPorComision(comision, docente)) {
+                comision.agregarInstanciaEvaluativa(instancia);
             }
         }
     }
@@ -284,6 +303,13 @@ public class GestionTurnero {
             Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
             
             if(alumnoEncontrado != null){
+                // Primero se da de baja en la base y si falla no se cambia nada en memoria
+                try {
+                    new AlumnoDao().darDeBaja(codigoComision, legajoAlumno);
+                } catch (SQLException e) {
+                    System.out.println("No se pudo dar de baja al alumno. Puede que ya tenga evaluaciones registradas: " + e.getMessage());
+                    return;
+                }
                 comisionEncontrada.darDeBajaAlumno(legajoAlumno);
                 for (Grupo grupo : comisionEncontrada.getListaGrupos()) {
                     if (grupo.quitarAlumno(alumnoEncontrado)) {
@@ -292,6 +318,7 @@ public class GestionTurnero {
                 }
                 for (InstanciaEvaluativa instancia : comisionEncontrada.getListaInstanciasEvaluativas()) {
                     instancia.getTurnero().actualizarPendientes(alumnoEncontrado, null);
+                    guardarTurnos(codigoComision, instancia.getCodigo(), instancia.getTurnero()); // Guarda en la base los turnos sin el alumno
                 }
                 System.out.println("Alumno con legajo " + legajoAlumno + " dado de baja de la comisión " + comisionEncontrada.getNombre() + ".");
             } else {
@@ -671,6 +698,7 @@ public class GestionTurnero {
                         }
                         ins.setFecha(nuevaFecha);
                         ins.getTurnero().calcularHorarios();
+                        guardarFechaHora(codigoComision, ins); // Guarda la nueva fecha en la base
                         System.out.println("Fecha y hora de la instancia evaluativa modificadas correctamente.");
                         instanciaEncontrada = true;
                         break;
@@ -712,6 +740,7 @@ public class GestionTurnero {
                         }
                         ins.setHoraInicio(nuevaHora);
                         ins.getTurnero().calcularHorarios();
+                        guardarFechaHora(codigoComision, ins); // Guarda la nueva hora en la base
                         System.out.println("Hora de la instancia evaluativa modificada correctamente.");
                         instanciaEncontrada = true;
                         break;
@@ -805,6 +834,33 @@ public class GestionTurnero {
         return null; // Retorna null si no se encuentra
     }
 
+    // Guarda en la base la fecha y la hora de la instancia y los horarios de sus turnos
+    private void guardarFechaHora(
+            int codigoComision, InstanciaEvaluativa instancia) {
+        try {
+            new InstanciaEvaluativaDao().actualizarFechaHora(
+                codigoComision, instancia.getCodigo(),
+                instancia.getFecha(), instancia.getHoraInicio()
+            );
+            guardarTurnos(
+                codigoComision, instancia.getCodigo(), instancia.getTurnero()
+            );
+        } catch (SQLException e) {
+            System.err.println("No se pudo guardar la fecha y la hora: " + e.getMessage());
+        }
+    }
+    
+    // Guarda en la base todos los turnos de una instancia tal como estan en memoria
+    private void guardarTurnos(
+            int codigoComision, int codigoInstancia, Turnero turnero) {
+        try {
+            new TurnoDao().reemplazarTurnos(
+                codigoComision, codigoInstancia, turnero.getListaTurno()
+            );
+        } catch (SQLException e) {
+            System.err.println("No se pudieron guardar los turnos: " + e.getMessage());
+        }
+    }
 
     public void cambiarOrdenTurno(int codigoComision, int codigoInstancia, int codigoTurno, int nuevaPosicion) {
 
@@ -834,6 +890,7 @@ public class GestionTurnero {
                     //Recalculo los horarios estimados porque cambio la posicion del turno
                     turnero.calcularHorarios();
                     System.out.println("Orden del turno cambiado correctamente.");
+                    guardarTurnos(codigoComision, codigoInstancia, turnero); // Guarda en la base el nuevo orden
                 }else{
                     
                     System.out.println("La nueva posición proporcionada es inválida. Debe estar entre 1 y " + listaTurnos.size() + ".");
@@ -963,6 +1020,7 @@ public class GestionTurnero {
         System.out.println("Turno finalizado.");
 
         turnero.iniciarOContinuar();
+        guardarTurnos(codigoComision, codigoInstancia, turnero); // Guarda en la base la nota y el estado
     }
 
         public void ponerAusente(
@@ -998,6 +1056,7 @@ public class GestionTurnero {
         System.out.println("Turno marcado como ausente.");
 
         turnero.iniciarOContinuar();
+        guardarTurnos(codigoComision, codigoInstancia, turnero); // Guarda en la base el estado ausente
     }
 
     // public Boolean validarGrupos(){
@@ -1039,8 +1098,3 @@ public class GestionTurnero {
         return resultados;
     }
 }
-
-
-
-
-

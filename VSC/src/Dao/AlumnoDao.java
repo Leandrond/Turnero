@@ -129,4 +129,41 @@ public class AlumnoDao {
             }
         }
     }
+
+    // Da de baja a un alumno de una comision (todo o nada)
+    public void darDeBaja(int codigoComision, int legajo) throws SQLException {
+
+        String[] sentencias = {
+            "DELETE FROM turno WHERE codigo_comision = ? " +
+            "AND legajo_alumno = ? AND estado = 'PENDIENTE'",
+            "DELETE FROM grupo_alumno WHERE codigo_comision = ? " +
+            "AND legajo_alumno = ?",
+            "DELETE FROM comision_alumno WHERE codigo_comision = ? " +
+            "AND legajo_alumno = ?"
+        };
+
+        try (Connection conexion = ConexionBD.conectar()) {
+            conexion.setAutoCommit(false);
+
+            try {
+                for (String sql : sentencias) {
+                    try (PreparedStatement sentencia =
+                            conexion.prepareStatement(sql)) {
+                        sentencia.setInt(1, codigoComision);
+                        sentencia.setInt(2, legajo);
+                        sentencia.executeUpdate();
+                    }
+                }
+
+                conexion.commit();
+            } catch (SQLException e) {
+                try {
+                    conexion.rollback();
+                } catch (SQLException errorRollback) {
+                    e.addSuppressed(errorRollback);
+                }
+                throw e;
+            }
+        }
+    }
 }
