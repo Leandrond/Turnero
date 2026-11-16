@@ -110,6 +110,24 @@ public class GestionTurnero {
     }
     
     
+    public void cargarInstanciasDeComisiones() throws SQLException {
+        Docente docente = getDocenteActual();
+
+        if (docente == null) {
+            throw new IllegalStateException("Primero debe cargarse un docente.");
+        }
+
+        InstanciaEvaluativaDao instanciaDao = new InstanciaEvaluativaDao();
+
+        for (Comision comision : listaComisiones) {
+            for (InstanciaEvaluativa instancia :
+                    instanciaDao.cargarPorComision(comision, docente)) {
+                comision.agregarInstanciaEvaluativa(instancia);
+            }
+        }
+    }
+    
+    
     public void crearComision(int codigo, String nombre, Materia materia)
             throws SQLException {
 

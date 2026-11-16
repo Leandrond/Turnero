@@ -68,6 +68,16 @@ public class Turno implements Priorizable
         this.nota = nota;
     }
 
+    //Restaura el numero el estado y la nota de un turno que viene de la base
+    public void restaurar(int numero, Estado estado, Integer nota){
+        this.numero = numero;
+        this.estado = estado;
+        this.nota = nota;
+        if (numero >= contador){
+            contador = numero + 1; //asi los turnos nuevos no repiten numero
+        }
+    }
+
     public boolean incluyeAlumno(int legajo) {
 
     // Turno individual

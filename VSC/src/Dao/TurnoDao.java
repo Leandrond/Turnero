@@ -1,9 +1,16 @@
 package Dao;
 import Conexion.ConexionBD;
+import Models.Alumno;
+import Models.Comision;
+import Models.Estado;
+import Models.Grupo;
+import Models.Instancias.InstanciaEvaluativa;
 import Models.Turno;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TurnoDao {
@@ -119,5 +126,72 @@ public class TurnoDao {
                 throw e;
             }
         }
+    }
+
+    // Lee de la base los turnos de una instancia en el orden guardado
+    public ArrayList<Turno> cargarPorInstancia(
+            Comision comision, InstanciaEvaluativa instancia)
+            throws SQLException {
+
+        String sql =
+            "SELECT numero, tipo_objetivo, legajo_alumno, numero_grupo, " +
+            "fecha, hora, estado, nota " +
+            "FROM turno " +
+            "WHERE codigo_comision = ? AND codigo_instancia = ? " +
+            "ORDER BY posicion";
+
+        ArrayList<Turno> turnos = new ArrayList<>();
+
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+
+            sentencia.setInt(1, comision.getCodigoComision());
+            sentencia.setInt(2, instancia.getCodigoDeInstancia());
+
+            try (ResultSet resultado = sentencia.executeQuery()) {
+                while (resultado.next()) {
+                    java.time.LocalDate fecha =
+                        resultado.getDate("fecha").toLocalDate();
+                    java.time.LocalTime hora =
+                        resultado.getTime("hora").toLocalTime();
+                    String tipoObjetivo = resultado.getString("tipo_objetivo");
+
+                    Turno turno = null;
+
+                    if (tipoObjetivo.equals("ALUMNO")) {
+                        Alumno alumno = comision.buscarAlumnoPorLegajo(
+                            resultado.getInt("legajo_alumno")
+                        );
+                        if (alumno != null) {
+                            turno = new Turno(instancia, alumno, fecha, hora);
+                        }
+                    } else if (tipoObjetivo.equals("GRUPO")) {
+                        int numeroGrupo = resultado.getInt("numero_grupo");
+                        for (Grupo grupo : comision.getListaGrupos()) {
+                            if (grupo.getNumero() == numeroGrupo) {
+                                turno = new Turno(instancia, grupo, fecha, hora);
+                                break;
+                            }
+                        }
+                    } else {
+                        turno = new Turno(instancia, comision, fecha, hora);
+                    }
+
+                    if (turno != null) {
+                        int nota = resultado.getInt("nota");
+                        Integer notaTurno = resultado.wasNull() ? null : nota;
+
+                        turno.restaurar(
+                            resultado.getInt("numero"),
+                            Estado.valueOf(resultado.getString("estado")),
+                            notaTurno
+                        ); // Deja el turno como estaba guardado
+                        turnos.add(turno);
+                    }
+                }
+            }
+        }
+
+        return turnos;
     }
 }

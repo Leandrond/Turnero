@@ -1,4 +1,3 @@
-
 package Views;
 import Conexion.InicializadorBD;
 import Controllers.GestionTurnero;
@@ -106,6 +105,7 @@ public class Main {
             gestion.cargarComisionesDelDocente();
             gestion.cargarAlumnosDeComisiones();
             gestion.cargarGruposDeComisiones();
+            gestion.cargarInstanciasDeComisiones();
 
         } catch (SQLException e) {
             System.err.println("No se pudieron cargar las comisiones: " + e.getMessage());
@@ -851,4 +851,3 @@ static void cambiarOrdenTurnos(GestionTurnero gestion) {
     }
 
 }
-

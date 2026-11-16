@@ -1,7 +1,13 @@
 package Dao;
 import Conexion.ConexionBD;
+import Models.Comision;
 import Models.Docente;
+import Models.Instancias.DefensaParcial;
+import Models.Instancias.ExamenFinal;
 import Models.Instancias.InstanciaEvaluativa ;
+import Models.Instancias.PresentacionTPI;
+import Models.Modalidad;
+import Models.Turnero;
 import Models.Turno;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class InstanciaEvaluativaDao {
@@ -106,6 +113,69 @@ public class InstanciaEvaluativaDao {
         }
     }
 
+
+    // Lee de la base las instancias de una comision con sus turnos
+    public ArrayList<InstanciaEvaluativa> cargarPorComision(
+            Comision comision, Docente docente) throws SQLException {
+
+        String sql =
+            "SELECT codigo_instancia, tipo, modalidad, fecha, " +
+            "hora_inicio, duracion_estimada " +
+            "FROM instancia_evaluativa " +
+            "WHERE codigo_comision = ? " +
+            "ORDER BY codigo_instancia";
+
+        ArrayList<InstanciaEvaluativa> instancias = new ArrayList<>();
+
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+
+            sentencia.setInt(1, comision.getCodigoComision());
+
+            try (ResultSet resultado = sentencia.executeQuery()) {
+                while (resultado.next()) {
+                    String tipo = resultado.getString("tipo");
+                    int codigo = resultado.getInt("codigo_instancia");
+                    LocalDate fecha = resultado.getDate("fecha").toLocalDate();
+                    LocalTime hora =
+                        resultado.getTime("hora_inicio").toLocalTime();
+                    double duracion = resultado.getDouble("duracion_estimada");
+                    Modalidad modalidad =
+                        Modalidad.valueOf(resultado.getString("modalidad"));
+                    Turnero turnero = new Turnero();
+
+                    InstanciaEvaluativa instancia;
+                    if (tipo.equals("Defensa Parcial")) {
+                        instancia = new DefensaParcial(
+                            tipo, fecha, hora, duracion, comision,
+                            docente, codigo, turnero, modalidad
+                        );
+                    } else if (tipo.equals("Examen Final")) {
+                        instancia = new ExamenFinal(
+                            tipo, fecha, hora, duracion, comision,
+                            docente, codigo, turnero, modalidad
+                        );
+                    } else {
+                        instancia = new PresentacionTPI(
+                            tipo, fecha, hora, duracion, comision,
+                            docente, codigo, turnero, modalidad
+                        );
+                    }
+
+                    instancias.add(instancia);
+                }
+            }
+        }
+
+        // Los turnos se leen despues de cerrar la consulta de instancias
+        for (InstanciaEvaluativa instancia : instancias) {
+            instancia.getTurnero().getListaTurno().addAll(
+                new TurnoDao().cargarPorInstancia(comision, instancia)
+            );
+        }
+
+        return instancias;
+    }
 
     public void listarPorComision(int codigoComision) throws SQLException {
         String sql =
