@@ -18,7 +18,9 @@ public class AlumnoDao {
             "SELECT 1 FROM alumno WHERE legajo = ?";
 
         String insertarAlumno =
-            "INSERT INTO alumno (legajo, estado, prioridad) VALUES (?, ?, ?)";
+            "INSERT INTO alumno " +
+            "(legajo, nombre, apellido, estado, prioridad) " +
+            "VALUES (?, ?, ?, ?, ?)";
 
         String asociarAlumno =
             "INSERT INTO comision_alumno (codigo_comision, legajo_alumno) " +
@@ -31,7 +33,7 @@ public class AlumnoDao {
                 boolean existe;
 
                 try (PreparedStatement sentencia =
-                    conexion.prepareStatement(buscarAlumno)) {
+                        conexion.prepareStatement(buscarAlumno)) {
                     sentencia.setInt(1, alumno.getLegajo());
 
                     try (ResultSet resultado = sentencia.executeQuery()) {
@@ -41,22 +43,18 @@ public class AlumnoDao {
 
                 if (!existe) {
                     try (PreparedStatement sentencia =
-                        conexion.prepareStatement(insertarAlumno)) {
+                            conexion.prepareStatement(insertarAlumno)) {
                         sentencia.setInt(1, alumno.getLegajo());
-
-                        if (alumno.getEstado() == null) {
-                            sentencia.setNull(2, java.sql.Types.VARCHAR);
-                        } else {
-                            sentencia.setString(2, alumno.getEstado().name());
-                        }
-
-                        sentencia.setBoolean(3, alumno.getPrioridad());
+                        sentencia.setString(2, alumno.getNombre());
+                        sentencia.setString(3, alumno.getApellido());
+                        sentencia.setString(4, alumno.getEstado().name());
+                        sentencia.setBoolean(5, alumno.getPrioridad());
                         sentencia.executeUpdate();
                     }
                 }
 
                 try (PreparedStatement sentencia =
-                    conexion.prepareStatement(asociarAlumno)) {
+                        conexion.prepareStatement(asociarAlumno)) {
                     sentencia.setInt(1, codigoComision);
                     sentencia.setInt(2, alumno.getLegajo());
                     sentencia.executeUpdate();
@@ -78,7 +76,7 @@ public class AlumnoDao {
             throws SQLException {
 
         String sql =
-            "SELECT a.legajo, a.estado, a.prioridad " +
+            "SELECT a.legajo, a.nombre, a.apellido, a.estado, a.prioridad " +
             "FROM alumno a " +
             "JOIN comision_alumno ca ON a.legajo = ca.legajo_alumno " +
             "WHERE ca.codigo_comision = ? " +
@@ -87,15 +85,15 @@ public class AlumnoDao {
         ArrayList<Alumno> alumnos = new ArrayList<>();
 
         try (Connection conexion = ConexionBD.conectar();
-            PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
 
             sentencia.setInt(1, codigoComision);
 
             try (ResultSet resultado = sentencia.executeQuery()) {
                 while (resultado.next()) {
                     Alumno alumno = new Alumno(
-                        null,
-                        null,
+                        resultado.getString("nombre"),
+                        resultado.getString("apellido"),
                         resultado.getInt("legajo")
                     );
 
@@ -119,7 +117,7 @@ public class AlumnoDao {
         String sql = "UPDATE alumno SET prioridad = ? WHERE legajo = ?";
 
         try (Connection conexion = ConexionBD.conectar();
-            PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
 
             sentencia.setBoolean(1, prioridad);
             sentencia.setInt(2, legajo);
@@ -128,6 +126,43 @@ public class AlumnoDao {
                 throw new SQLException(
                     "No existe un alumno con legajo " + legajo
                 );
+            }
+        }
+    }
+
+    // Da de baja a un alumno de una comision (todo o nada)
+    public void darDeBaja(int codigoComision, int legajo) throws SQLException {
+
+        String[] sentencias = {
+            "DELETE FROM turno WHERE codigo_comision = ? " +
+            "AND legajo_alumno = ? AND estado = 'PENDIENTE'",
+            "DELETE FROM grupo_alumno WHERE codigo_comision = ? " +
+            "AND legajo_alumno = ?",
+            "DELETE FROM comision_alumno WHERE codigo_comision = ? " +
+            "AND legajo_alumno = ?"
+        };
+
+        try (Connection conexion = ConexionBD.conectar()) {
+            conexion.setAutoCommit(false);
+
+            try {
+                for (String sql : sentencias) {
+                    try (PreparedStatement sentencia =
+                            conexion.prepareStatement(sql)) {
+                        sentencia.setInt(1, codigoComision);
+                        sentencia.setInt(2, legajo);
+                        sentencia.executeUpdate();
+                    }
+                }
+
+                conexion.commit();
+            } catch (SQLException e) {
+                try {
+                    conexion.rollback();
+                } catch (SQLException errorRollback) {
+                    e.addSuppressed(errorRollback);
+                }
+                throw e;
             }
         }
     }

@@ -70,6 +70,7 @@ public class GrupoDao {
         }
     }
 
+    
     public void quitarAlumno(
             int codigoComision, int numeroGrupo, int legajoAlumno)
             throws SQLException {
@@ -88,6 +89,84 @@ public class GrupoDao {
 
             if (sentencia.executeUpdate() == 0) {
                 throw new SQLException("No se encontró ese alumno en el grupo.");
+            }
+        }
+    }
+
+
+    public java.util.ArrayList<Grupo> listarPorComision(int codigoComision)
+            throws SQLException {
+
+        String sql =
+            "SELECT numero_grupo, cupo_maximo " +
+            "FROM grupo " +
+            "WHERE codigo_comision = ? " +
+            "ORDER BY numero_grupo";
+
+        java.util.ArrayList<Grupo> grupos = new java.util.ArrayList<>();
+
+        try (Connection conexion = ConexionBD.conectar();
+            PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+
+            sentencia.setInt(1, codigoComision);
+
+            try (ResultSet resultado = sentencia.executeQuery()) {
+                while (resultado.next()) {
+                    grupos.add(new Grupo(
+                        resultado.getInt("numero_grupo"),
+                        resultado.getInt("cupo_maximo")
+                    ));
+                }
+            }
+        }
+
+        return grupos;
+    }
+
+
+    public java.util.ArrayList<Integer> listarLegajosIntegrantes(
+            int codigoComision, int numeroGrupo) throws SQLException {
+
+        String sql =
+            "SELECT legajo_alumno FROM grupo_alumno " +
+            "WHERE codigo_comision = ? AND numero_grupo = ? " +
+            "ORDER BY legajo_alumno";
+
+        java.util.ArrayList<Integer> legajos = new java.util.ArrayList<>();
+
+        try (Connection conexion = ConexionBD.conectar();
+            PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+
+            sentencia.setInt(1, codigoComision);
+            sentencia.setInt(2, numeroGrupo);
+
+            try (ResultSet resultado = sentencia.executeQuery()) {
+                while (resultado.next()) {
+                    legajos.add(resultado.getInt("legajo_alumno"));
+                }
+            }
+        }
+
+        return legajos;
+    }
+
+    public void actualizarCupo(
+            int codigoComision, int numeroGrupo, int nuevoCupo)
+            throws SQLException {
+
+        String sql =
+            "UPDATE grupo SET cupo_maximo = ? " +
+            "WHERE codigo_comision = ? AND numero_grupo = ?";
+
+        try (Connection conexion = ConexionBD.conectar();
+            PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+
+            sentencia.setInt(1, nuevoCupo);
+            sentencia.setInt(2, codigoComision);
+            sentencia.setInt(3, numeroGrupo);
+
+            if (sentencia.executeUpdate() == 0) {
+                throw new SQLException("No se encontró el grupo en la base de datos.");
             }
         }
     }

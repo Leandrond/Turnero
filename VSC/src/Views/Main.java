@@ -1,4 +1,3 @@
-
 package Views;
 import Conexion.InicializadorBD;
 import Controllers.GestionTurnero;
@@ -86,7 +85,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-
+        // exepcion a la que llama
         try{
             InicializadorBD.crearBD();
         } catch (SQLException e) {
@@ -98,7 +97,21 @@ public class Main {
 
         
         GestionTurnero gestion = new GestionTurnero();
-        registrarDocente(gestion);
+        if (!registrarDocente(gestion)) {
+        return;
+        }
+        //exepciones
+        try {
+            gestion.cargarComisionesDelDocente();
+            gestion.cargarAlumnosDeComisiones();
+            gestion.cargarGruposDeComisiones();
+            gestion.cargarInstanciasDeComisiones();
+
+        } catch (SQLException e) {
+            System.err.println("No se pudieron cargar las comisiones: " + e.getMessage());
+            return;
+        }
+        
 
         int opcion;
         do {
@@ -130,23 +143,35 @@ public class Main {
         teclado.close();
     }
 
-static void registrarDocente(GestionTurnero gestion) {
-    if (!gestion.tieneDocenteRegistrado()) {
+    static boolean registrarDocente(GestionTurnero gestion) {
+        if (gestion.tieneDocenteRegistrado()) {
+            return true;
+        }
 
-        System.out.println("\nREGISTRO DEL DOCENTE");
-
-        String nombre = leerTexto("Nombre: ");
-        String apellido = leerTexto("Apellido: ");
-        String legajo = leerTexto("Legajo: ");
+        String legajo = leerTexto("Legajo del docente: ");
 
         try {
+            Docente docente = gestion.cargarDocentePorLegajo(legajo);
+
+            if (docente != null) {
+                System.out.println("Docente encontrado: " + docente.getNombreCompleto());
+                return true;
+            }
+
+            System.out.println("No existe un docente con ese legajo. Registremos uno.");
+            String nombre = leerTexto("Nombre: ");
+            String apellido = leerTexto("Apellido: ");
+
             gestion.registrarDocente(nombre, apellido, legajo);
             System.out.println("Docente registrado correctamente.");
+            return true;
         } catch (SQLException e) {
-            System.err.println("No se pudo registrar el docente: " + e.getMessage());
+            System.err.println("No se pudo buscar o registrar el docente: " + e.getMessage());
+            return false;
         }
     }
-}
+    
+    
     static void menuComisiones(GestionTurnero gestion) {
 
         int opcion;
@@ -195,12 +220,19 @@ static void registrarDocente(GestionTurnero gestion) {
     static void crearComision(GestionTurnero gestion) {
         int codigo = leerEntero("Codigo: ");
         String nombre = leerTexto("Nombre: ");
-        String materia = leerTexto("Materia: ");
+        String nombreMateria = leerTexto("Materia: ");
 
-         Docente docenteActual = gestion.getDocenteActual();
-         Materia nuevaMateria = new Materia(materia, docenteActual);
-         gestion.crearComision(codigo, nombre, nuevaMateria);
+        Docente docenteActual = gestion.getDocenteActual();
+        Materia nuevaMateria = new Materia(nombreMateria, docenteActual);
+
+        try {
+            gestion.crearComision(codigo, nombre, nuevaMateria);
+        } catch (SQLException e) {
+            System.err.println("No se pudo guardar la comisión: " + e.getMessage());
+        }
     }
+    
+    
     static void listarComisiones(GestionTurnero gestion) {
         gestion.listarComisiones();
     }
@@ -253,8 +285,15 @@ static void registrarDocente(GestionTurnero gestion) {
         int legajo = leerEntero("Legajo del alumno: ");
         String nombre = leerTexto("Nombre: ");
         String apellido = leerTexto("Apellido: ");
-        gestion.agregarAlumno(codigo, legajo, nombre, apellido);
+
+        try {
+            gestion.agregarAlumno(codigo, legajo, nombre, apellido);
+        } catch (SQLException e) {
+            System.err.println("No se pudo guardar el alumno: " + e.getMessage());
+        }
     }
+
+    
     static void listarAlumnos(GestionTurnero gestion, int codigo) {
 
          gestion.listarAlumnos(codigo);
@@ -325,7 +364,11 @@ static void registrarDocente(GestionTurnero gestion) {
         System.out.println("\nCupo maximo: ");
         int cupo = leerEntero("Cupo: ");
 
-         gestion.crearGrupo(codigo, numero, cupo);
+        try {
+            gestion.crearGrupo(codigo, numero, cupo);
+        } catch (SQLException e) {
+            System.err.println("No se pudo guardar el grupo: " + e.getMessage());
+        }
     }
     static void cambiarCupoMaximo(GestionTurnero gestion, int codigo) {
         System.out.println("\nCAMBIAR CUPO MAXIMO DE GRUPO");
@@ -334,7 +377,11 @@ static void registrarDocente(GestionTurnero gestion) {
         System.out.println("\nNuevo cupo maximo: ");
         int cupo = leerEntero("Cupo: ");
 
-         gestion.cambiarCupoMaximo(codigo, numero, cupo);
+        try {
+        gestion.cambiarCupoMaximo(codigo, numero, cupo);
+    } catch (SQLException e) {
+        System.err.println("No se pudo actualizar el cupo: " + e.getMessage());
+    }
     }
     static void agregarAlumnoAGrupo(GestionTurnero gestion, int codigo) {
         System.out.println("\nAGREGAR ALUMNO A GRUPO");
@@ -343,7 +390,11 @@ static void registrarDocente(GestionTurnero gestion) {
         System.out.println("\nLegajo del alumno: ");
         int legajo = leerEntero("Legajo: ");
 
-         gestion.agregarAlumnoAGrupo(codigo, numero, legajo);
+        try {
+            gestion.agregarAlumnoAGrupo(codigo, numero, legajo);
+        } catch (SQLException e) {
+            System.err.println("No se pudo agregar el alumno al grupo: " + e.getMessage());
+        }
     }
     static void quitarAlumnoDeGrupo(GestionTurnero gestion, int codigo) {
         System.out.println("\nQUITAR ALUMNO DE GRUPO");
@@ -352,33 +403,42 @@ static void registrarDocente(GestionTurnero gestion) {
         System.out.println("\n Legajo del alumno: ");
         int legajo = leerEntero("Legajo: ");
 
-         gestion.quitarAlumnoDeGrupo(codigo, numero, legajo);
+
+        try {
+            gestion.quitarAlumnoDeGrupo(codigo, numero, legajo);
+        } catch (SQLException e) {
+            System.err.println("No se pudo quitar el alumno del grupo: " + e.getMessage());
+        }
     }
     static void listarGrupos(GestionTurnero gestion, int codigo) {
 
-         gestion.listarGrupos(codigo);
+        gestion.listarGrupos(codigo);
     }
+
     static void administrarPrioridades(GestionTurnero gestion) {
         System.out.println("\nADMINISTRAR PRIORIDADES DE ALUMNOS");
-        System.out.println("\nCodigo de comision: ");
         int codigo = leerEntero("Codigo de comision: ");
-        System.out.println("\nLegajo del alumno: ");
-        int legajo = leerEntero("Legajo: ");
+        int legajo = leerEntero("Legajo del alumno: ");
 
         System.out.println("1. Dar prioridad");
         System.out.println("2. Quitar prioridad");
 
         int opcion = leerEntero("Opcion: ");
 
-         if (opcion == 1) {
-             gestion.cambiarPrioridad(codigo, legajo, true);
-         } else if (opcion == 2) {
-             gestion.cambiarPrioridad(codigo, legajo, false);
-         } else {
-             System.out.println("Opcion incorrecta.");
-         }
+        try {
+            if (opcion == 1) {
+                gestion.cambiarPrioridad(codigo, legajo, true);
+            } else if (opcion == 2) {
+                gestion.cambiarPrioridad(codigo, legajo, false);
+            } else {
+                System.out.println("Opcion incorrecta.");
+            }
+        } catch (SQLException e) {
+            System.err.println("No se pudo guardar la prioridad: " + e.getMessage());
+        }
     }
-    
+
+
 static void menuEvaluaciones(GestionTurnero gestion) {
 
     int opcion;
@@ -490,51 +550,35 @@ static void crearInstancia(GestionTurnero gestion) {
     Turnero turnero = new Turnero();
 
     boolean registrada;
-    switch (tipo) {
 
-        case 1:
-            registrada = gestion.crearDefensaParcial(
-                comisionEncontrada,
-                fecha,
-                hora,
-                duracionEstimada,
-                codigoDeInstancia,
-                docente,
-                turnero,
-                modalidad
-            );
-            break;
-
-        case 2:
-            registrada = gestion.crearExamenFinal(
-                comisionEncontrada,
-                fecha,
-                hora,
-                duracionEstimada,
-                codigoDeInstancia,
-                docente,
-                turnero,
-                modalidad
-            );
-            break;
-
-        case 3:
-            registrada = gestion.crearPresentacionTPI(
-                comisionEncontrada,
-                fecha,
-                hora,
-                duracionEstimada,
-                codigoDeInstancia,
-                docente,
-                turnero,
-                modalidad
-            );
-            break;
-        default:
-            return;
+    try {
+        switch (tipo) {
+            case 1:
+                registrada = gestion.crearDefensaParcial(
+                    comisionEncontrada, fecha, hora, duracionEstimada,
+                    codigoDeInstancia, docente, turnero, modalidad
+                );
+                break;
+            case 2:
+                registrada = gestion.crearExamenFinal(
+                    comisionEncontrada, fecha, hora, duracionEstimada,
+                    codigoDeInstancia, docente, turnero, modalidad
+                );
+                break;
+            case 3:
+                registrada = gestion.crearPresentacionTPI(
+                    comisionEncontrada, fecha, hora, duracionEstimada,
+                    codigoDeInstancia, docente, turnero, modalidad
+                );
+                break;
+            default:
+                return;
+        }
+    } catch (SQLException e) {
+        System.err.println("No se pudo guardar la instancia y sus turnos: " + e.getMessage());
+        return;
     }
-
-    if (!registrada) {
+        if (!registrada) {
         return;
     }
 
@@ -807,4 +851,3 @@ static void cambiarOrdenTurnos(GestionTurnero gestion) {
     }
 
 }
-

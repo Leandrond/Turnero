@@ -1,4 +1,10 @@
 package Controllers;
+import Dao.AlumnoDao;
+import Dao.ComisionDao;
+import Dao.DocenteDao;
+import Dao.GrupoDao;
+import Dao.InstanciaEvaluativaDao;
+import Dao.TurnoDao;
 import Models.Alumno;
 import Models.Comision;
 import Models.Docente;
@@ -12,13 +18,11 @@ import Models.Materia;
 import Models.Modalidad;
 import Models.Turnero;
 import Models.Turno;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-
-import Dao.DocenteDao;
+import java.util.Collections;
 
 public class GestionTurnero {
 
@@ -39,21 +43,117 @@ public class GestionTurnero {
         new DocenteDao().registrar(nuevoDocente);
         listaDocentes.add(nuevoDocente);
     }
+    
+    public Docente cargarDocentePorLegajo(String legajo) throws SQLException {
+    Docente docente = new DocenteDao().buscarPorLegajo(legajo);
 
-    public void crearComision(int codigo, String nombre, Materia materia){
+    if (docente != null) {
+        listaDocentes.add(docente);
+    }
+
+    return docente;
+    }
+
+    public void cargarComisionesDelDocente() throws SQLException {
+        Docente docente = getDocenteActual();
+
+        if (docente == null) {
+            throw new IllegalStateException("Primero debe cargarse un docente.");
+        }
+
+        ArrayList<Comision> comisiones =
+            new ComisionDao().listarPorDocente(docente);
+
+        listaComisiones.addAll(comisiones);
+        docente.getListaComisiones().addAll(comisiones);
+    }
+    
+    
+    
+    
+    public void cargarAlumnosDeComisiones() throws SQLException {
+        AlumnoDao alumnoDao = new AlumnoDao();
+
+        for (Comision comision : listaComisiones) {
+            comision.getListaAlumnos().addAll(
+                alumnoDao.listarPorComision(comision.getCodigoComision())
+            );
+        }
+    }
+    
+    
+    public void cargarGruposDeComisiones() throws SQLException {
+        GrupoDao grupoDao = new GrupoDao();
+
+        for (Comision comision : listaComisiones) {
+            ArrayList<Grupo> grupos =
+                grupoDao.listarPorComision(comision.getCodigoComision());
+
+            for (Grupo grupo : grupos) {
+                ArrayList<Integer> legajos = grupoDao.listarLegajosIntegrantes(
+                    comision.getCodigoComision(),
+                    grupo.getNumero()
+                );
+
+                for (int legajo : legajos) {
+                    Alumno alumno =
+                        comision.buscarAlumnoPorLegajo(legajo);
+
+                    if (alumno != null) {
+                        grupo.agregarAlumno(alumno);
+                    }
+                }
+
+                comision.agregarGrupo(grupo);
+            }
+        }
+    }
+    
+    
+    public void cargarInstanciasDeComisiones() throws SQLException {
+        Docente docente = getDocenteActual();
+
+        if (docente == null) {
+            throw new IllegalStateException("Primero debe cargarse un docente.");
+        }
+
+        InstanciaEvaluativaDao instanciaDao = new InstanciaEvaluativaDao();
+
+        for (Comision comision : listaComisiones) {
+            for (InstanciaEvaluativa instancia :
+                    instanciaDao.cargarPorComision(comision, docente)) {
+                comision.agregarInstanciaEvaluativa(instancia);
+            }
+        }
+    }
+    
+    
+    public void crearComision(int codigo, String nombre, Materia materia)
+            throws SQLException {
+
         for (Comision comision : listaComisiones) {
             if (comision.getCodigoComision() == codigo) {
-                System.out.println("Ya existe una comision con ese codigo.");
+                System.out.println("Ya existe una comisión con ese código.");
                 return;
             }
         }
-        Comision nuevaComision = new Comision(codigo, nombre, materia);
-        listaComisiones.add(nuevaComision);
-        //Se la asignamos al docente registrado (asumiendo que trabajamos con el docente actual)
-        if(!this.listaDocentes.isEmpty()){
-            Docente docenteActual = this.listaDocentes.get(0); // Tomo el docente activo
-            docenteActual.agregarComision(nuevaComision); // Agrego la comisión al docente activo
+
+        Docente docenteActual = getDocenteActual();
+        if (docenteActual == null) {
+            throw new IllegalStateException("No hay un docente cargado.");
         }
+
+        Comision nuevaComision = new Comision(codigo, nombre, materia);
+
+        new ComisionDao().registrarConMateria(
+            nuevaComision,
+            docenteActual.getLegajo()
+        );
+
+        listaComisiones.add(nuevaComision);
+        docenteActual.agregarComision(nuevaComision);
+
+        System.out.println("Comisión registrada correctamente.");
     }
 
     public Docente getDocenteActual() {
@@ -66,6 +166,8 @@ public class GestionTurnero {
     public boolean tieneDocenteRegistrado(){
         return !listaDocentes.isEmpty();
     }
+    
+    
     public void registroDocente(String nombre, String apellido, String legajo){
         if(!tieneDocenteRegistrado()){
             // Simulamos la entrada de datos del docente
@@ -95,38 +197,39 @@ public class GestionTurnero {
             } 
             
         }else{
-                System.out.println("No hay docentes registrados en el sistema.");
+                System.out.println("No hay Comisiones registrados en el sistema.");
             }
     }
 
-    public void agregarAlumno(int codigoComision, int legajoAlumno, String nombre, String apellido){
-        //1- Busco la comision por su codigo en el docente actual
-        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
-        
-        //2- Si encuentra la comision, validamos que el alumno no este ya en la comision y lo agregamos
-        if(comisionEncontrada != null){
-            // Verifico si el alumno ya está en la comisión
-            boolean alumnoExistente = false;
-            for (Alumno a : comisionEncontrada.getListaAlumnos()) {
-                if (a.getLegajo() == legajoAlumno) {
-                    alumnoExistente = true;
-                    break;
-                }
-            }
 
-            if (!alumnoExistente) {
-                Alumno nuevoAlumno = new Alumno(nombre, apellido, legajoAlumno);
-                comisionEncontrada.agregarAlumno(nuevoAlumno);// Usamos el método que ya tiene Comision
-                System.out.println("Alumno con legajo " + legajoAlumno + " agregado correctamente a la comisión.");
-            } else {
-                System.out.println("ERROR: Ya existe un alumno con ese legajo en esta comisión.");
-            }
-        } else {
-            System.out.println("No se encontró la comisión con el código proporcionado.");
+
+    public void agregarAlumno(
+            int codigoComision, int legajoAlumno, String nombre, String apellido)
+            throws SQLException {
+
+        Comision comision = buscarComisionPorCodigo(codigoComision);
+
+        if (comision == null) {
+            System.out.println("No se encontró la comisión.");
+            return;
         }
 
-    }
+        for (Alumno alumno : comision.getListaAlumnos()) {
+            if (alumno.getLegajo() == legajoAlumno) {
+                System.out.println("Ya existe un alumno con ese legajo en esta comisión.");
+                return;
+            }
+        }
 
+        Alumno nuevoAlumno = new Alumno(nombre, apellido, legajoAlumno);
+
+        new AlumnoDao().registrarEnComision(nuevoAlumno, codigoComision);
+        comision.agregarAlumno(nuevoAlumno);
+
+        System.out.println("Alumno registrado correctamente.");
+    }
+    
+    
     public void listarAlumnos(int codigoComision){
         //1- Busco la comision por su codigo en el docente actual
         Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
@@ -200,6 +303,13 @@ public class GestionTurnero {
             Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
             
             if(alumnoEncontrado != null){
+                // Primero se da de baja en la base y si falla no se cambia nada en memoria
+                try {
+                    new AlumnoDao().darDeBaja(codigoComision, legajoAlumno);
+                } catch (SQLException e) {
+                    System.out.println("No se pudo dar de baja al alumno. Puede que ya tenga evaluaciones registradas: " + e.getMessage());
+                    return;
+                }
                 comisionEncontrada.darDeBajaAlumno(legajoAlumno);
                 for (Grupo grupo : comisionEncontrada.getListaGrupos()) {
                     if (grupo.quitarAlumno(alumnoEncontrado)) {
@@ -208,6 +318,7 @@ public class GestionTurnero {
                 }
                 for (InstanciaEvaluativa instancia : comisionEncontrada.getListaInstanciasEvaluativas()) {
                     instancia.getTurnero().actualizarPendientes(alumnoEncontrado, null);
+                    guardarTurnos(codigoComision, instancia.getCodigo(), instancia.getTurnero()); // Guarda en la base los turnos sin el alumno
                 }
                 System.out.println("Alumno con legajo " + legajoAlumno + " dado de baja de la comisión " + comisionEncontrada.getNombre() + ".");
             } else {
@@ -253,110 +364,116 @@ public class GestionTurnero {
     
 
 
-    public void crearGrupo(int codigoComision, int numeroGrupo, int cupo){
-        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
+    public void crearGrupo(int codigoComision, int numeroGrupo, int cupo)
+            throws SQLException {
 
-        if(comisionEncontrada != null){
-            if (cupo <= 0) {
-                System.out.println("El cupo tiene que ser mayor que cero.");
+        Comision comision = buscarComisionPorCodigo(codigoComision);
+
+        if (comision == null) {
+            System.out.println("No se encontró la comisión.");
+            return;
+        }
+
+        if (cupo <= 0) {
+            System.out.println("El cupo tiene que ser mayor que cero.");
+            return;
+        }
+
+        for (Grupo grupo : comision.getListaGrupos()) {
+            if (grupo.getNumero() == numeroGrupo) {
+                System.out.println("Ya existe un grupo con ese número en esta comisión.");
                 return;
             }
-            Grupo nuevoGrupo = new Grupo(numeroGrupo, cupo);
-            comisionEncontrada.agregarGrupo(nuevoGrupo);
-        } else {
-            System.out.println("No se encontró la comisión con el código proporcionado.");
         }
-    }
 
+        Grupo nuevoGrupo = new Grupo(numeroGrupo, cupo);
+        new GrupoDao().crear(nuevoGrupo, codigoComision);
+        comision.agregarGrupo(nuevoGrupo);
+
+        System.out.println("Grupo creado correctamente.");
+    }
 
     //responde al metodo de la linea 430
-    public void cambiarCupoMaximo(int codigoComision, int numeroGrupo, int nuevoCupo){
-        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
-        if(comisionEncontrada != null){
-            Grupo grupoEncontrado = null;
-            for (Grupo g : comisionEncontrada.getListaGrupos()) {
-                if (g.getNumero() == numeroGrupo) {
-                    grupoEncontrado = g;
-                    break;
-                }
-            }
+    public void cambiarCupoMaximo(
+            int codigoComision, int numeroGrupo, int nuevoCupo)
+            throws SQLException {
 
-            if(grupoEncontrado != null){
-                if (!grupoEncontrado.setCupoMaximo(nuevoCupo)) {
-                    System.out.println("El cupo tiene que ser positivo y alcanzar para los integrantes actuales.");
-                    return;
-                }
-                System.out.println("Cupo máximo del grupo " + numeroGrupo + " cambiado a " + nuevoCupo + ".");
-            } else {
-                System.out.println("No se encontró un grupo con ese número en esta comisión.");
-            }
-        } else {
-            System.out.println("No se encontró la comisión con el código proporcionado.");
+        Grupo grupo = buscarGrupoEnComision(codigoComision, numeroGrupo);
+
+        if (grupo == null) {
+            System.out.println("No se encontró el grupo en esta comisión.");
+            return;
         }
-    }
 
+        if (nuevoCupo <= 0 || nuevoCupo < grupo.getlistaAlumnos().size()) {
+            System.out.println(
+                "El cupo debe ser positivo y no menor que la cantidad de integrantes."
+            );
+            return;
+        }
+
+        new GrupoDao().actualizarCupo(codigoComision, numeroGrupo, nuevoCupo);
+        grupo.setCupoMaximo(nuevoCupo);
+
+        System.out.println("Cupo actualizado correctamente.");
+    }
 
     //responde al metodo de la linea 458
-    public void agregarAlumnoAGrupo(int codigoComision, int numeroGrupo, int legajoAlumno){
-        //Se busca la comision
-        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
-        if(comisionEncontrada != null){
-            //Se busca el grupo
-            Grupo grupoEncontrado = null;
-            for (Grupo g : comisionEncontrada.getListaGrupos()) {
-                if (g.getNumero() == numeroGrupo) {
-                    grupoEncontrado = g;
-                    break;
-                }
-            }
+    public void agregarAlumnoAGrupo(
+            int codigoComision, int numeroGrupo, int legajoAlumno)
+            throws SQLException {
 
-            if(grupoEncontrado != null){
-                //Se busca el alumno en la comision
-                Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
-                if(alumnoEncontrado != null){
-                    //Se agrega el alumno al grupo
-                    if (!grupoEncontrado.agregarAlumno(alumnoEncontrado)) {
-                        System.out.println("El grupo esta lleno o el alumno ya es integrante.");
-                        return;
-                    }
-                    actualizarGrupo(buscarComisionPorCodigo(codigoComision), grupoEncontrado);
-                    System.out.println("Alumno con legajo " + legajoAlumno + " agregado al grupo con éxito.");
-                } else {
-                    System.out.println("Error: No se encontró un alumno con ese legajo en esta comisión.");
-                }
-            } else {
-                System.out.println("No se encontró un grupo con ese número en esta comisión.");
-            }
-        } else {
-            System.out.println("No se encontró la comisión con el código proporcionado.");
+        Grupo grupo = buscarGrupoEnComision(codigoComision, numeroGrupo);
+        if (grupo == null) {
+            System.out.println("No se encontró el grupo en esta comisión.");
+            return;
         }
+
+        Alumno alumno = buscarAlumnoEnComision(codigoComision, legajoAlumno);
+        if (alumno == null) {
+            System.out.println("No se encontró el alumno en esta comisión.");
+            return;
+        }
+
+        if (grupo.getlistaAlumnos().contains(alumno)) {
+            System.out.println("El alumno ya integra este grupo.");
+            return;
+        }
+
+        if (!grupo.tieneDisponibilidad()) {
+            System.out.println("El grupo ya alcanzó su cupo máximo.");
+            return;
+        }
+
+        new GrupoDao().agregarAlumno(codigoComision, numeroGrupo, legajoAlumno);
+        grupo.agregarAlumno(alumno);
+        actualizarGrupo(buscarComisionPorCodigo(codigoComision), grupo);
+
+        System.out.println("Alumno agregado al grupo.");
     }
 
+    public void quitarAlumnoDeGrupo(
+            int codigoComision, int numeroGrupo, int legajoAlumno)
+            throws SQLException {
 
-    public void quitarAlumnoDeGrupo(int codigoComision, int numeroGrupo, int legajoAlumno){
-       //1. Busco el grupo directamente con el codigo y el numero usando el metodo auxiliar
-        Grupo grupoEncontrado = buscarGrupoEnComision(codigoComision, numeroGrupo);
-
-        //2. Si encuentra el grupo, busca el alumno por legajo y lo quita del grupo
-        if(grupoEncontrado != null){
-            Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
-            
-            if(alumnoEncontrado != null){
-                if (!grupoEncontrado.quitarAlumno(alumnoEncontrado)) {
-                    System.out.println("El alumno no es integrante del grupo.");
-                    return;
-                }
-                actualizarGrupo(buscarComisionPorCodigo(codigoComision), grupoEncontrado);
-                System.out.println("Alumno con legajo " + legajoAlumno + " removido del grupo con éxito.");
-                
-            } else {
-                System.out.println("No se encontró un alumno con ese legajo en esta comisión.");
-            }
-        } else {
-            System.out.println("No se encontró un grupo con ese número en esta comisión.");
+        Grupo grupo = buscarGrupoEnComision(codigoComision, numeroGrupo);
+        if (grupo == null) {
+            System.out.println("No se encontró el grupo en esta comisión.");
+            return;
         }
-    }
 
+        Alumno alumno = buscarAlumnoEnComision(codigoComision, legajoAlumno);
+        if (alumno == null || !grupo.getlistaAlumnos().contains(alumno)) {
+            System.out.println("El alumno no integra este grupo.");
+            return;
+        }
+
+        new GrupoDao().quitarAlumno(codigoComision, numeroGrupo, legajoAlumno);
+        grupo.quitarAlumno(alumno);
+        actualizarGrupo(buscarComisionPorCodigo(codigoComision), grupo);
+
+        System.out.println("Alumno quitado del grupo.");
+    }
 
     private void actualizarGrupo(Comision comision, Grupo grupo) {
         for (InstanciaEvaluativa instancia : comision.getListaInstanciasEvaluativas()) {
@@ -364,27 +481,38 @@ public class GestionTurnero {
         }
     }
 
-    public void cambiarPrioridad(int codigoComision, int legajoAlumno, boolean nuevaPrioridad){
-        //1- Busco la comision por su codigo en el docente actual
-        Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
-       
-        //2- Si encuentra la comision, busca el alumno por legajo y cambia su prioridad
-        if(comisionEncontrada != null){
-            Alumno alumnoEncontrado = buscarAlumnoEnComision(codigoComision, legajoAlumno);
-            
-            if(alumnoEncontrado != null){
-                if (alumnoEncontrado.getPrioridad() != nuevaPrioridad) {
-                    alumnoEncontrado.setPrioridad(nuevaPrioridad);
-                    actualizarTurnosPendientes(comisionEncontrada, alumnoEncontrado);
-                }
-                System.out.println("Prioridad del alumno con legajo " + legajoAlumno + " cambiada a " + nuevaPrioridad + ".");
-            } else {
-                System.out.println("No se encontró un alumno con ese legajo en esta comisión.");
+        public void cambiarPrioridad(
+                int codigoComision, int legajoAlumno, boolean nuevaPrioridad)
+                throws SQLException {
+
+            Comision comision = buscarComisionPorCodigo(codigoComision);
+
+            if (comision == null) {
+                System.out.println("No se encontró la comisión.");
+                return;
             }
-        } else {
-            System.out.println("No se encontró la comisión con el código proporcionado.");
+
+            Alumno alumno = buscarAlumnoEnComision(codigoComision, legajoAlumno);
+
+            if (alumno == null) {
+                System.out.println("No se encontró el alumno en esta comisión.");
+                return;
+            }
+
+            if (alumno.getPrioridad() == nuevaPrioridad) {
+                System.out.println("El alumno ya tiene ese nivel de prioridad.");
+                return;
+            }
+
+            new AlumnoDao().cambiarPrioridad(legajoAlumno, nuevaPrioridad);
+            alumno.setPrioridad(nuevaPrioridad);
+            actualizarTurnosPendientes(comision, alumno);
+
+            System.out.println(
+                "Prioridad del alumno con legajo " + legajoAlumno +
+                " cambiada a " + nuevaPrioridad + "."
+            );
         }
-    }
 
 
     private void actualizarTurnosPendientes(Comision comision, Alumno alumno) {
@@ -409,7 +537,7 @@ public class GestionTurnero {
     public boolean crearDefensaParcial(
         Comision comisionEncontrada, String fecha, String hora,
         double duracionEstimada, int codigoDeInstancia,
-        Docente docente, Turnero turnero, Modalidad modalidad) {
+        Docente docente, Turnero turnero, Modalidad modalidad) throws SQLException{
 
     InstanciaEvaluativa instancia = new DefensaParcial(
         "Defensa Parcial",
@@ -423,7 +551,7 @@ public class GestionTurnero {
         modalidad
     );
     // lo agregamos a la lista de instancias evaluativas de la comision, porque la comision es la que tiene la lista de instancias evaluativas
-    return registrarInstancia(comisionEncontrada, instancia);
+    return registrarInstancia(comisionEncontrada, instancia, docente);
 }
       
 
@@ -439,7 +567,7 @@ public class GestionTurnero {
     public boolean crearExamenFinal(
         Comision comisionEncontrada, String fecha, String hora,
         double duracionEstimada, int codigoDeInstancia,
-        Docente docente, Turnero turnero, Modalidad modalidad) {
+        Docente docente, Turnero turnero, Modalidad modalidad) throws  SQLException {
 
     InstanciaEvaluativa instancia = new ExamenFinal(
         "Examen Final",
@@ -453,7 +581,7 @@ public class GestionTurnero {
         modalidad
     );
     // lo agregamos a la lista de instancias evaluativas de la comision, porque la comision es la que tiene la lista de instancias evaluativas
-    return registrarInstancia(comisionEncontrada, instancia);}
+    return registrarInstancia(comisionEncontrada, instancia,docente);}
     // public boolean crearPresentacionTPI(Comision comisionEncontrada, LocalDate fecha, LocalTime hora ,double duracionEstimada, Docente docente, int codigoDeInstancia, Turnero turnero) {
         
     //     InstanciaEvaluativa instancia3= new PresentacionTPI("Presentacion TPI", fecha, hora, duracionEstimada, comisionEncontrada, docente, codigoDeInstancia, turnero);              
@@ -464,7 +592,7 @@ public class GestionTurnero {
     public boolean crearPresentacionTPI(
         Comision comisionEncontrada, String fecha, String hora,
         double duracionEstimada, int codigoDeInstancia,
-        Docente docente, Turnero turnero, Modalidad modalidad) {
+        Docente docente, Turnero turnero, Modalidad modalidad) throws  SQLException{
     InstanciaEvaluativa instancia = new PresentacionTPI(
         "Presentacion TPI",
         LocalDate.parse(fecha),
@@ -477,50 +605,61 @@ public class GestionTurnero {
         modalidad
     );
     // lo agregamos a la lista de instancias evaluativas de la comision, porque la comision es la que tiene la lista de instancias evaluativas
-    return registrarInstancia(comisionEncontrada, instancia);
+    return registrarInstancia(comisionEncontrada, instancia, docente);
     }
 
 
-    private boolean registrarInstancia(Comision comision, InstanciaEvaluativa instancia) {
-        for (InstanciaEvaluativa registrada : comision.getListaInstanciasEvaluativas()) {
-            if (registrada.getCodigo() == instancia.getCodigo()) {
-                System.out.println("Ya hay una instancia con ese codigo en la comision.");
-                return false;
-            }
-        }
+    private boolean registrarInstancia(
+        Comision comision, InstanciaEvaluativa instancia, Docente docente)
+        throws SQLException {
 
-        Turnero turnero = instancia.getTurnero();
-        LocalDate fecha = instancia.getFecha();
-        LocalTime hora = instancia.getHoraInicio();
-
-        switch (instancia.getModalidad()) {
-            case INDIVIDUAL:
-                for (Alumno alumno : comision.getListaAlumnos()) {
-                    turnero.agregarTurno(new Turno(instancia, alumno, fecha, hora));
-                }
-                break;
-            case GRUPAL:
-                for (Grupo grupo : comision.getListaGrupos()) {
-                    if (!grupo.getlistaAlumnos().isEmpty()) {
-                        turnero.agregarTurno(new Turno(instancia, grupo, fecha, hora));
-                    }
-                }
-                break;
-            case GENERAL:
-                turnero.agregarTurno(new Turno(instancia, comision, fecha, hora));
-                break;
-        }
-
-        if (turnero.getListaTurno().isEmpty()) {
-            System.out.println("No hay alumnos o grupos con integrantes para generar turnos.");
+    for (InstanciaEvaluativa registrada : comision.getListaInstanciasEvaluativas()) {
+        if (registrada.getCodigo() == instancia.getCodigo()) {
+            System.out.println("Ya hay una instancia con ese código en la comisión.");
             return false;
         }
-
-        turnero.ordenarPorPrioridad();
-        turnero.calcularHorarios();
-        comision.agregarInstanciaEvaluativa(instancia);
-        return true;
     }
+
+    Turnero turnero = instancia.getTurnero();
+    LocalDate fecha = instancia.getFecha();
+    LocalTime hora = instancia.getHoraInicio();
+
+    switch (instancia.getModalidad()) {
+        case INDIVIDUAL:
+            for (Alumno alumno : comision.getListaAlumnos()) {
+                turnero.agregarTurno(new Turno(instancia, alumno, fecha, hora));
+            }
+            break;
+        case GRUPAL:
+            for (Grupo grupo : comision.getListaGrupos()) {
+                if (!grupo.getlistaAlumnos().isEmpty()) {
+                    turnero.agregarTurno(new Turno(instancia, grupo, fecha, hora));
+                }
+            }
+            break;
+        case GENERAL:
+            turnero.agregarTurno(new Turno(instancia, comision, fecha, hora));
+            break;
+    }
+
+    if (turnero.getListaTurno().isEmpty()) {
+        System.out.println("No hay alumnos o grupos con integrantes para generar turnos.");
+        return false;
+    }
+
+    turnero.ordenarPorPrioridad();
+    turnero.calcularHorarios();
+
+    new InstanciaEvaluativaDao().registrar(
+        instancia,
+        comision.getCodigoComision(),
+        Collections.singletonList(docente),
+        turnero.getListaTurno()
+    );
+
+    comision.agregarInstanciaEvaluativa(instancia);
+    return true;
+}
 
     public Turnero obtenerTurnero(int codigoComision, int codigoInstancia) {
 
@@ -559,6 +698,7 @@ public class GestionTurnero {
                         }
                         ins.setFecha(nuevaFecha);
                         ins.getTurnero().calcularHorarios();
+                        guardarFechaHora(codigoComision, ins); // Guarda la nueva fecha en la base
                         System.out.println("Fecha y hora de la instancia evaluativa modificadas correctamente.");
                         instanciaEncontrada = true;
                         break;
@@ -600,6 +740,7 @@ public class GestionTurnero {
                         }
                         ins.setHoraInicio(nuevaHora);
                         ins.getTurnero().calcularHorarios();
+                        guardarFechaHora(codigoComision, ins); // Guarda la nueva hora en la base
                         System.out.println("Hora de la instancia evaluativa modificada correctamente.");
                         instanciaEncontrada = true;
                         break;
@@ -693,6 +834,33 @@ public class GestionTurnero {
         return null; // Retorna null si no se encuentra
     }
 
+    // Guarda en la base la fecha y la hora de la instancia y los horarios de sus turnos
+    private void guardarFechaHora(
+            int codigoComision, InstanciaEvaluativa instancia) {
+        try {
+            new InstanciaEvaluativaDao().actualizarFechaHora(
+                codigoComision, instancia.getCodigo(),
+                instancia.getFecha(), instancia.getHoraInicio()
+            );
+            guardarTurnos(
+                codigoComision, instancia.getCodigo(), instancia.getTurnero()
+            );
+        } catch (SQLException e) {
+            System.err.println("No se pudo guardar la fecha y la hora: " + e.getMessage());
+        }
+    }
+    
+    // Guarda en la base todos los turnos de una instancia tal como estan en memoria
+    private void guardarTurnos(
+            int codigoComision, int codigoInstancia, Turnero turnero) {
+        try {
+            new TurnoDao().reemplazarTurnos(
+                codigoComision, codigoInstancia, turnero.getListaTurno()
+            );
+        } catch (SQLException e) {
+            System.err.println("No se pudieron guardar los turnos: " + e.getMessage());
+        }
+    }
 
     public void cambiarOrdenTurno(int codigoComision, int codigoInstancia, int codigoTurno, int nuevaPosicion) {
 
@@ -722,6 +890,7 @@ public class GestionTurnero {
                     //Recalculo los horarios estimados porque cambio la posicion del turno
                     turnero.calcularHorarios();
                     System.out.println("Orden del turno cambiado correctamente.");
+                    guardarTurnos(codigoComision, codigoInstancia, turnero); // Guarda en la base el nuevo orden
                 }else{
                     
                     System.out.println("La nueva posición proporcionada es inválida. Debe estar entre 1 y " + listaTurnos.size() + ".");
@@ -851,6 +1020,7 @@ public class GestionTurnero {
         System.out.println("Turno finalizado.");
 
         turnero.iniciarOContinuar();
+        guardarTurnos(codigoComision, codigoInstancia, turnero); // Guarda en la base la nota y el estado
     }
 
         public void ponerAusente(
@@ -886,6 +1056,7 @@ public class GestionTurnero {
         System.out.println("Turno marcado como ausente.");
 
         turnero.iniciarOContinuar();
+        guardarTurnos(codigoComision, codigoInstancia, turnero); // Guarda en la base el estado ausente
     }
 
     // public Boolean validarGrupos(){
@@ -927,8 +1098,3 @@ public class GestionTurnero {
         return resultados;
     }
 }
-
-
-
-
-

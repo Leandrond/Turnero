@@ -46,7 +46,7 @@ public class DocenteDao {
         }
     }
 
-    public void buscarPorLegajo(String legajoBuscado) throws SQLException {
+    public Docente buscarPorLegajo(String legajoBuscado) throws SQLException {
         String sql =
             "SELECT legajo, nombre, apellido " +
             "FROM docente WHERE legajo = ?";
@@ -58,14 +58,15 @@ public class DocenteDao {
 
             try (ResultSet resultado = sentencia.executeQuery()) {
                 if (resultado.next()) {
-                    System.out.println("\n--- DOCENTE ENCONTRADO ---");
-                    System.out.println("Legajo: " + resultado.getString("legajo"));
-                    System.out.println("Nombre: " + resultado.getString("nombre"));
-                    System.out.println("Apellido: " + resultado.getString("apellido"));
-                } else {
-                    System.out.println("No se encontró un docente con ese legajo.");
+                    return new Docente(
+                        resultado.getString("nombre"),
+                        resultado.getString("apellido"),
+                        resultado.getString("legajo")
+                    );
                 }
             }
         }
+
+        return null;
     }
 }
