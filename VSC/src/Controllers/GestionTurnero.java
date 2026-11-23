@@ -23,11 +23,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GestionTurnero {
 
     private ArrayList<Docente> listaDocentes;
     private ArrayList<Comision> listaComisiones;
+    private final Map<Integer, Alumno> alumnosRegistrados = new HashMap<>();
     
     public GestionTurnero() {
         //System.out.println("Hola Gestion del Turnero");
@@ -38,20 +41,26 @@ public class GestionTurnero {
     //metodo para agregar un docente nuevo recibiendo sus datos
     public void registrarDocente(String nombre, String apellido, String legajo)
             throws SQLException {
-        Docente nuevoDocente = new Docente(nombre, apellido, legajo);
+        validarNombre(nombre, apellido);
+        if (legajo == null || legajo.trim().isEmpty() || legajo.trim().length() > 30) {
+            throw new SQLException("Ingresá un legajo de hasta 30 caracteres.");
+        }
+        Docente nuevoDocente = new Docente(nombre.trim(), apellido.trim(), legajo.trim());
 
         new DocenteDao().registrar(nuevoDocente);
         listaDocentes.add(nuevoDocente);
     }
     
     public Docente cargarDocentePorLegajo(String legajo) throws SQLException {
-    Docente docente = new DocenteDao().buscarPorLegajo(legajo);
+        Docente docente = new DocenteDao().buscarPorLegajo(legajo.trim());
 
-    if (docente != null) {
-        listaDocentes.add(docente);
-    }
-
-    return docente;
+        if (docente != null) {
+            listaDocentes.clear();
+            listaDocentes.add(docente);
+            listaComisiones.clear();
+            alumnosRegistrados.clear();
+        }
+        return docente;
     }
 
     public void cargarComisionesDelDocente() throws SQLException {
@@ -75,9 +84,10 @@ public class GestionTurnero {
         AlumnoDao alumnoDao = new AlumnoDao();
 
         for (Comision comision : listaComisiones) {
-            comision.getListaAlumnos().addAll(
-                alumnoDao.listarPorComision(comision.getCodigoComision())
-            );
+            for (Alumno alumno : alumnoDao.listarPorComision(comision.getCodigoComision())) {
+                alumnosRegistrados.putIfAbsent(alumno.getLegajo(), alumno);
+                comision.agregarAlumno(alumnosRegistrados.get(alumno.getLegajo()));
+            }
         }
     }
     
@@ -203,33 +213,49 @@ public class GestionTurnero {
 
 
 
-    public void agregarAlumno(
-            int codigoComision, int legajoAlumno, String nombre, String apellido)
+    public void registrarAlumno(int legajo, String nombre, String apellido)
             throws SQLException {
-
-        Comision comision = buscarComisionPorCodigo(codigoComision);
-
-        if (comision == null) {
-            System.out.println("No se encontró la comisión.");
-            return;
+        if (legajo <= 0) {
+            throw new SQLException("Ingresá un legajo de alumno positivo.");
         }
-
-        for (Alumno alumno : comision.getListaAlumnos()) {
-            if (alumno.getLegajo() == legajoAlumno) {
-                System.out.println("Ya existe un alumno con ese legajo en esta comisión.");
-                return;
-            }
-        }
-
-        Alumno nuevoAlumno = new Alumno(nombre, apellido, legajoAlumno);
-
-        new AlumnoDao().registrarEnComision(nuevoAlumno, codigoComision);
-        comision.agregarAlumno(nuevoAlumno);
-
-        System.out.println("Alumno registrado correctamente.");
+        validarNombre(nombre, apellido);
+        Alumno alumno = new Alumno(nombre.trim(), apellido.trim(), legajo);
+        new AlumnoDao().registrar(alumno);
+        alumnosRegistrados.put(legajo, alumno);
     }
-    
-    
+
+    public Alumno inscribirAlumno(int codigoComision, int legajo) throws SQLException {
+        Comision comision = buscarComisionPorCodigo(codigoComision);
+        if (comision == null) {
+            throw new SQLException("No se encontró la comisión.");
+        }
+        if (comision.buscarAlumnoPorLegajo(legajo) != null) {
+            throw new SQLException("El alumno ya está inscripto en esa comisión.");
+        }
+
+        AlumnoDao alumnoDao = new AlumnoDao();
+        Alumno alumno = alumnosRegistrados.get(legajo);
+        if (alumno == null) {
+            alumno = alumnoDao.buscarPorLegajo(legajo);
+        }
+        if (alumno == null) {
+            throw new SQLException("No hay un alumno registrado con ese legajo.");
+        }
+
+        alumnoDao.inscribir(codigoComision, legajo);
+        alumnosRegistrados.put(legajo, alumno);
+        comision.agregarAlumno(alumno);
+        return alumno;
+    }
+
+    private void validarNombre(String nombre, String apellido) throws SQLException {
+        if (nombre == null || apellido == null || nombre.trim().isEmpty()
+                || apellido.trim().isEmpty() || nombre.trim().length() > 100
+                || apellido.trim().length() > 100) {
+            throw new SQLException("Ingresá nombre y apellido de hasta 100 caracteres.");
+        }
+    }
+
     public void listarAlumnos(int codigoComision){
         //1- Busco la comision por su codigo en el docente actual
         Comision comisionEncontrada = buscarComisionPorCodigo(codigoComision);
@@ -506,7 +532,11 @@ public class GestionTurnero {
 
             new AlumnoDao().cambiarPrioridad(legajoAlumno, nuevaPrioridad);
             alumno.setPrioridad(nuevaPrioridad);
-            actualizarTurnosPendientes(comision, alumno);
+            for (Comision otraComision : getDocenteActual().getListaComisiones()) {
+                if (otraComision.buscarAlumnoPorLegajo(legajoAlumno) != null) {
+                    actualizarTurnosPendientes(otraComision, alumno);
+                }
+            }
 
             System.out.println(
                 "Prioridad del alumno con legajo " + legajoAlumno +

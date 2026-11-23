@@ -129,6 +129,7 @@ public static void crearBD() throws SQLException {
             "(tipo_objetivo = 'COMISION' AND legajo_alumno IS NULL AND numero_grupo IS NULL)" +
             ")" +
             ") ENGINE=InnoDB");
+        RegistroPersonasBD.preparar(conexion);
     }
 
     System.out.println("Base de datos y tablas disponibles.");

@@ -23,6 +23,12 @@ public class DocenteDao {
             sentencia.setString(2, docente.getNombre());
             sentencia.setString(3, docente.getApellido());
             sentencia.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1062) {
+                throw new SQLException("El legajo " + docente.getLegajo() +
+                    " ya está registrado.", e);
+            }
+            throw e;
         }
     }
 

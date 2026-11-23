@@ -108,13 +108,21 @@ public class PanelIngreso extends JPanel {
         botonIngresar.setPreferredSize(new Dimension(310, 60));
         botonIngresar.setFocusPainted(false);
 
-        botonIngresar.addActionListener(e -> ingresar());
+        botonIngresar.addActionListener(e -> ingresar(false));
+
+        JButton botonRegistrar = new BotonRedondeado("Registrar docente");
+        botonRegistrar.setFont(botonIngresar.getFont());
+        botonRegistrar.setForeground(EstiloTurnero.BEIGE);
+        botonRegistrar.setPreferredSize(botonIngresar.getPreferredSize());
+        botonRegistrar.setFocusPainted(false);
+        botonRegistrar.addActionListener(e -> ingresar(true));
 
         JPanel panelBoton = new JPanel(new FlowLayout(
             FlowLayout.CENTER, 0, 10
         ));
         panelBoton.setOpaque(false);
         panelBoton.add(botonIngresar);
+        panelBoton.add(botonRegistrar);
 
         contenido.add(panelBoton, BorderLayout.SOUTH);
         add(contenido);
@@ -192,32 +200,41 @@ public class PanelIngreso extends JPanel {
         panel.add(campo, c);
     }
 
-    private void ingresar() {
+    private void ingresar(boolean registrar) {
 
         String nombre = campoNombre.getText().trim();
         String apellido = campoApellido.getText().trim();
         String legajo = campoLegajo.getText().trim();
 
-        if (nombre.isEmpty() || apellido.isEmpty() || legajo.isEmpty()) {
+        if (legajo.isEmpty() || (registrar && (nombre.isEmpty() || apellido.isEmpty()))) {
             JOptionPane.showMessageDialog(
-                this, "Completá todos los campos."
+                this, registrar ? "Completá todos los campos." : "Ingresá el legajo docente."
             );
             return;
         }
 
         try {
-            gestion.registrarDocente(nombre, apellido, legajo);
+            if (registrar) {
+                gestion.registrarDocente(nombre, apellido, legajo);
+            } else if (gestion.cargarDocentePorLegajo(legajo) == null) {
+                JOptionPane.showMessageDialog(this, "No hay un docente registrado con ese legajo.");
+                return;
+            }
+            gestion.cargarComisionesDelDocente();
+            gestion.cargarAlumnosDeComisiones();
+            gestion.cargarGruposDeComisiones();
+            gestion.cargarInstanciasDeComisiones();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(
                 this,
-                "No se pudo registrar el docente: " + ex.getMessage()
+                ex.getMessage()
             );
             return;
         }
 
         JOptionPane.showMessageDialog(
             this,
-            "Docente registrado: " +
+            "Docente: " +
             gestion.getDocenteActual().getNombreCompleto()
         );
 

@@ -6,6 +6,7 @@ import Models.Comision;
 import Models.Materia;
 
 import java.awt.*;
+import java.sql.SQLException;
 import javax.swing.*;
 
 public class PanelComisiones extends JPanel {
@@ -186,6 +187,8 @@ public class PanelComisiones extends JPanel {
             JOptionPane.showMessageDialog(
                 this, "El código debe ser un número entero."
             );
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "No se pudo crear la comisión. " + ex.getMessage());
         }
     }
 

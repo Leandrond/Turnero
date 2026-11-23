@@ -80,7 +80,7 @@ public class Comision
     
     //Agregar alumno
     public void agregarAlumno(Alumno alumno){
-        if(alumno != null){ //verifico que alumno no sea un valor nulo
+        if (alumno != null && buscarAlumnoPorLegajo(alumno.getLegajo()) == null) {
             this.listaAlumnos.add(alumno);
         }
     }

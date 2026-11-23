@@ -6,6 +6,7 @@ import Models.Comision;
 import Models.Grupo;
 
 import java.awt.*;
+import java.sql.SQLException;
 import javax.swing.*;
 
 public class PanelGrupos extends JPanel {
@@ -169,7 +170,12 @@ public class PanelGrupos extends JPanel {
             return;
         }
 
-        gestion.crearGrupo(codigo, numero, cupo);
+        try {
+            gestion.crearGrupo(codigo, numero, cupo);
+        } catch (SQLException ex) {
+            mostrarError(ex.getMessage());
+            return;
+        }
 
         if (gestion.buscarGrupoEnComision(codigo, numero) != null) {
             resultados.setText(
@@ -254,9 +260,14 @@ public class PanelGrupos extends JPanel {
             return;
         }
 
-        gestion.agregarAlumnoAGrupo(
-            codigo, grupo.getNumero(), legajo
-        );
+        try {
+            gestion.agregarAlumnoAGrupo(
+                codigo, grupo.getNumero(), legajo
+            );
+        } catch (SQLException ex) {
+            mostrarError(ex.getMessage());
+            return;
+        }
 
         if (grupo.getlistaAlumnos().contains(alumno)) {
             resultados.setText(
@@ -297,9 +308,14 @@ public class PanelGrupos extends JPanel {
 
         if (confirmar != JOptionPane.YES_OPTION) return;
 
-        gestion.quitarAlumnoDeGrupo(
-            codigo, grupo.getNumero(), legajo
-        );
+        try {
+            gestion.quitarAlumnoDeGrupo(
+                codigo, grupo.getNumero(), legajo
+            );
+        } catch (SQLException ex) {
+            mostrarError(ex.getMessage());
+            return;
+        }
 
         if (!grupo.getlistaAlumnos().contains(alumno)) {
             resultados.setText(
@@ -328,9 +344,14 @@ public class PanelGrupos extends JPanel {
             return;
         }
 
-        gestion.cambiarCupoMaximo(
-            codigo, grupo.getNumero(), nuevoCupo
-        );
+        try {
+            gestion.cambiarCupoMaximo(
+                codigo, grupo.getNumero(), nuevoCupo
+            );
+        } catch (SQLException ex) {
+            mostrarError(ex.getMessage());
+            return;
+        }
 
         if (grupo.getCupoMaximo() == nuevoCupo) {
             resultados.setText(

@@ -238,38 +238,41 @@ public class Main {
     }
     static void menuAlumnos(GestionTurnero gestion) {
 
-        int codigo = leerEntero("Codigo de comision: ");
         int opcion;
 
         do {
             System.out.println("\nALUMNOS");
-            System.out.println("1. Agregar alumno");
+            System.out.println("1. Registrar alumno nuevo");
             System.out.println("2. Ver alumnos");
             System.out.println("3. Buscar alumno");
             System.out.println("4. Dar de baja alumno");
             System.out.println("5. Consultar Nota");
+            System.out.println("6. Inscribir alumno existente");
             System.out.println("0. Volver");
 
             opcion = leerEntero("Opcion: ");
 
             switch (opcion) {
                 case 1:
-                    agregarAlumno(gestion, codigo);
+                    registrarAlumno(gestion);
                     break;
 
                 case 2:
-                    listarAlumnos(gestion, codigo);
+                    listarAlumnos(gestion, leerEntero("Código de comisión: "));
                     break;
 
                 case 3:
-                    buscarAlumno(gestion, codigo);
+                    buscarAlumno(gestion, leerEntero("Código de comisión: "));
                     break;
 
                 case 4:
-                    darDeBajaAlumno(gestion, codigo);
+                    darDeBajaAlumno(gestion, leerEntero("Código de comisión: "));
                     break;
                 case 5:
-                    consultarCalificaciones(gestion,codigo);
+                    consultarCalificaciones(gestion, leerEntero("Código de comisión: "));
+                    break;
+                case 6:
+                    inscribirAlumno(gestion, leerEntero("Código de comisión: "));
                     break;
                 case 0:
                     break;
@@ -281,19 +284,30 @@ public class Main {
         } while (opcion != 0);
     }
 
-    static void agregarAlumno(GestionTurnero gestion, int codigo) {
+    static void registrarAlumno(GestionTurnero gestion) {
         int legajo = leerEntero("Legajo del alumno: ");
         String nombre = leerTexto("Nombre: ");
         String apellido = leerTexto("Apellido: ");
 
         try {
-            gestion.agregarAlumno(codigo, legajo, nombre, apellido);
+            gestion.registrarAlumno(legajo, nombre, apellido);
+            System.out.println("Alumno registrado. Ya podés inscribirlo en una comisión.");
         } catch (SQLException e) {
             System.err.println("No se pudo guardar el alumno: " + e.getMessage());
         }
     }
 
     
+    static void inscribirAlumno(GestionTurnero gestion, int codigo) {
+        int legajo = leerEntero("Legajo del alumno registrado: ");
+        try {
+            Alumno alumno = gestion.inscribirAlumno(codigo, legajo);
+            System.out.println("Alumno inscripto: " + alumno.getNombreCompleto());
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     static void listarAlumnos(GestionTurnero gestion, int codigo) {
 
          gestion.listarAlumnos(codigo);

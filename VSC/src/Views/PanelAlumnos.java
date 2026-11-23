@@ -7,6 +7,7 @@ import Models.Comision;
 import Models.Turno;
 
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -39,11 +40,12 @@ public class PanelAlumnos extends JPanel {
         titulo.setForeground(EstiloTurnero.BEIGE);
         contenido.add(titulo, BorderLayout.NORTH);
 
-        JPanel botones = new JPanel(new GridLayout(8, 1, 0, 12));
+        JPanel botones = new JPanel(new GridLayout(9, 1, 0, 8));
         botones.setOpaque(false);
         botones.setPreferredSize(new Dimension(265, 400));
 
-        JButton agregar = crearBoton("Agregar alumno");
+        JButton registrar = crearBoton("Registrar alumno nuevo");
+        JButton inscribir = crearBoton("Inscribir alumno existente");
         JButton listar = crearBoton("Listar alumnos");
         JButton buscar = crearBoton("Buscar alumno");
         JButton baja = crearBoton("Dar de baja");
@@ -52,7 +54,8 @@ public class PanelAlumnos extends JPanel {
         JButton quitarPrioridad = crearBoton("Quitar prioridad");
         JButton volver = crearBoton("Volver a comisiones");
 
-        botones.add(agregar);
+        botones.add(registrar);
+        botones.add(inscribir);
         botones.add(listar);
         botones.add(buscar);
         botones.add(baja);
@@ -81,7 +84,8 @@ public class PanelAlumnos extends JPanel {
         contenido.add(centro, BorderLayout.CENTER);
         add(contenido);
 
-        agregar.addActionListener(e -> agregarAlumno());
+        registrar.addActionListener(e -> registrarAlumno());
+        inscribir.addActionListener(e -> inscribirAlumno());
         listar.addActionListener(e -> listarAlumnos());
         buscar.addActionListener(e -> buscarAlumno());
         baja.addActionListener(e -> darDeBaja());
@@ -147,11 +151,7 @@ public class PanelAlumnos extends JPanel {
         return codigo;
     }
 
-    private void agregarAlumno() {
-
-        Integer codigo = pedirComision();
-        if (codigo == null) return;
-
+    private void registrarAlumno() {
         JTextField legajo = new JTextField();
         JTextField nombre = new JTextField();
         JTextField apellido = new JTextField();
@@ -165,7 +165,7 @@ public class PanelAlumnos extends JPanel {
         formulario.add(apellido);
 
         int opcion = JOptionPane.showConfirmDialog(
-            this, formulario, "Agregar alumno",
+            this, formulario, "Registrar alumno nuevo",
             JOptionPane.OK_CANCEL_OPTION
         );
 
@@ -176,29 +176,29 @@ public class PanelAlumnos extends JPanel {
             String nom = nombre.getText().trim();
             String ape = apellido.getText().trim();
 
-            if (numero <= 0 || nom.isEmpty() || ape.isEmpty()) {
-                mostrarError("Completá los datos correctamente.");
-                return;
-            }
-
-            if (gestion.buscarAlumnoEnComision(codigo, numero) != null) {
-                mostrarError("Ese alumno ya está registrado.");
-                return;
-            }
-
-            gestion.agregarAlumno(codigo, numero, nom, ape);
-
-            if (gestion.buscarAlumnoEnComision(codigo, numero) != null) {
-                resultados.setText(
-                    "Alumno registrado correctamente:\n\n" +
-                    nom + " " + ape + "\nLegajo: " + numero
-                );
-            } else {
-                mostrarError("No se pudo agregar el alumno.");
-            }
-
+            gestion.registrarAlumno(numero, nom, ape);
+            resultados.setText("Alumno registrado. Para agregarlo a una comisión, " +
+                "elegí Inscribir alumno existente.\n\n" + nom + " " + ape +
+                "\nLegajo: " + numero);
         } catch (NumberFormatException ex) {
             mostrarError("El legajo debe ser un número entero.");
+        } catch (SQLException ex) {
+            mostrarError(ex.getMessage());
+        }
+    }
+
+    private void inscribirAlumno() {
+        Integer codigo = pedirComision();
+        if (codigo == null) return;
+
+        Integer legajo = pedirNumero("Legajo del alumno registrado:");
+        if (legajo == null) return;
+
+        try {
+            Alumno alumno = gestion.inscribirAlumno(codigo, legajo);
+            resultados.setText(alumno.getNombreCompleto() + " fue inscripto en la comisión " + codigo + ".");
+        } catch (SQLException ex) {
+            mostrarError(ex.getMessage());
         }
     }
 
@@ -348,7 +348,12 @@ public class PanelAlumnos extends JPanel {
             return;
         }
 
-        gestion.cambiarPrioridad(codigo, legajo, nuevaPrioridad);
+        try {
+            gestion.cambiarPrioridad(codigo, legajo, nuevaPrioridad);
+        } catch (SQLException ex) {
+            mostrarError(ex.getMessage());
+            return;
+        }
 
         resultados.setText(
             "Alumno: " + alumno.getNombreCompleto() +

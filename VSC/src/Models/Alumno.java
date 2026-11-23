@@ -4,7 +4,7 @@ package Models;
 public class Alumno extends Persona implements Priorizable
 {
     
-    private int legajo;
+    private final int legajo;
     private Estado estado;
     private boolean prioridad;
 
@@ -39,11 +39,6 @@ public class Alumno extends Persona implements Priorizable
         this.prioridad=prioridad;
     }
     
-    public void setLegajo(int legajo){
-        this.legajo=legajo;
-    }
-
-    // hago un metodo set, que devuelva el legajo porque lo necesito para la comision
     public int getLegajo(){
         return legajo;
     }

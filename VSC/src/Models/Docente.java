@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Docente extends Persona
 {
-    private String legajo;
+    private final String legajo;
 
     private ArrayList<Comision> listaComisiones; //Lista para poder administrar comisiones
 

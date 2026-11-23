@@ -8,6 +8,7 @@ import Models.Turnero;
 import Models.Instancias.InstanciaEvaluativa;
 
 import java.awt.*;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import javax.swing.*;
@@ -292,6 +293,8 @@ public class PanelInstancias extends JPanel {
                  java.time.format.DateTimeParseException ex) {
 
             mostrarError("Fecha, hora, código o duración inválidos.");
+        } catch (SQLException ex) {
+            mostrarError(ex.getMessage());
         }
     }
 
