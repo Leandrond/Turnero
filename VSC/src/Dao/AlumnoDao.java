@@ -32,7 +32,8 @@ public class AlumnoDao {
     }
 
     public void inscribir(int codigoComision, int legajo) throws SQLException {
-        String sql = "INSERT INTO comision_alumno (codigo_comision, legajo_alumno) VALUES (?, ?)";
+        String sql = "INSERT INTO comision_alumno (codigo_comision, legajo_alumno) VALUES (?, ?) " +
+            "ON DUPLICATE KEY UPDATE activo = TRUE";
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement sentencia = conexion.prepareStatement(sql)) {
             sentencia.setInt(1, codigoComision);
@@ -75,7 +76,7 @@ public class AlumnoDao {
             "SELECT a.legajo, a.nombre, a.apellido, a.estado, a.prioridad " +
             "FROM alumno a " +
             "JOIN comision_alumno ca ON a.legajo = ca.legajo_alumno " +
-            "WHERE ca.codigo_comision = ? " +
+            "WHERE ca.codigo_comision = ? AND ca.activo = TRUE " +
             "ORDER BY a.legajo";
 
         ArrayList<Alumno> alumnos = new ArrayList<>();
@@ -122,7 +123,7 @@ public class AlumnoDao {
             "AND legajo_alumno = ? AND estado = 'PENDIENTE'",
             "DELETE FROM grupo_alumno WHERE codigo_comision = ? " +
             "AND legajo_alumno = ?",
-            "DELETE FROM comision_alumno WHERE codigo_comision = ? " +
+            "UPDATE comision_alumno SET activo = FALSE WHERE codigo_comision = ? " +
             "AND legajo_alumno = ?"
         };
 

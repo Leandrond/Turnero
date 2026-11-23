@@ -129,6 +129,13 @@ public static void crearBD() throws SQLException {
             "(tipo_objetivo = 'COMISION' AND legajo_alumno IS NULL AND numero_grupo IS NULL)" +
             ")" +
             ") ENGINE=InnoDB");
+        try (java.sql.ResultSet columnas = conexion.getMetaData().getColumns(
+                conexion.getCatalog(), null, "comision_alumno", "activo")) {
+            if (!columnas.next()) {
+                ejecutarDDL(conexion,
+                    "ALTER TABLE comision_alumno ADD COLUMN activo BOOLEAN NOT NULL DEFAULT TRUE");
+            }
+        }
         RegistroPersonasBD.preparar(conexion);
     }
 

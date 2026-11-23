@@ -530,11 +530,84 @@ public class GestionTurnero {
                 return;
             }
 
-            new AlumnoDao().cambiarPrioridad(legajoAlumno, nuevaPrioridad);
-            alumno.setPrioridad(nuevaPrioridad);
-            for (Comision otraComision : getDocenteActual().getListaComisiones()) {
-                if (otraComision.buscarAlumnoPorLegajo(legajoAlumno) != null) {
-                    actualizarTurnosPendientes(otraComision, alumno);
+            ArrayList<Comision> afectadas = new ArrayList<>();
+            ArrayList<InstanciaEvaluativa> instancias = new ArrayList<>();
+            ArrayList<ArrayList<Turno>> ordenes = new ArrayList<>();
+            ArrayList<ArrayList<LocalDate>> fechas = new ArrayList<>();
+            ArrayList<ArrayList<LocalTime>> horas = new ArrayList<>();
+
+            for (Comision otra : getDocenteActual().getListaComisiones()) {
+                if (otra.buscarAlumnoPorLegajo(legajoAlumno) == null) {
+                    continue;
+                }
+                for (InstanciaEvaluativa instancia : otra.getListaInstanciasEvaluativas()) {
+                    if (instancia.getModalidad() == Modalidad.GENERAL) {
+                        continue;
+                    }
+                    boolean afectada = false;
+                    for (Turno turno : instancia.getTurnero().getListaTurno()) {
+                        if (turno.getEstado() == Estado.PENDIENTE
+                                && (turno.getAlumno() == alumno || (turno.getGrupo() != null
+                                && turno.getGrupo().getlistaAlumnos().contains(alumno)))) {
+                            afectada = true;
+                        }
+                    }
+                    if (afectada) {
+                        ArrayList<Turno> orden = new ArrayList<>(instancia.getTurnero().getListaTurno());
+                        ArrayList<LocalDate> fechasOriginales = new ArrayList<>();
+                        ArrayList<LocalTime> horasOriginales = new ArrayList<>();
+                        for (Turno turno : orden) {
+                            fechasOriginales.add(turno.getFecha());
+                            horasOriginales.add(turno.getHora());
+                        }
+                        afectadas.add(otra);
+                        instancias.add(instancia);
+                        ordenes.add(orden);
+                        fechas.add(fechasOriginales);
+                        horas.add(horasOriginales);
+                    }
+                }
+            }
+
+            boolean prioridadAnterior = alumno.getPrioridad();
+            try (java.sql.Connection conexion = Conexion.ConexionBD.conectar()) {
+                conexion.setAutoCommit(false);
+                try {
+                    try (java.sql.PreparedStatement sentencia = conexion.prepareStatement(
+                            "UPDATE alumno SET prioridad = ? WHERE legajo = ?")) {
+                        sentencia.setBoolean(1, nuevaPrioridad);
+                        sentencia.setInt(2, legajoAlumno);
+                        if (sentencia.executeUpdate() == 0) {
+                            throw new SQLException("No se encontro el alumno.");
+                        }
+                    }
+                    alumno.setPrioridad(nuevaPrioridad);
+                    for (int i = 0; i < instancias.size(); i++) {
+                        Turnero turnero = instancias.get(i).getTurnero();
+                        turnero.ordenarPorPrioridad();
+                        turnero.calcularHorarios();
+                        new TurnoDao().reemplazarTurnos(conexion,
+                            afectadas.get(i).getCodigoComision(),
+                            instancias.get(i).getCodigo(), turnero.getListaTurno());
+                    }
+                    conexion.commit();
+                } catch (SQLException | RuntimeException e) {
+                    try {
+                        conexion.rollback();
+                    } catch (SQLException errorRollback) {
+                        e.addSuppressed(errorRollback);
+                    }
+                    alumno.setPrioridad(prioridadAnterior);
+                    for (int i = 0; i < instancias.size(); i++) {
+                        ArrayList<Turno> lista = instancias.get(i).getTurnero().getListaTurno();
+                        lista.clear();
+                        lista.addAll(ordenes.get(i));
+                        for (int j = 0; j < lista.size(); j++) {
+                            lista.get(j).setFecha(fechas.get(i).get(j));
+                            lista.get(j).setHora(horas.get(i).get(j));
+                        }
+                    }
+                    throw e;
                 }
             }
 

@@ -95,36 +95,32 @@ public class TurnoDao {
             int codigoComision, int codigoInstancia, List<Turno> turnos)
             throws SQLException {
 
-        String borrar =
-            "DELETE FROM turno " +
-            "WHERE codigo_comision = ? AND codigo_instancia = ?";
-
         try (Connection conexion = ConexionBD.conectar()) {
-            conexion.setAutoCommit(false); // Los cambios se confirman todos juntos al final
-
+            conexion.setAutoCommit(false);
             try {
-                try (PreparedStatement sentencia =
-                        conexion.prepareStatement(borrar)) {
-                    sentencia.setInt(1, codigoComision);
-                    sentencia.setInt(2, codigoInstancia);
-                    sentencia.executeUpdate(); // Borra los turnos viejos de esa instancia
-                }
-
-                for (int posicion = 0; posicion < turnos.size(); posicion++) {
-                    registrar(
-                        conexion, turnos.get(posicion), codigoComision, posicion
-                    ); // Vuelve a guardar cada turno con su posicion actual
-                }
-
-                conexion.commit(); // Confirma todo
+                reemplazarTurnos(conexion, codigoComision, codigoInstancia, turnos);
+                conexion.commit();
             } catch (SQLException | RuntimeException e) {
                 try {
-                    conexion.rollback(); // Si algo falla deshace todo y la base queda como estaba
+                    conexion.rollback();
                 } catch (SQLException errorRollback) {
                     e.addSuppressed(errorRollback);
                 }
                 throw e;
             }
+        }
+    }
+
+    public void reemplazarTurnos(Connection conexion, int codigoComision,
+            int codigoInstancia, List<Turno> turnos) throws SQLException {
+        String borrar = "DELETE FROM turno WHERE codigo_comision = ? AND codigo_instancia = ?";
+        try (PreparedStatement sentencia = conexion.prepareStatement(borrar)) {
+            sentencia.setInt(1, codigoComision);
+            sentencia.setInt(2, codigoInstancia);
+            sentencia.executeUpdate();
+        }
+        for (int posicion = 0; posicion < turnos.size(); posicion++) {
+            registrar(conexion, turnos.get(posicion), codigoComision, posicion);
         }
     }
 
@@ -162,6 +158,9 @@ public class TurnoDao {
                         Alumno alumno = comision.buscarAlumnoPorLegajo(
                             resultado.getInt("legajo_alumno")
                         );
+                        if (alumno == null) {
+                            alumno = new AlumnoDao().buscarPorLegajo(resultado.getInt("legajo_alumno"));
+                        }
                         if (alumno != null) {
                             turno = new Turno(instancia, alumno, fecha, hora);
                         }
